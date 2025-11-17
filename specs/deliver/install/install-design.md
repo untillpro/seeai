@@ -72,21 +72,52 @@ Examples:
   seeai.sh list                       # List installed files
 ```
 
+## Source Files
+
+Source files are stored in the `src/` directory with simple names:
+
+- `design.md` - Software Engineering Design prompt
+- `gherkin.md` - Gherkin/BDD prompt
+
+These files are transformed during installation based on the target agent (see "File Organization Strategy" below).
+
 ## Installation Locations
+
+### File Organization Strategy
+
+**Copilot** does not support subfolders in the prompts directory. Therefore:
+
+- **Copilot**: Files are installed directly in the prompts directory with a `seeai-` prefix
+  - Example: `seeai-design.prompt.md`, `seeai-gherkin.prompt.md`
+- **Augment & Claude**: Files are installed in a `seeai/` subdirectory
+  - Example: `seeai/design.md`, `seeai/gherkin.md`
 
 ### Workspace
 
-- Augment: `./.augment/commands/`
-- Copilot: `./.github/prompts/`
-- Claude: `./.claude/commands/`
+- Augment: `./.augment/commands/seeai/`
+- Copilot: `./.github/prompts/` (files: `seeai-design.prompt.md`, etc.)
+- Claude: `./.claude/commands/seeai/`
 
-### User Global
+### User
 
-- Augment: `~/.augment/commands/`
+- Augment: `~/.augment/commands/seeai/`
 - Copilot: Default profile or specific profile (user selects during installation)
   - Default profile: `%APPDATA%/Code/User/prompts/` (Windows), `~/Library/Application Support/Code/User/prompts/` (macOS), `~/.config/Code/User/prompts/` (Linux)
   - Specific profile: `%APPDATA%/Code/User/profiles/<profile-id>/prompts/` (Windows), `~/Library/Application Support/Code/User/profiles/<profile-id>/prompts/` (macOS), `~/.config/Code/User/profiles/<profile-id>/prompts/` (Linux)
-- Claude: `~/.claude/commands/`
+  - Files: `seeai-design.prompt.md`, `seeai-gherkin.prompt.md`, etc.
+- Claude: `~/.claude/commands/seeai/`
+
+### List Command Search Strategy
+
+The list command searches for files using current installation patterns only:
+
+**For Copilot locations** (prompts directories):
+
+- `seeai-*.prompt.md`
+
+**For Augment/Claude locations** (commands directories):
+
+- `seeai/*.md`
 
 ## Install Command Flow
 
@@ -101,54 +132,35 @@ If `--agent` is specified:
 
 - Skip Step 1 (agent selection)
 - For copilot: Use default profile, skip profile selection
-- Still ask for installation scope (workspace vs user global) unless additional options are added
+- Still ask for installation scope (workspace vs user) unless additional options are added
 
-### Step 1: Check Existing Installations (Automatic)
-
-Use the list command logic to scan for existing `se-*.md` files in all known locations (non-recursively).
-
-If existing files are found, display them and prompt for confirmation:
-
-```text
-Checking for existing installations...
-
-Found existing files:
-  ./.augment/commands/se-design.md
-  ./.augment/commands/se-impl.md
-
-Continue with installation? (y/n)
-```
-
-If no existing files are found, skip this prompt and proceed directly to Step 2.
-
-If user answers "n", exit with code 0 (user cancelled, not an error).
-
-Search locations: See "Installation Locations" section above.
-
-### Step 2: Ask Agent Type
+### Step 1: Ask Agent Type
 
 Skip this step if `--agent` option is provided.
 
 ```text
 Which agent?
-1) Augment (.augment/commands/)
-2) GitHub Copilot (.github/prompts/)
-3) Claude (.claude/commands/)
+1) Augment (.augment/commands/seeai/)
+2) GitHub Copilot (.github/prompts/seeai/)
+3) Claude (.claude/commands/seeai/)
 ```
 
-### Step 3: Ask Installation Scope
+### Step 2: Ask Installation Scope
 
 ```text
 Installation scope?
-1) Current workspace
-2) User global
+1) User [default]
+2) Current workspace
+Select (1-2) [1]:
 ```
+
+User is the default (option 1). If the user presses Enter without typing anything, User is selected.
 
 See "Installation Locations" section for specific paths by agent and scope.
 
-### Step 3a: Installation Location
+### Step 2a: Installation Location
 
-If user selects Copilot + User global, ask which VS Code profile.
+If user selects Copilot + User, ask which VS Code profile.
 
 Skip this step if `--agent copilot` is provided (use default profile).
 
@@ -161,32 +173,34 @@ Select VS Code profile for Copilot:
 
 See "Installation Locations" section for specific paths.
 
-### Step 4: Download and Install
+### Step 3: Download and Install
 
 Show absolute paths and confirm before creating files:
 
 ```text
 Installing from: latest (or main, or v0.1.0)
-Target: /home/user/myproject/.augment/commands/
+Target: /home/user/myproject/.augment/commands/seeai/
 
 The following files will be installed:
-  /home/user/myproject/.augment/commands/se-design.md
-  /home/user/myproject/.augment/commands/se-gherkin.md
+  /home/user/myproject/.augment/commands/seeai/design.md
+  /home/user/myproject/.augment/commands/seeai/gherkin.md
 
-Proceed? (y/n)
+Proceed? (Y/n) [Y]:
 ```
+
+"Y" is the default - pressing Enter proceeds with installation. Only explicit "n" or "N" cancels.
 
 If user answers "n", exit with code 0 (user cancelled, not an error).
 
-If user answers "y", create target directory and install:
+If user answers "y" or presses Enter, create target directory and install:
 
 ```bash
 mkdir -p "$TARGET_DIR"
 ```
 
 ```text
-Downloading se-design.md... OK
-Downloading se-gherkin.md... OK
+Downloading design.md... OK
+Downloading gherkin.md... OK
 
 Installation complete!
 ```
@@ -195,50 +209,50 @@ If `-l` flag is used, show "local (../src)" as source and "Copying" instead of "
 
 ```text
 Installing from: local (../src)
-Target: /home/user/myproject/.augment/commands/
+Target: /home/user/myproject/.augment/commands/seeai/
 
 The following files will be installed:
-  /home/user/myproject/.augment/commands/se-design.md
-  /home/user/myproject/.augment/commands/se-gherkin.md
+  /home/user/myproject/.augment/commands/seeai/design.md
+  /home/user/myproject/.augment/commands/seeai/gherkin.md
 
-Proceed? (y/n)
+Proceed? (Y/n) [Y]:
 
-Copying se-design.md... OK
-Copying se-gherkin.md... OK
+Copying design.md... OK
+Copying gherkin.md... OK
 
 Installation complete!
 ```
 
-For Copilot, files are renamed with `.prompt.md` extension during installation (show the `.prompt.md` extension in the file list).
+For Copilot, files are transformed with `seeai-` prefix and `.prompt.md` extension during installation (show the transformed names in the file list).
 
 Error handling: The `set -Eeuo pipefail` header ensures the script exits on any error (curl failure, copy failure, etc.).
 
 ## List Command
 
-Searches for installed `se-*.md` files and displays their locations.
+Searches for installed SeeAI files and displays their locations.
+
+Search patterns:
+
+- Copilot: `seeai-*.prompt.md`
+- Augment/Claude: `seeai/*.md`
 
 Search locations: See "Installation Locations" section above.
 
 ### Output Example
 
 ```text
-Found seeai installations:
+Found SeeAI installations:
 
 Workspace (Augment):
-  ./.augment/commands/se-design.md
-  ./.augment/commands/se-impl.md
-  ./.augment/commands/se-plan.md
-  (8 files total)
+  ./.augment/commands/seeai/design.md
+  ./.augment/commands/seeai/gherkin.md
 
-User Global (Claude):
-  /home/user/.claude/commands/se-design.md
-  /home/user/.claude/commands/se-impl.md
-  (10 files total)
+User (Claude):
+  /home/user/.claude/commands/seeai/design.md
 
-User Global (Copilot - Windows):
-  C:/Users/Usuario/AppData/Roaming/Code/User/prompts/se-design.prompt.md
-  C:/Users/Usuario/AppData/Roaming/Code/User/prompts/se-impl.prompt.md
-  (10 files total)
+User (Copilot - Windows):
+  C:/Users/Usuario/AppData/Roaming/Code/User/prompts/seeai-design.prompt.md
+  C:/Users/Usuario/AppData/Roaming/Code/User/prompts/seeai-gherkin.prompt.md
 ```
 
 ## Implementation Details
@@ -399,18 +413,19 @@ case $AGENT in
 esac
 ```
 
-GitHub Copilot requires `.prompt.md` extension:
+GitHub Copilot requires `.prompt.md` extension and `seeai-` prefix (no subfolder support):
 
 ```bash
 if [[ $AGENT_INTERNAL == "copilot" ]]; then
-  # Rename se-design.md to se-design.prompt.md
-  TARGET_FILE="${file%.md}.prompt.md"
+  # Transform: design.md -> seeai-design.prompt.md
+  TARGET_FILE="seeai-${file%.md}.prompt.md"
 else
+  # Keep original name: design.md
   TARGET_FILE="$file"
 fi
 ```
 
-When `--agent copilot` is used with user global scope, automatically use default profile:
+When `--agent copilot` is used with user scope, automatically use default profile:
 
 ```bash
 if [[ $AGENT == "copilot" && -n "$AGENT" ]]; then

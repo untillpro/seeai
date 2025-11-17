@@ -49,6 +49,8 @@ normalize_path() {
     local drive="${BASH_REMATCH[1]}"
     path="${drive^^}:${path:2}"
   fi
+  # Remove /./ patterns
+  path="${path//\/.\//\/}"
   echo "$path"
 }
 

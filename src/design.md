@@ -22,7 +22,7 @@ CRITICAL: Use declarative language throughout the design document. Describe what
 - Documentation Updates: "OAuth requirements must be documented" (not "Add OAuth requirements")
 - This approach is naturally idempotent and describes desired state rather than mutations
 
-Ask 3-5 most important questions with suggested solutions if you need clarification on:
+CRITICAL: ALWAYS ask 3-5 most important questions with suggested solutions:
 
 - Unclear requirements or ambiguous specifications
 - Existing patterns or conventions in the codebase
@@ -40,15 +40,17 @@ Format for suggestions:
 
 - Present suggestions as numbered lists
 - First option should be the recommended approach with rationale
-- ALWAYS use web search to find current best practices and available options BEFORE asking questions
+- CRITICAL: ALWAYS use web search to find current best practices and available options BEFORE asking questions
 
 Example:
 
-Question: Which state management approach should we use for the form?
+```markdown
+## Question: Which state management approach should we use for the form?
 
 1. React Hook Form (Recommended) - Better performance with uncontrolled components, built-in validation, smaller bundle size
 2. Formik - More established, larger community, but heavier bundle
 3. Custom useState hooks - Maximum control but requires more boilerplate
+```
 
 ## Output File Naming
 

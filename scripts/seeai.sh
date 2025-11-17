@@ -160,9 +160,9 @@ ask_agent() {
   fi
 
   echo "Which agent?"
-  echo "1) Augment (.augment/commands/seeai/)"
-  echo "2) GitHub Copilot (.github/prompts/seeai/)"
-  echo "3) Claude (.claude/commands/seeai/)"
+  echo "1) Augment"
+  echo "2) GitHub Copilot"
+  echo "3) Claude"
   read -p "Select (1-3): " -r choice </dev/tty
 
   case $choice in
@@ -277,9 +277,15 @@ install_files() {
     source_label="$VERSION"
   fi
 
-  # Convert to absolute path
+  # Convert to absolute path without creating directories
   local abs_target_dir
-  abs_target_dir=$(cd "$(dirname "$TARGET_DIR")" 2>/dev/null && pwd)/$(basename "$TARGET_DIR")/ || abs_target_dir="$TARGET_DIR"
+  if [[ "$TARGET_DIR" != /* ]]; then
+    # Relative path: prepend current directory
+    abs_target_dir="$(pwd)/$TARGET_DIR"
+  else
+    # Already absolute
+    abs_target_dir="$TARGET_DIR"
+  fi
   abs_target_dir=$(normalize_path "$abs_target_dir")
 
   echo

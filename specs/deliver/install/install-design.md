@@ -140,9 +140,9 @@ Skip this step if `--agent` option is provided.
 
 ```text
 Which agent?
-1) Augment (.augment/commands/seeai/)
-2) GitHub Copilot (.github/prompts/seeai/)
-3) Claude (.claude/commands/seeai/)
+1) Augment
+2) GitHub Copilot
+3) Claude
 ```
 
 ### Step 2: Ask Installation Scope
@@ -175,7 +175,18 @@ See "Installation Locations" section for specific paths.
 
 ### Step 3: Download and Install
 
-Show absolute paths and confirm before creating files:
+Resolve absolute path without creating directories:
+
+```bash
+if [[ "$TARGET_DIR" != /* ]]; then
+  abs_target_dir="$(pwd)/$TARGET_DIR"
+else
+  abs_target_dir="$TARGET_DIR"
+fi
+abs_target_dir=$(normalize_path "$abs_target_dir")
+```
+
+Show confirmation:
 
 ```text
 Installing from: latest (or main, or v0.1.0)
@@ -192,7 +203,7 @@ Proceed? (Y/n) [Y]:
 
 If user answers "n", exit with code 0 (user cancelled, not an error).
 
-If user answers "y" or presses Enter, create target directory and install:
+If user answers "y" or presses Enter, create target directory and install files:
 
 ```bash
 mkdir -p "$TARGET_DIR"

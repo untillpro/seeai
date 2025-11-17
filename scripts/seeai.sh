@@ -163,7 +163,7 @@ ask_agent() {
   echo "1) Augment (.augment/commands/seeai/)"
   echo "2) GitHub Copilot (.github/prompts/seeai/)"
   echo "3) Claude (.claude/commands/seeai/)"
-  read -p "Select (1-3): " -r choice
+  read -p "Select (1-3): " -r choice </dev/tty
 
   case $choice in
     1) AGENT="auggie" ;;
@@ -182,7 +182,7 @@ ask_scope() {
   echo "Installation scope?"
   echo "1) User [default]"
   echo "2) Current workspace"
-  read -p "Select (1-2) [1]: " -r choice
+  read -p "Select (1-2) [1]: " -r choice </dev/tty
 
   # Default to User if empty
   choice=${choice:-1}
@@ -213,14 +213,14 @@ ask_copilot_profile() {
   echo "1) Default profile"
   echo "2) Specific profile (enter profile ID)"
   echo "3) List available profiles"
-  read -p "Select (1-3): " -r choice
+  read -p "Select (1-3): " -r choice </dev/tty
 
   case $choice in
     1)
       # Use default profile (already set by get_global_dir)
       ;;
     2)
-      read -p "Enter profile ID: " -r profile_id
+      read -p "Enter profile ID: " -r profile_id </dev/tty
       # Copilot doesn't support subfolders, so files go directly in prompts/
       case "$(uname -s)" in
         MINGW*|MSYS*|CYGWIN*) TARGET_DIR="$APPDATA/Code/User/profiles/$profile_id/prompts/" ;;
@@ -298,7 +298,7 @@ install_files() {
   done
 
   echo
-  read -p "Proceed? (Y/n) [Y]: " -n 1 -r
+  read -p "Proceed? (Y/n) [Y]: " -n 1 -r </dev/tty
   echo
   # Default to Y if empty, exit only on explicit n/N
   if [[ -n $REPLY && $REPLY =~ ^[Nn]$ ]]; then

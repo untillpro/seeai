@@ -141,8 +141,8 @@ Skip this step if `--agent` option is provided.
 ```text
 Which agent?
 1) Augment
-2) GitHub Copilot
-3) Claude
+2) Claude
+3) GitHub Copilot
 ```
 
 ### Step 2: Ask Installation Scope

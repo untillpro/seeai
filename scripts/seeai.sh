@@ -163,14 +163,14 @@ ask_agent() {
 
   echo "Which agent?"
   echo "1) Augment"
-  echo "2) GitHub Copilot"
-  echo "3) Claude"
+  echo "2) Claude"
+  echo "3) GitHub Copilot"
   read -p "Select (1-3): " -r choice </dev/tty
 
   case $choice in
     1) AGENT="auggie" ;;
-    2) AGENT="copilot" ;;
-    3) AGENT="claude" ;;
+    2) AGENT="claude" ;;
+    3) AGENT="copilot" ;;
     *)
       echo "Error: Invalid choice"
       exit 1

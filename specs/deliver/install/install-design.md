@@ -2,7 +2,7 @@
 
 ## Overview
 
-Create `seeai.sh` - a multi-command installation script for seeai prompt templates that supports multiple agentic tools and installation scopes.
+Create `scripts/seeai.sh` - a multi-command installation script for seeai prompt templates that supports multiple agentic tools and installation scopes.
 
 ## README.md Documentation
 
@@ -10,10 +10,10 @@ README.md should contain only the two one-liner installation commands:
 
 ```bash
 # Install latest stable version
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/seeai.sh | bash -s install
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install
 
 # Install from main branch (unstable)
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/seeai.sh | bash -s install main
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main
 ```
 
 The script will interactively ask:
@@ -28,22 +28,21 @@ The script will interactively ask:
 
 ```bash
 # Install latest stable (default) - interactive
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/seeai.sh | bash -s install
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install
 
 # Install from main branch (unstable) - interactive
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/seeai.sh | bash -s install main
-
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main
 # Install specific version - interactive
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/seeai.sh | bash -s install v0.1.0
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install v0.1.0
 
 # Install for specific agent (non-interactive)
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/seeai.sh | bash -s install --agent auggie
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent auggie
 
 # Install from local src folder (for development)
 ./seeai.sh install -l --agent claude
 
 # List installed files
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/seeai.sh | bash -s list
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s list
 ```
 
 ### Command Syntax

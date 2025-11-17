@@ -92,7 +92,7 @@ CRITICAL: ALWAYS conduct web search BEFORE proceeding to find:
 
 Document system-level installations and configurations required to implement the feature. Include only when the feature requires changes to the development environment, system-wide tools, SDKs, or global packages.
 
-When to Include:
+When to include:
 
 - SDK installations (Flutter SDK, Android SDK, iOS SDK, .NET SDK, etc.)
 - System-wide tool installations (Docker, Kubernetes, CMake, etc.)
@@ -102,7 +102,7 @@ When to Include:
 - Platform-specific system requirements (Xcode Command Line Tools, Visual Studio Build Tools, etc.)
 - Virtual environment or container setup
 
-When to Skip:
+When to skip:
 
 - Feature uses only existing system tools and SDKs
 - All dependencies are project-level (managed by package managers within the project)
@@ -514,7 +514,7 @@ CRITICAL: ALWAYS conduct web search BEFORE proceeding to find:
 
 Document project-level file modifications required to implement the feature. Include only when the feature requires changes to project configuration files (dependencies, build settings, platform permissions, assets, etc.).
 
-When to Include:
+When to include:
 
 - New dependencies or package installations
 - Build configuration changes (SDK versions, compile options)
@@ -944,7 +944,7 @@ QrAuthScreen
 
 Key data models used by feature components. Include only when feature introduces new models or significantly modifies existing ones.
 
-**Data Structure - When to Include:**
+Data Structure - When to include:
 
 - New models, significant changes, or complex relationships (3+ entities)
 - API contracts (request/response) that are non-trivial
@@ -952,7 +952,7 @@ Key data models used by feature components. Include only when feature introduces
 - Event/message structures for async communication
 - Skip if using existing models unchanged or structures are trivial
 
-**Data Structure - DO:**
+Data Structure - DO:
 
 - Use component format: `[ModelName: Type](path) - description with key fields: field (type, constraints)`
 - Include component type (e.g., `[ReviewFormState: class]`, `[Transaction: model]`, `[CreateReviewRequest: DTO]`, `[ControlButtons: React.FC<ControlButtonsProps>]`)
@@ -1016,7 +1016,7 @@ List data models grouped by category (State Objects, DTOs, Domain Models, Databa
 
 Use Mermaid ERD to show relationships between models. Include only when 3+ models have significant relationships.
 
-**Example:**
+Example:
 
 ```mermaid
 erDiagram
@@ -1059,20 +1059,13 @@ erDiagram
     }
 ```
 
-**Key transformations:**
-
-1. User input → ReviewFormState (UI validation)
-2. Form submission → CreateReviewRequest (API DTO)
-3. API processing → Review domain model (business logic)
-4. Persistence → ReviewEntity (database)
-
 ---
 
 ### Flows
 
 Common flow rules:
 
-- **IMPORTANT**: All components mentioned in flows MUST be defined in the Architecture section (either as Feature Components or External Components). Use the exact component names as defined in Architecture (e.g., BalanceCard, TransactionViewModel, not generic names like "Component A")
+- IMPORTANT: All components mentioned in flows MUST be defined in the Architecture section (either as Feature Components or External Components). Use the exact component names as defined in Architecture (e.g., BalanceCard, TransactionViewModel, not generic names like "Component A")
 
 #### Key Control Flows (3-5 flows)
 
@@ -1085,13 +1078,13 @@ Each flow should:
 - Include key decision points, validation, and outcomes (success/error paths)
 - Use exact component names defined in the Architecture section
 - Focus on the control flow logic, not data transformation
-- **Annotate components with emojis** to distinguish their types:
+- Annotate components with emojis to distinguish their types:
   - 👤 User/Actor - Use `actor` keyword in Mermaid (e.g., `actor 👤User`)
   - 🎯 Feature Components (defined in Feature Components section)
   - 🔧 Utility Components (defined in Utility Components section)
   - 📦 External Components (defined in External Components section)
 
-**Example - User-Initiated Flow:**
+Example - User-Initiated Flow:
 
 ```markdown
 ### Flow 1: User Submits Transaction Request
@@ -1152,7 +1145,7 @@ sequenceDiagram
 
 Links to related documentation.
 
-**Example:**
+Example:
 
 ```markdown
 - [Transaction Feature Requirements](docs/requirements/transaction-feature.md)
@@ -1163,7 +1156,7 @@ Links to related documentation.
 
 ## Rules
 
-**DO:**
+DO:
 
 - Be concise - one line per component description
 - Focus on WHAT and WHY, not HOW
@@ -1171,13 +1164,13 @@ Links to related documentation.
 - Show component relationships
 - Keep explanations brief
 - Give each component a concise, descriptive name (e.g., `BalanceCard`, `TransactionViewModel`, `AuthService`)
-- **Include component type** in the format `[ComponentName: Type]` (e.g., `[TransactionFormScreen: HooksConsumerWidget]`, `[TransactionRepository: class]`, `[Transaction: model]`, `[ControlButtons: React.FC<ControlButtonsProps>]`)
+- Include component type in the format `[ComponentName: Type]` (e.g., `[TransactionFormScreen: HooksConsumerWidget]`, `[TransactionRepository: class]`, `[Transaction: model]`, `[ControlButtons: React.FC<ControlButtonsProps>]`)
 - Define ALL components with their names and types in Architecture section before using them in Data Flow or Control Flow
 - List which Feature Components use each External Component
 - Use the exact component names consistently throughout the document
 - Annotate components in sequence diagrams with emojis: 👤 User/Actor (use `actor` keyword), 🎯 Feature, 🔧 Utility, 📦 External
 
-**DO NOT:**
+DO NOT:
 
 - Include code examples
 - Include implementation details

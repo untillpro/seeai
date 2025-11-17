@@ -243,6 +243,26 @@ User Global (Copilot - Windows):
 
 ## Implementation Details
 
+### Path Normalization
+
+All output paths are normalized to use forward slashes and consistent drive letter format (C:/ style):
+
+```bash
+normalize_path() {
+  local path="$1"
+  # Convert backslashes to forward slashes
+  path="${path//\\//}"
+  # Convert /c/ to C:/ format (Git Bash style to Windows style)
+  if [[ "$path" =~ ^/([a-z])/ ]]; then
+    local drive="${BASH_REMATCH[1]}"
+    path="${drive^^}:${path:2}"
+  fi
+  echo "$path"
+}
+```
+
+This ensures consistent output across different environments (Git Bash, native Windows, etc.).
+
 ### Main Script Structure
 
 ```bash

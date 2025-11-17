@@ -45,7 +45,7 @@ Format for suggestions:
 Example:
 
 ```markdown
-## Question: Which state management approach should we use for the form?
+## Q1: Which state management approach should we use for the form?
 
 1. React Hook Form (Recommended) - Better performance with uncontrolled components, built-in validation, smaller bundle size
 2. Formik - More established, larger community, but heavier bundle

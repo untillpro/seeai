@@ -14,7 +14,10 @@
   - ps scripts
   - Does not work for a project that is not in a repo root
 
-## What
+## How
 
 - Just few prompts: design, meta-design
+- No new ideas, just software engineering best practices
 - Can be installed globally
+- Easy installation
+- Prerequirements: git, bash

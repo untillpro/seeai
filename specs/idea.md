@@ -18,6 +18,6 @@
 
 - Just few prompts: design, meta-design
 - No new ideas, just software engineering best practices
-- Can be installed globally
+- Can be installed per user
 - Easy installation
-- Prerequirements: git, bash
+- Simple prerequisites: git, bash

@@ -1,0 +1,3 @@
+# Distribution and Deployment Guidelines
+
+Packaging, installers, CI/CD, installation, updates...

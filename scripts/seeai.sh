@@ -276,12 +276,13 @@ install_files() {
   if [[ "$LOCAL_MODE" == true ]]; then
     source_label="local (../src)"
   else
+    resolve_version
     source_label="$VERSION"
   fi
 
   # Convert to absolute path without creating directories
   local abs_target_dir
-  if [[ "$TARGET_DIR" != /* ]]; then
+  if [[ "$TARGET_DIR" != /* && "$TARGET_DIR" != [A-Za-z]:/* ]]; then
     # Relative path: prepend current directory
     abs_target_dir="$(pwd)/$TARGET_DIR"
   else
@@ -333,7 +334,6 @@ install_files() {
       echo "OK"
     done
   else
-    resolve_version
     BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/src"
 
     for file in "${FILES[@]}"; do

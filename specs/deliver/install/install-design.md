@@ -18,7 +18,7 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 
 The script will interactively ask:
 
-- Which agent to use (Augment/Copilot/Claude/All)
+- Which agent to use (Augment/Copilot/Claude)
 - Installation scope (workspace/global)
 - Confirmation if existing files are found
 
@@ -38,8 +38,8 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 # Install for specific agent (non-interactive)
 curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent auggie
 
-# Install from local src folder (for development)
-./seeai.sh install -l --agent claude
+# Install from local ../src folder (for development)
+./scripts/seeai.sh install -l --agent claude
 
 # List installed files
 curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s list
@@ -60,7 +60,7 @@ Version (for install):
   v0.1.0            - Specific version tag
 
 Options (for install):
-  -l                - Use local files from ../src folder (for development)
+  -l                - Use local files from ../src folder (relative to script path, for development)
   --agent <name>    - Specify agent (auggie, claude, copilot) - skips interactive prompt
                       For copilot, uses default profile
 
@@ -71,6 +71,22 @@ Examples:
   seeai.sh install -l --agent claude  # Local files, Claude agent
   seeai.sh list                       # List installed files
 ```
+
+## Installation Locations
+
+### Workspace
+
+- Augment: `./.augment/commands/`
+- Copilot: `./.github/prompts/`
+- Claude: `./.claude/commands/`
+
+### User Global
+
+- Augment: `~/.augment/commands/`
+- Copilot: Default profile or specific profile (user selects during installation)
+  - Default profile: `%APPDATA%/Code/User/prompts/` (Windows), `~/Library/Application Support/Code/User/prompts/` (macOS), `~/.config/Code/User/prompts/` (Linux)
+  - Specific profile: `%APPDATA%/Code/User/profiles/<profile-id>/prompts/` (Windows), `~/Library/Application Support/Code/User/profiles/<profile-id>/prompts/` (macOS), `~/.config/Code/User/profiles/<profile-id>/prompts/` (Linux)
+- Claude: `~/.claude/commands/`
 
 ## Install Command Flow
 
@@ -89,7 +105,9 @@ If `--agent` is specified:
 
 ### Step 1: Check Existing Installations (Automatic)
 
-Before prompting user, scan for existing `se-*.md` files in known locations:
+Use the list command logic to scan for existing `se-*.md` files in all known locations (non-recursively).
+
+If existing files are found, display them and prompt for confirmation:
 
 ```text
 Checking for existing installations...
@@ -97,26 +115,15 @@ Checking for existing installations...
 Found existing files:
   ./.augment/commands/se-design.md
   ./.augment/commands/se-impl.md
-  ~/.seeai/.claude/commands/se-design.md
 
 Continue with installation? (y/n)
 ```
 
-Search locations:
+If no existing files are found, skip this prompt and proceed directly to Step 2.
 
-Workspace:
+If user answers "n", exit with code 0 (user cancelled, not an error).
 
-- `./.augment/commands/`
-- `./.github/prompts/`
-- `./.claude/commands/`
-
-User global (agent-specific):
-
-- Augment: `~/.augment/commands/`
-- Copilot: Default profile or specific profile (user selects during installation)
-  - Default profile: `%APPDATA%/Code/User/prompts/` (Windows), `~/Library/Application Support/Code/User/prompts/` (macOS), `~/.config/Code/User/prompts/` (Linux)
-  - Specific profile: `%APPDATA%/Code/User/profiles/<profile-id>/prompts/` (Windows), `~/Library/Application Support/Code/User/profiles/<profile-id>/prompts/` (macOS), `~/.config/Code/User/profiles/<profile-id>/prompts/` (Linux)
-- Claude: `~/.claude/commands/`
+Search locations: See "Installation Locations" section above.
 
 ### Step 2: Ask Agent Type
 
@@ -127,22 +134,17 @@ Which agent?
 1) Augment (.augment/commands/)
 2) GitHub Copilot (.github/prompts/)
 3) Claude (.claude/commands/)
-4) All
 ```
 
 ### Step 3: Ask Installation Scope
 
 ```text
 Installation scope?
-1) Current workspace (./.augment/commands/, ./.github/prompts/, ./.claude/commands/)
-2) User global (agent-specific locations)
+1) Current workspace
+2) User global
 ```
 
-User global locations by agent:
-
-- Augment: `~/.augment/commands/`
-- Copilot: Requires profile selection (see Step 3a)
-- Claude: `~/.claude/commands/`
+See "Installation Locations" section for specific paths by agent and scope.
 
 ### Step 3a: Installation Location
 
@@ -152,40 +154,54 @@ Skip this step if `--agent copilot` is provided (use default profile).
 
 ```text
 Select VS Code profile for Copilot:
-1) Default profile (%APPDATA%/Code/User/prompts/)
+1) Default profile
 2) Specific profile (enter profile ID)
 3) List available profiles
 ```
 
-Default profile locations:
-
-- Windows: `%APPDATA%/Code/User/prompts/`
-- macOS: `~/Library/Application Support/Code/User/prompts/`
-- Linux: `~/.config/Code/User/prompts/`
-
-Specific profile locations:
-
-- Windows: `%APPDATA%/Code/User/profiles/<profile-id>/prompts/`
-- macOS: `~/Library/Application Support/Code/User/profiles/<profile-id>/prompts/`
-- Linux: `~/.config/Code/User/profiles/<profile-id>/prompts/`
+See "Installation Locations" section for specific paths.
 
 ### Step 4: Download and Install
 
+Show absolute paths and confirm before creating files:
+
 ```text
 Installing from: latest (or main, or v0.1.0)
-Target: ./.augment/commands/
+Target: /home/user/myproject/.augment/commands/
 
+The following files will be installed:
+  /home/user/myproject/.augment/commands/se-design.md
+  /home/user/myproject/.augment/commands/se-gherkin.md
+
+Proceed? (y/n)
+```
+
+If user answers "n", exit with code 0 (user cancelled, not an error).
+
+If user answers "y", create target directory and install:
+
+```bash
+mkdir -p "$TARGET_DIR"
+```
+
+```text
 Downloading se-design.md... OK
 Downloading se-gherkin.md... OK
 
 Installation complete!
 ```
 
-If `-l` flag is used:
+If `-l` flag is used, show "local (../src)" as source and "Copying" instead of "Downloading":
 
 ```text
 Installing from: local (../src)
-Target: ./.augment/commands/
+Target: /home/user/myproject/.augment/commands/
+
+The following files will be installed:
+  /home/user/myproject/.augment/commands/se-design.md
+  /home/user/myproject/.augment/commands/se-gherkin.md
+
+Proceed? (y/n)
 
 Copying se-design.md... OK
 Copying se-gherkin.md... OK
@@ -193,15 +209,15 @@ Copying se-gherkin.md... OK
 Installation complete!
 ```
 
-For Copilot, files are renamed with `.prompt.md` extension during installation.
+For Copilot, files are renamed with `.prompt.md` extension during installation (show the `.prompt.md` extension in the file list).
+
+Error handling: The `set -Eeuo pipefail` header ensures the script exits on any error (curl failure, copy failure, etc.).
 
 ## List Command
 
 Searches for installed `se-*.md` files and displays their locations.
 
-### Search Locations
-
-Ref. the Installation Location section above.
+Search locations: See "Installation Locations" section above.
 
 ### Output Example
 
@@ -226,6 +242,35 @@ User Global (Copilot - Windows):
 ```
 
 ## Implementation Details
+
+### Main Script Structure
+
+```bash
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+# File list - update when adding/removing templates
+FILES=(
+  "se-design.md"
+  "se-gherkin.md"
+)
+
+COMMAND="${1:-}"
+shift || true
+
+case "$COMMAND" in
+  install)
+    install_command "$@"
+    ;;
+  list)
+    list_command
+    ;;
+  *)
+    echo "Usage: seeai.sh <install|list> [options]"
+    exit 1
+    ;;
+esac
+```
 
 ### Option Parsing
 
@@ -358,9 +403,9 @@ if [[ $AGENT == "copilot" && -n "$AGENT" ]]; then
 fi
 ```
 
-### File List (Hardcoded)
+### File List
 
-The script contains a hardcoded list of `se-*.md` files to install. Update this list when adding/removing templates.
+The global `FILES` array (defined in Main Script Structure) contains all `se-*.md` files to install. Update this array when adding/removing templates.
 
 ### Copilot Profile Detection
 

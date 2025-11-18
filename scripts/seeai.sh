@@ -406,7 +406,7 @@ install_files() {
   echo "  w - Switch to workspace scope (will be prompted again)"
   echo "  n - Cancel"
   echo
-  read -p "> " -r choice
+  read -p "> " -r choice </dev/tty
   echo
 
   # Default to Y if empty
@@ -425,7 +425,7 @@ install_files() {
       show_install_preview
 
       # Simple Y/n confirmation
-      read -p "Proceed? (Y/n) [Y]: " -r confirm
+      read -p "Proceed? (Y/n) [Y]: " -r confirm </dev/tty
       echo
 
       # Default to Y if empty, exit only on explicit n/N

@@ -2,6 +2,8 @@
 
 Software Engineering, Empowered by AI
 
+A lightweight framework for AI-powered software design and implementation.
+
 ## Quick Start
 
 ### Install

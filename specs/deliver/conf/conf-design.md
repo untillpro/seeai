@@ -1,4 +1,4 @@
-# SeeAI Installation Script Design
+# SeeAI Configuration Script Design
 
 ## Overview
 
@@ -296,8 +296,8 @@ set -Eeuo pipefail
 
 # File list - update when adding/removing templates
 FILES=(
-  "se-design.md"
-  "se-gherkin.md"
+  "design.md"
+  "gherkin.md"
 )
 
 COMMAND="${1:-}"
@@ -380,8 +380,8 @@ For remote installation (default):
 BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/src"
 
 FILES=(
-  "se-design.md"
-  "se-gherkin.md"
+  "design.md"
+  "gherkin.md"
 )
 
 for file in "${FILES[@]}"; do
@@ -396,8 +396,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC_DIR="$SCRIPT_DIR/../src"
 
 FILES=(
-  "se-design.md"
-  "se-gherkin.md"
+  "design.md"
+  "gherkin.md"
 )
 
 for file in "${FILES[@]}"; do

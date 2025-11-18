@@ -1,12 +1,12 @@
-# Installation
+# SeeAI Configuration Script
 
 ## Why
 
-Users need an easy way to install seeai prompt templates (`se-*.md` files) for different agentic tools (Augment, GitHub Copilot, Claude) without manually copying files. The installation should support:
+Users need an easy way to configure (install and manage) seeai prompt templates (`seeai-*.md` files) for different agentic tools (Augment, GitHub Copilot, Claude) without manually copying files. The configuration should support:
 
 - Version control (stable vs unstable)
 - Multiple agents with different folder conventions
-- Both workspace-specific and user-global installations
+- Both workspace-specific and user installations
 - Visibility into what's already installed
 
 ### How
@@ -14,9 +14,8 @@ Users need an easy way to install seeai prompt templates (`se-*.md` files) for d
 Create a single bash script (`seeai.sh`) with two commands:
 
 1. **install** - Interactive installation that:
-   - Checks for existing files first
-   - Asks which agent (Augment/Copilot/Claude/All)
-   - Asks scope (workspace vs user global)
+   - Asks which agent (Augment/Copilot/Claude)
+   - Asks scope (workspace vs user)
    - Downloads files directly from GitHub raw URLs (no archives)
    - Handles agent-specific naming (e.g., `.prompt.md` for Copilot)
 

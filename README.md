@@ -8,7 +8,7 @@ A lightweight framework for AI-powered software design and implementation.
 
 ### Install
 
-Run a command for the agent you want to install SeeAI for. You will be prompted before applying any changes.
+Run the command below for your preferred AI agent. You'll be prompted before any changes are applied.
 
 <details>
 <summary>auggie</summary>

@@ -53,10 +53,10 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s list
 ```
 
-### Design and implement a solution for your problem
+### Describe your problem in a written form
 
 - cd `<your-project-folder>`
-- Describe your problem. E.g.:
+- Prepare a description. E.g.:
 
 ```bash
 $ cat > myproblem.md << 'EOF'
@@ -65,6 +65,8 @@ $ cat > myproblem.md << 'EOF'
 A Tetris board game implemented in Rust, with simple synthesized sound effects.
 EOF
 ```
+
+### Design the solution
 
 - Start the CLI agent (auggie, claude, copilot)
 - Invoke the design command with your problem file tagged (`@` for claude/auggie, `#` for copilot):
@@ -79,4 +81,10 @@ or
 
 - As a result you will get the `myproblem-design.md` file
 - Now see AI, 👀 the design, apply changes, if needed
+
+### Implement the solution
+
 - Ask your agent to implement the design
+- Run and see 👀, provide feedback to AI
+- Iterate until satisfied
+- Happy vibecoding! 🚀

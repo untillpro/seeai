@@ -6,8 +6,10 @@ Software Engineering, Empowered by AI
 
 ### Install
 
+Run a command for the agent you want to install SeeAI for. You will be prompted before applying any changes.
+
 <details>
-<summary>Augment</summary>
+<summary>auggie</summary>
 
 Latest stable release:
 ```bash
@@ -22,7 +24,7 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 </details>
 
 <details>
-<summary>Claude</summary>
+<summary>claude</summary>
 
 Latest stable release:
 ```bash
@@ -37,7 +39,7 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 </details>
 
 <details>
-<summary>Copilot</summary>
+<summary>copilot</summary>
 
 Latest stable release:
 ```bash
@@ -59,24 +61,30 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 
 ### Run Agent
 
-- cd `you-project-folder`
-- Describe you problem, say, in `myproblem.md`:
+- cd `<your-project-folder>`
+- Describe you problem. E.g.:
 
-```markdown
+```bash
+$ cat > myproblem.md << 'EOF'
 # Tetrust
 
 A Tetris board game implemented in Rust, with simple synthesized sound effects.
+EOF
 ```
 
+- Start the CLI agent (auggie, claude, copilot)
 - For agents like claude and auggie use `@` to tag the problem file:
 
 ```text
 > /seeai:design @myfeature.md
 ```
 
-- Start the CLI agent (auggie, claude, copilot)
 - For agents like copilot use `#`:
 
 ```text
 > /seeai:design #myfeature.md
 ```
+
+- As a result you will the `myproblem-design.md file`
+- Review the design, apply changes, if needed
+- Ask you agent to implement the design

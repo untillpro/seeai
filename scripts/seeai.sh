@@ -19,7 +19,7 @@ declare -A GLOBAL_BASE_DIRS=(
   [claude]="$HOME/.claude/commands"
 )
 
-# Copilot global base dir depends on OS
+# copilot global base dir depends on OS
 get_copilot_global_base() {
   case "$(uname -s)" in
     MINGW*|MSYS*|CYGWIN*) echo "$APPDATA/Code/User/prompts" ;;
@@ -56,7 +56,7 @@ normalize_path() {
 }
 
 # Get installation directory
-# Copilot doesn't support subfolders, so files go directly in base dir with seeai- prefix
+# copilot doesn't support subfolders, so files go directly in base dir with seeai- prefix
 # Other agents use seeai/ subdirectory
 get_workspace_dir() {
   local agent=$1
@@ -94,7 +94,7 @@ get_all_locations() {
     locations+=("$base/$SEEAI_SUBDIR/")
   done
 
-  # Copilot global - base and seeai subdirectory
+  # copilot global - base and seeai subdirectory
   local copilot_base
   copilot_base=$(get_copilot_global_base)
   locations+=("$copilot_base/")
@@ -206,7 +206,7 @@ list_command() {
     local files=()
 
     if [[ "$location" == *"/prompts/"* ]]; then
-      # Copilot locations: search for seeai-*.prompt.md
+      # copilot locations: search for seeai-*.prompt.md
       mapfile -t files < <(find "$location" -maxdepth 1 -type f -name "seeai-*.prompt.md" 2>/dev/null || true)
     else
       # Augment/Claude locations: search in seeai/ subfolder
@@ -224,7 +224,7 @@ list_command() {
         ./.claude/commands/*) label="Workspace (claude)" ;;
         "$HOME/.augment/commands"*) label="User (auggie)" ;;
         "$HOME/.claude/commands"*) label="User (claude)" ;;
-        *) label="User (Copilot)" ;;
+        *) label="User (copilot)" ;;
       esac
 
       # Read version metadata
@@ -232,7 +232,7 @@ list_command() {
       local version_info
 
       if [[ "$location" == *"/prompts/"* ]]; then
-        # Copilot: metadata in prompts directory
+        # copilot: metadata in prompts directory
         metadata_file="$location/seeai-version.yml"
       elif [[ "$location" == *"/seeai/" ]]; then
         # Already in seeai subdirectory
@@ -293,7 +293,7 @@ ask_scope() {
   SCOPE="global"
 }
 
-# Ask Copilot profile (if needed)
+# Ask copilot profile (if needed)
 ask_copilot_profile() {
   if [[ "$AGENT_INTERNAL" != "copilot" || "$SCOPE" != "global" ]]; then
     return
@@ -305,7 +305,7 @@ ask_copilot_profile() {
   fi
 
   echo
-  echo "Select VS Code profile for Copilot:"
+  echo "Select VS Code profile for copilot:"
   echo "1) Default profile"
   echo "2) Specific profile (enter profile ID)"
   echo "3) List available profiles"
@@ -317,7 +317,7 @@ ask_copilot_profile() {
       ;;
     2)
       read -p "Enter profile ID: " -r profile_id </dev/tty
-      # Copilot doesn't support subfolders, so files go directly in prompts/
+      # copilot doesn't support subfolders, so files go directly in prompts/
       case "$(uname -s)" in
         MINGW*|MSYS*|CYGWIN*) TARGET_DIR="$APPDATA/Code/User/profiles/$profile_id/prompts/" ;;
         Darwin*) TARGET_DIR="$HOME/Library/Application Support/Code/User/profiles/$profile_id/prompts/" ;;
@@ -399,7 +399,7 @@ show_install_preview() {
   for file in "${FILES[@]}"; do
     local target_file="$file"
     if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
-      # Copilot: add seeai- prefix and change extension to .prompt.md
+      # copilot: add seeai- prefix and change extension to .prompt.md
       target_file="seeai-${file%.md}.prompt.md"
     fi
     echo "  $abs_target_dir$target_file"
@@ -471,7 +471,7 @@ install_files() {
     for file in "${FILES[@]}"; do
       local target_file="$file"
       if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
-        # Copilot: add seeai- prefix and change extension to .prompt.md
+        # copilot: add seeai- prefix and change extension to .prompt.md
         target_file="seeai-${file%.md}.prompt.md"
       fi
 
@@ -485,7 +485,7 @@ install_files() {
     for file in "${FILES[@]}"; do
       local target_file="$file"
       if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
-        # Copilot: add seeai- prefix and change extension to .prompt.md
+        # copilot: add seeai- prefix and change extension to .prompt.md
         target_file="seeai-${file%.md}.prompt.md"
       fi
 
@@ -566,7 +566,7 @@ install_command() {
     TARGET_DIR=$(get_global_dir "$AGENT_INTERNAL")
   fi
 
-  # Step 2a: Ask Copilot profile (if needed)
+  # Step 2a: Ask copilot profile (if needed)
   ask_copilot_profile
 
   # Step 3: Download and install

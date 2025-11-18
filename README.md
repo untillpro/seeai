@@ -59,7 +59,7 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s list
 ```
 
-### Run Agent
+### Design and implement a solution for your problem
 
 - cd `<your-project-folder>`
 - Describe you problem. E.g.:

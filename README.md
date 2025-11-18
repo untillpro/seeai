@@ -62,7 +62,7 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 ### Design and implement a solution for your problem
 
 - cd `<your-project-folder>`
-- Describe you problem. E.g.:
+- Describe your problem. E.g.:
 
 ```bash
 $ cat > myproblem.md << 'EOF'
@@ -85,6 +85,6 @@ EOF
 > /seeai:design #myfeature.md
 ```
 
-- As a result you will the `myproblem-design.md file`
+- As a result you will get the `myproblem-design.md` file
 - Review the design, apply changes, if needed
-- Ask you agent to implement the design
+- Ask your agent to implement the design

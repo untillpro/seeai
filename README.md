@@ -60,10 +60,14 @@ EOF
 ```
 
 - Start the CLI agent (auggie, claude, copilot)
-- Use `@` or `#` to tag the problem file:
+- Invoke the design command with your problem file tagged (`@` for claude/auggie, `#` for copilot):
 
 ```text
 > /seeai:design @myfeature.md
+
+or
+
+> /seeai:design #myfeature.md
 ```
 
 - As a result you will get the `myproblem-design.md` file

@@ -86,5 +86,5 @@ EOF
 ```
 
 - As a result you will get the `myproblem-design.md` file
-- Review the design, apply changes, if needed
+- Now see AI, 👀 the design, apply changes, if needed
 - Ask your agent to implement the design

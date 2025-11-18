@@ -38,6 +38,7 @@ VERSION=""
 AGENT_INTERNAL=""
 SCOPE=""
 TARGET_DIR=""
+REF=""
 
 # Normalize path to use forward slashes and C:/ format
 normalize_path() {
@@ -102,6 +103,78 @@ get_all_locations() {
   printf '%s\n' "${locations[@]}"
 }
 
+# Create version metadata file
+create_version_metadata() {
+  local target_dir="$1"
+  local version_string
+  local source_type
+
+  # Determine version string
+  if [[ "$LOCAL_MODE" == true ]]; then
+    version_string="local"
+    source_type="local"
+  else
+    source_type="github"
+    if [[ "$VERSION" == "main" ]]; then
+      # For main branch, use date-hash format
+      local date_part
+      local hash_part
+      date_part=$(date +%Y%m%d)
+      hash_part=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+      version_string="${date_part}-${hash_part}"
+    else
+      # For tagged versions, use the REF
+      version_string="$REF"
+    fi
+  fi
+
+  # Generate ISO 8601 timestamp
+  local timestamp
+  timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+  # Create YAML file
+  local metadata_file="$target_dir/seeai-version.yml"
+  cat > "$metadata_file" <<EOF
+version: $version_string
+installed_at: $timestamp
+source: $source_type
+files:
+EOF
+
+  # Add file list
+  for file in "${FILES[@]}"; do
+    echo "  - $file" >> "$metadata_file"
+  done
+}
+
+# Read version metadata from seeai-version.yml
+read_version_metadata() {
+  local metadata_file="$1"
+
+  if [[ ! -f "$metadata_file" ]]; then
+    echo ""
+    return
+  fi
+
+  local version
+  local source
+  local installed_at
+  local date_part
+
+  version=$(grep "^version:" "$metadata_file" 2>/dev/null | sed 's/^version: *//' | tr -d '"' | tr -d "'")
+  source=$(grep "^source:" "$metadata_file" 2>/dev/null | sed 's/^source: *//' | tr -d '"' | tr -d "'")
+  installed_at=$(grep "^installed_at:" "$metadata_file" 2>/dev/null | sed 's/^installed_at: *//' | tr -d '"' | tr -d "'")
+
+  # Extract just the date part (YYYY-MM-DD)
+  date_part=$(echo "$installed_at" | cut -d'T' -f1)
+
+  if [[ -n "$version" && -n "$source" && -n "$date_part" ]]; then
+    echo "[$version, $source, $date_part]"
+  else
+    echo ""
+  fi
+}
+
 # List command
 list_command() {
   echo "Found SeeAI installations:"
@@ -140,7 +213,29 @@ list_command() {
         *) label="User (Copilot)" ;;
       esac
 
-      echo "$label:"
+      # Read version metadata
+      local metadata_file
+      local version_info
+
+      if [[ "$location" == *"/prompts/"* ]]; then
+        # Copilot: metadata in prompts directory
+        metadata_file="$location/seeai-version.yml"
+      elif [[ "$location" == *"/seeai/" ]]; then
+        # Already in seeai subdirectory
+        metadata_file="$location/seeai-version.yml"
+      else
+        # Augment/Claude: metadata in seeai subdirectory
+        metadata_file="$location/seeai/seeai-version.yml"
+      fi
+
+      version_info=$(read_version_metadata "$metadata_file")
+
+      if [[ -n "$version_info" ]]; then
+        echo "$label $version_info:"
+      else
+        echo "$label:"
+      fi
+
       for file in "${files[@]}"; do
         echo "  $(normalize_path "$file")"
       done
@@ -353,6 +448,11 @@ install_files() {
       echo "OK"
     done
   fi
+
+  # Create version metadata file
+  echo -n "Creating seeai-version.yml... "
+  create_version_metadata "$TARGET_DIR"
+  echo "OK"
 
   echo
   echo "Installation complete!"

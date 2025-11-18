@@ -2,25 +2,7 @@
 
 ## Overview
 
-Create `scripts/seeai.sh` - a multi-command installation script for seeai prompt templates that supports multiple agentic tools and installation scopes.
-
-## README.md Documentation
-
-README.md should contain only the two one-liner installation commands:
-
-```bash
-# Install latest stable version
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install
-
-# Install from main branch (unstable)
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main
-```
-
-The script will interactively ask:
-
-- Which agent to use (Augment/Copilot/Claude)
-- Installation scope (workspace/global)
-- Confirmation if existing files are found
+[scripts/seeai.sh](../../../scripts/seeai.sh) - a multi-command installation script for seeai prompt templates that supports multiple agentic tools and installation scopes.
 
 ## Command Structure
 
@@ -212,6 +194,7 @@ mkdir -p "$TARGET_DIR"
 ```text
 Downloading design.md... OK
 Downloading gherkin.md... OK
+Creating seeai-version.yml... OK
 
 Installation complete!
 ```
@@ -230,17 +213,56 @@ Proceed? (Y/n) [Y]:
 
 Copying design.md... OK
 Copying gherkin.md... OK
+Creating seeai-version.yml... OK
 
 Installation complete!
 ```
 
 For Copilot, files are transformed with `seeai-` prefix and `.prompt.md` extension during installation (show the transformed names in the file list).
 
+### Step 4: Create Version Metadata File
+
+After successful file installation, create `seeai-version.yml` in the target directory.
+
+Version string generation:
+
+```bash
+if [[ "$LOCAL_MODE" == true ]]; then
+  VERSION_STRING="local"
+else
+  if [[ "$VERSION" == "main" ]]; then
+    VERSION_STRING="$(date +%Y%m%d)-$(git rev-parse --short HEAD)"
+  else
+    VERSION_STRING="$REF"
+  fi
+fi
+```
+
+Metadata file content:
+
+```yaml
+version: v1.0.0
+installed_at: 2025-01-18T14:30:00Z
+source: github
+files:
+  - design.md
+  - gherkin.md
+```
+
+Fields:
+
+- `version`: Version identifier (tag like `v1.0.0`, date-hash like `20250118-a3f2c1b`, or `local`)
+- `installed_at`: ISO 8601 timestamp (`date -u +"%Y-%m-%dT%H:%M:%SZ"`)
+- `source`: `github` or `local`
+- `files`: List of installed base filenames (not transformed names)
+
+For Copilot installations, the metadata file is placed in the prompts directory alongside the transformed files.
+
 Error handling: The `set -Eeuo pipefail` header ensures the script exits on any error (curl failure, copy failure, etc.).
 
 ## List Command
 
-Searches for installed SeeAI files and displays their locations.
+Searches for installed SeeAI files and displays their locations with version metadata.
 
 Search patterns:
 
@@ -249,19 +271,26 @@ Search patterns:
 
 Search locations: See "Installation Locations" section above.
 
+Version metadata reading:
+
+- Check for `seeai-version.yml` in each installation directory
+- Parse version, source, and installed_at fields
+- Display in format: `[version, source, date]`
+- If metadata file missing, show files without version info
+
 ### Output Example
 
 ```text
 Found SeeAI installations:
 
-Workspace (Augment):
+Workspace (Augment) [v1.0.0, github, 2025-01-18]:
   ./.augment/commands/seeai/design.md
   ./.augment/commands/seeai/gherkin.md
 
-User (Claude):
+User (Claude) [local, 2025-01-18]:
   /home/user/.claude/commands/seeai/design.md
 
-User (Copilot - Windows):
+User (Copilot) [20250118-a3f2c1b, github, 2025-01-18]:
   C:/Users/Usuario/AppData/Roaming/Code/User/prompts/seeai-design.prompt.md
   C:/Users/Usuario/AppData/Roaming/Code/User/prompts/seeai-gherkin.prompt.md
 ```

@@ -13,11 +13,6 @@ Run a command for the agent you want to install SeeAI for. You will be prompted 
 <details>
 <summary>auggie</summary>
 
-Latest stable release:
-```bash
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent auggie
-```
-
 Main branch (unstable):
 ```bash
 curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent auggie
@@ -28,11 +23,6 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 <details>
 <summary>claude</summary>
 
-Latest stable release:
-```bash
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent claude
-```
-
 Main branch (unstable):
 ```bash
 curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent claude
@@ -42,11 +32,6 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 
 <details>
 <summary>copilot</summary>
-
-Latest stable release:
-```bash
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent copilot
-```
 
 Main branch (unstable):
 ```bash

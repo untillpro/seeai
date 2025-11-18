@@ -2,9 +2,16 @@
 
 Software Engineering, Empowered by AI
 
-A lightweight framework for AI-powered software design and implementation.
+An extremely lightweight framework for AI-powered software design and implementation.
 
 ## Quick Start
+
+### Prerequisites
+
+- Bash
+- Git
+
+Windows: install [Git for Windows](https://git-scm.com/download/win) to get both Git and Git Bash.
 
 ### Install
 

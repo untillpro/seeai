@@ -1,4 +1,4 @@
-# SeeAI
+# SeeAI (/siː aɪ/)
 
 Software Engineering, Empowered by AI
 

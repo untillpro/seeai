@@ -2,15 +2,56 @@
 
 Software Engineering, Empowered by AI
 
-## Install
+## Configuration
 
+### Install
+
+<details>
+<summary>Augment</summary>
+
+Latest stable release:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent auggie
 ```
 
-Supports: Augment, GitHub Copilot, Claude
+Main branch (unstable):
+```bash
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent auggie
+```
 
-## List Installed Files
+</details>
+
+<details>
+<summary>GitHub Copilot</summary>
+
+Latest stable release:
+```bash
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent copilot
+```
+
+Main branch (unstable):
+```bash
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent copilot
+```
+
+</details>
+
+<details>
+<summary>Claude</summary>
+
+Latest stable release:
+```bash
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent claude
+```
+
+Main branch (unstable):
+```bash
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent claude
+```
+
+</details>
+
+## List installed files
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s list

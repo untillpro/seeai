@@ -265,6 +265,11 @@ resolve_version() {
   elif [[ $VERSION == "latest" ]]; then
     REF=$(git ls-remote --tags --refs --sort='v:refname' \
       https://github.com/untillpro/seeai.git | tail -n1 | sed 's/.*\///')
+    # Fail if no tags found
+    if [[ -z "$REF" ]]; then
+      echo "Error: No releases found. Use 'bash -s install main' to install from the main branch."
+      exit 1
+    fi
   else
     REF="$VERSION"
   fi

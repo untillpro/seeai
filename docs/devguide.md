@@ -12,8 +12,12 @@
 ./scripts/seeai.sh list
 ```
 
-Examples:
+Install:
 
 - ./scripts/seeai.sh install -l --agent auggie
 - ./scripts/seeai.sh install -l --agent claude
 - ./scripts/seeai.sh install -l --agent copilot
+
+List:
+
+- ./scripts/seeai.sh list

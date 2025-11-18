@@ -22,21 +22,6 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 </details>
 
 <details>
-<summary>GitHub Copilot</summary>
-
-Latest stable release:
-```bash
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent copilot
-```
-
-Main branch (unstable):
-```bash
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent copilot
-```
-
-</details>
-
-<details>
 <summary>Claude</summary>
 
 Latest stable release:
@@ -47,6 +32,21 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 Main branch (unstable):
 ```bash
 curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent claude
+```
+
+</details>
+
+<details>
+<summary>GitHub Copilot</summary>
+
+Latest stable release:
+```bash
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent copilot
+```
+
+Main branch (unstable):
+```bash
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent copilot
 ```
 
 </details>

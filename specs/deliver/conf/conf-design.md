@@ -127,22 +127,50 @@ Which agent?
 3) GitHub Copilot
 ```
 
-### Step 2: Ask Installation Scope
+### Step 2: Show Installation Preview (User Scope Default)
+
+Default to user scope and show installation preview:
 
 ```text
-Installation scope?
-1) User [default]
-2) Current workspace
-Select (1-2) [1]:
+Installing from: latest
+Target: /home/user/.augment/commands/seeai/
+
+The following files will be installed:
+  /home/user/.augment/commands/seeai/design.md
+  /home/user/.augment/commands/seeai/gherkin.md
+
+Proceed? (Y/w/n) [Y]:
+  Y - Install to user scope
+  w - Switch to workspace scope (will be prompted again)
+  n - Cancel
 ```
 
-User is the default (option 1). If the user presses Enter without typing anything, User is selected.
+User scope is the default. Options:
 
-See "Installation Locations" section for specific paths by agent and scope.
+- `Y` or Enter: Install to user scope (proceed)
+- `w`: Switch to workspace scope, show new preview, ask Y/n again
+- `n`: Cancel installation
 
-### Step 2a: Installation Location
+### Step 2a: Workspace Scope (if 'w' selected)
 
-If user selects Copilot + User, ask which VS Code profile.
+If user types 'w', switch to workspace scope and show new preview:
+
+```text
+Installing from: latest
+Target: /home/user/myproject/.augment/commands/seeai/
+
+The following files will be installed:
+  /home/user/myproject/.augment/commands/seeai/design.md
+  /home/user/myproject/.augment/commands/seeai/gherkin.md
+
+Proceed? (Y/n) [Y]:
+```
+
+Simple Y/n confirmation. Default to Y if Enter is pressed.
+
+### Step 2b: Copilot Profile Selection
+
+If user selects Copilot + User scope, ask which VS Code profile.
 
 Skip this step if `--agent copilot` is provided (use default profile).
 
@@ -157,35 +185,7 @@ See "Installation Locations" section for specific paths.
 
 ### Step 3: Download and Install
 
-Resolve absolute path without creating directories:
-
-```bash
-if [[ "$TARGET_DIR" != /* ]]; then
-  abs_target_dir="$(pwd)/$TARGET_DIR"
-else
-  abs_target_dir="$TARGET_DIR"
-fi
-abs_target_dir=$(normalize_path "$abs_target_dir")
-```
-
-Show confirmation:
-
-```text
-Installing from: latest (or main, or v0.1.0)
-Target: /home/user/myproject/.augment/commands/seeai/
-
-The following files will be installed:
-  /home/user/myproject/.augment/commands/seeai/design.md
-  /home/user/myproject/.augment/commands/seeai/gherkin.md
-
-Proceed? (Y/n) [Y]:
-```
-
-"Y" is the default - pressing Enter proceeds with installation. Only explicit "n" or "N" cancels.
-
-If user answers "n", exit with code 0 (user cancelled, not an error).
-
-If user answers "y" or presses Enter, create target directory and install files:
+After user confirms (either Y for user scope or Y after switching to workspace), create target directory and install files:
 
 ```bash
 mkdir -p "$TARGET_DIR"
@@ -275,7 +275,7 @@ Version metadata reading:
 
 - Check for `seeai-version.yml` in each installation directory
 - Parse version, source, and installed_at fields
-- Display in format: `[version, source, date]`
+- Display in format: `[version, source, timestamp]`
 - If metadata file missing, show files without version info
 
 ### Output Example
@@ -283,14 +283,14 @@ Version metadata reading:
 ```text
 Found SeeAI installations:
 
-Workspace (Augment) [v1.0.0, github, 2025-01-18]:
+Workspace (Augment) [v1.0.0, github, 2025-01-18T14:30:00Z]:
   ./.augment/commands/seeai/design.md
   ./.augment/commands/seeai/gherkin.md
 
-User (Claude) [local, 2025-01-18]:
+User (Claude) [local, local, 2025-01-18T10:15:00Z]:
   /home/user/.claude/commands/seeai/design.md
 
-User (Copilot) [20250118-a3f2c1b, github, 2025-01-18]:
+User (Copilot) [20250118-a3f2c1b, github, 2025-01-18T16:45:00Z]:
   C:/Users/Usuario/AppData/Roaming/Code/User/prompts/seeai-design.prompt.md
   C:/Users/Usuario/AppData/Roaming/Code/User/prompts/seeai-gherkin.prompt.md
 ```

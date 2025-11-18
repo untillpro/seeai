@@ -159,17 +159,13 @@ read_version_metadata() {
   local version
   local source
   local installed_at
-  local date_part
 
   version=$(grep "^version:" "$metadata_file" 2>/dev/null | sed 's/^version: *//' | tr -d '"' | tr -d "'")
   source=$(grep "^source:" "$metadata_file" 2>/dev/null | sed 's/^source: *//' | tr -d '"' | tr -d "'")
   installed_at=$(grep "^installed_at:" "$metadata_file" 2>/dev/null | sed 's/^installed_at: *//' | tr -d '"' | tr -d "'")
 
-  # Extract just the date part (YYYY-MM-DD)
-  date_part=$(echo "$installed_at" | cut -d'T' -f1)
-
-  if [[ -n "$version" && -n "$source" && -n "$date_part" ]]; then
-    echo "[$version, $source, $date_part]"
+  if [[ -n "$version" && -n "$source" && -n "$installed_at" ]]; then
+    echo "[$version, $source, $installed_at]"
   else
     echo ""
   fi
@@ -273,25 +269,10 @@ ask_agent() {
   esac
 }
 
-# Ask installation scope
+# Ask installation scope (removed - now handled in install_files with Y/w prompt)
 ask_scope() {
-  echo
-  echo "Installation scope?"
-  echo "1) User [default]"
-  echo "2) Current workspace"
-  read -p "Select (1-2) [1]: " -r choice </dev/tty
-
-  # Default to User if empty
-  choice=${choice:-1}
-
-  case $choice in
-    1) SCOPE="global" ;;
-    2) SCOPE="workspace" ;;
-    *)
-      echo "Error: Invalid choice"
-      exit 1
-      ;;
-  esac
+  # Default to user scope
+  SCOPE="global"
 }
 
 # Ask Copilot profile (if needed)
@@ -370,13 +351,13 @@ resolve_version() {
   fi
 }
 
-# Download and install files
-install_files() {
+# Show installation preview and get confirmation
+show_install_preview() {
   local source_label
+
   if [[ "$LOCAL_MODE" == true ]]; then
     source_label="local (../src)"
   else
-    resolve_version
     source_label="$VERSION"
   fi
 
@@ -405,14 +386,61 @@ install_files() {
     fi
     echo "  $abs_target_dir$target_file"
   done
+  echo
+}
 
-  echo
-  read -p "Proceed? (Y/n) [Y]: " -n 1 -r </dev/tty
-  echo
-  # Default to Y if empty, exit only on explicit n/N
-  if [[ -n $REPLY && $REPLY =~ ^[Nn]$ ]]; then
-    exit 0
+# Download and install files
+install_files() {
+  # Resolve version first if not local mode
+  if [[ "$LOCAL_MODE" != true ]]; then
+    resolve_version
   fi
+
+  # Show initial preview for user scope
+  show_install_preview
+
+  # Prompt with Y/w/n options
+  echo
+  echo "Proceed? (Y/w/n) [Y]: "
+  echo "  Y - Install to user scope"
+  echo "  w - Switch to workspace scope (will be prompted again)"
+  echo "  n - Cancel"
+  echo
+  read -p "> " -r choice
+  echo
+
+  # Default to Y if empty
+  choice=${choice:-Y}
+
+  case $choice in
+    [Yy])
+      # Continue with user scope (already set)
+      ;;
+    [Ww])
+      # Switch to workspace scope
+      SCOPE="workspace"
+      TARGET_DIR=$(get_workspace_dir "$AGENT_INTERNAL")
+
+      # Show new preview for workspace
+      show_install_preview
+
+      # Simple Y/n confirmation
+      read -p "Proceed? (Y/n) [Y]: " -r confirm
+      echo
+
+      # Default to Y if empty, exit only on explicit n/N
+      if [[ -n $confirm && $confirm =~ ^[Nn]$ ]]; then
+        exit 0
+      fi
+      ;;
+    [Nn])
+      exit 0
+      ;;
+    *)
+      echo "Error: Invalid choice"
+      exit 1
+      ;;
+  esac
 
   # Create target directory
   mkdir -p "$TARGET_DIR"

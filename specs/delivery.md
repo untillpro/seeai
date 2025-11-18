@@ -1,3 +1,3 @@
-# Distribution and Deployment Guidelines
+# Delivery: Distribution and Deployment Rules
 
 Packaging, installers, CI/CD, installation, updates...

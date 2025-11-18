@@ -1,4 +1,4 @@
-# Documentation Guidelines
+# Documentation Rules
 
 ## All Docs
 

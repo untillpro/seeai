@@ -1,4 +1,4 @@
-# SeeAI idea
+# SeeAI: Idea
 
 ## Why
 

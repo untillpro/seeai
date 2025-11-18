@@ -103,28 +103,48 @@ get_all_locations() {
   printf '%s\n' "${locations[@]}"
 }
 
+# Get commit hash from GitHub API
+get_github_commit_hash() {
+  local ref="$1"
+  local api_url="https://api.github.com/repos/untillpro/seeai/commits/$ref"
+
+  # Try to fetch commit info from GitHub API
+  local response
+  response=$(curl -fsSL "$api_url" 2>/dev/null)
+
+  if [[ $? -eq 0 && -n "$response" ]]; then
+    # Extract SHA and get first 7 characters
+    echo "$response" | grep -o '"sha": *"[^"]*"' | head -1 | sed 's/"sha": *"\([^"]*\)"/\1/' | cut -c1-7
+  else
+    echo "unknown"
+  fi
+}
+
 # Create version metadata file
 create_version_metadata() {
   local target_dir="$1"
   local version_string
-  local source_type
+  local source_url
+  local branch_name
+  local hash_part
 
-  # Determine version string
+  # Determine version string and source URL
   if [[ "$LOCAL_MODE" == true ]]; then
-    version_string="local"
-    source_type="local"
+    # Local mode: local-<branch>-<hash>
+    branch_name=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
+    hash_part=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+    version_string="local-${branch_name}-${hash_part}"
+    source_url="https://github.com/untillpro/seeai/tree/${branch_name}"
   else
-    source_type="github"
     if [[ "$VERSION" == "main" ]]; then
-      # For main branch, use date-hash format
-      local date_part
-      local hash_part
-      date_part=$(date +%Y%m%d)
-      hash_part=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
-      version_string="${date_part}-${hash_part}"
+      # Remote main branch: remote-main-<hash>
+      hash_part=$(get_github_commit_hash "main")
+      version_string="remote-main-${hash_part}"
+      source_url="https://github.com/untillpro/seeai/tree/main"
     else
-      # For tagged versions, use the REF
+      # Tagged version: v0.1.0
       version_string="$REF"
+      source_url="https://github.com/untillpro/seeai/releases/tag/${REF}"
     fi
   fi
 
@@ -137,7 +157,7 @@ create_version_metadata() {
   cat > "$metadata_file" <<EOF
 version: $version_string
 installed_at: $timestamp
-source: $source_type
+source: $source_url
 files:
 EOF
 
@@ -157,15 +177,13 @@ read_version_metadata() {
   fi
 
   local version
-  local source
   local installed_at
 
   version=$(grep "^version:" "$metadata_file" 2>/dev/null | sed 's/^version: *//' | tr -d '"' | tr -d "'")
-  source=$(grep "^source:" "$metadata_file" 2>/dev/null | sed 's/^source: *//' | tr -d '"' | tr -d "'")
   installed_at=$(grep "^installed_at:" "$metadata_file" 2>/dev/null | sed 's/^installed_at: *//' | tr -d '"' | tr -d "'")
 
-  if [[ -n "$version" && -n "$source" && -n "$installed_at" ]]; then
-    echo "[$version, $source, $installed_at]"
+  if [[ -n "$version" && -n "$installed_at" ]]; then
+    echo "[$version, $installed_at]"
   else
     echo ""
   fi

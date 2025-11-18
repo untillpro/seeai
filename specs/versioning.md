@@ -2,7 +2,7 @@
 
 ## Version Formats
 
-### Releases (Stable)
+### Tagged Releases (Stable)
 
 Format: `v<major>.<minor>.<patch>`
 
@@ -16,17 +16,31 @@ Rules:
 - Minor: new features, backward compatible
 - Patch: bug fixes
 
-### Main Branch (Unstable)
+### Local Installations
 
-Format: `YYYYMMDD-<short-hash>`
+Format: `local-<branch>-<short-hash>`
 
-Examples: `20250118-a3f2c1b`, `20250215-f8e9d2a`
+Examples: `local-main-4e24576`, `local-feature-123-a3f2c1b`
 
 Rules:
 
-- Date: `YYYYMMDD` format
-- Hash: 7-character git commit hash
-- Generated via: `date +%Y%m%d`-`git rev-parse --short HEAD`
+- Prefix: `local-`
+- Branch: Current branch name from `git rev-parse --abbrev-ref HEAD`
+- Hash: 7-character git commit hash from `git rev-parse --short HEAD`
+- Falls back to "unknown" if hash cannot be determined
+
+### Remote Installations (from branch)
+
+Format: `remote-<branch>-<short-hash>`
+
+Examples: `remote-main-4e24576`, `remote-develop-f8e9d2a`
+
+Rules:
+
+- Prefix: `remote-`
+- Branch: Branch name being installed from
+- Hash: 7-character git commit hash fetched via GitHub API from `https://api.github.com/repos/untillpro/seeai/commits/<branch>`
+- Falls back to "unknown" if hash cannot be determined
 
 ## Version Resolution
 
@@ -51,10 +65,31 @@ Location:
 
 Format:
 
+Tagged release:
 ```yaml
-version: v1.0.0
+version: v0.1.0
 installed_at: 2025-01-18T14:30:00Z
-source: github
+source: https://github.com/untillpro/seeai/releases/tag/v0.1.0
+files:
+  - design.md
+  - gherkin.md
+```
+
+Local installation:
+```yaml
+version: local-main-4e24576
+installed_at: 2025-01-18T14:30:00Z
+source: https://github.com/untillpro/seeai/tree/main
+files:
+  - design.md
+  - gherkin.md
+```
+
+Remote installation:
+```yaml
+version: remote-main-4e24576
+installed_at: 2025-01-18T14:30:00Z
+source: https://github.com/untillpro/seeai/tree/main
 files:
   - design.md
   - gherkin.md
@@ -62,10 +97,15 @@ files:
 
 Fields:
 
-- `version`: Version identifier (tag, main+date-hash, or "local")
-- `installed_at`: ISO 8601 timestamp
-- `source`: "github" or "local"
-- `files`: List of installed files
+- `version`: Version identifier
+  - Tagged releases: `v0.1.0`
+  - Local installations: `local-<branch>-<hash>`
+  - Remote installations: `remote-<branch>-<hash>`
+- `installed_at`: ISO 8601 timestamp in UTC
+- `source`: Full GitHub URL
+  - Tagged releases: `https://github.com/untillpro/seeai/releases/tag/<tag>`
+  - Branch installations: `https://github.com/untillpro/seeai/tree/<branch>`
+- `files`: List of installed base filenames
 
 Usage:
 

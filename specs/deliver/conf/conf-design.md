@@ -228,22 +228,68 @@ Version string generation:
 
 ```bash
 if [[ "$LOCAL_MODE" == true ]]; then
-  VERSION_STRING="local"
+  # Local mode: local-<branch>-<hash>
+  BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
+  HASH=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+  VERSION_STRING="local-${BRANCH}-${HASH}"
+  SOURCE_URL="https://github.com/untillpro/seeai/tree/${BRANCH}"
 else
   if [[ "$VERSION" == "main" ]]; then
-    VERSION_STRING="$(date +%Y%m%d)-$(git rev-parse --short HEAD)"
+    # Remote branch: remote-<branch>-<hash>
+    HASH=$(get_github_commit_hash "main")
+    VERSION_STRING="remote-main-${HASH}"
+    SOURCE_URL="https://github.com/untillpro/seeai/tree/main"
   else
+    # Tagged version: v0.1.0
     VERSION_STRING="$REF"
+    SOURCE_URL="https://github.com/untillpro/seeai/releases/tag/${REF}"
   fi
 fi
 ```
 
-Metadata file content:
+The `get_github_commit_hash()` function fetches the commit SHA from GitHub API:
 
+```bash
+get_github_commit_hash() {
+  local ref="$1"
+  local api_url="https://api.github.com/repos/untillpro/seeai/commits/$ref"
+  local response=$(curl -fsSL "$api_url" 2>/dev/null)
+
+  if [[ $? -eq 0 && -n "$response" ]]; then
+    echo "$response" | grep -o '"sha": *"[^"]*"' | head -1 | sed 's/"sha": *"\([^"]*\)"/\1/' | cut -c1-7
+  else
+    echo "unknown"
+  fi
+}
+```
+
+Metadata file examples:
+
+Tagged release:
 ```yaml
-version: v1.0.0
+version: v0.1.0
 installed_at: 2025-01-18T14:30:00Z
-source: github
+source: https://github.com/untillpro/seeai/releases/tag/v0.1.0
+files:
+  - design.md
+  - gherkin.md
+```
+
+Local installation:
+```yaml
+version: local-main-4e24576
+installed_at: 2025-01-18T14:30:00Z
+source: https://github.com/untillpro/seeai/tree/main
+files:
+  - design.md
+  - gherkin.md
+```
+
+Remote installation:
+```yaml
+version: remote-main-4e24576
+installed_at: 2025-01-18T14:30:00Z
+source: https://github.com/untillpro/seeai/tree/main
 files:
   - design.md
   - gherkin.md
@@ -251,9 +297,14 @@ files:
 
 Fields:
 
-- `version`: Version identifier (tag like `v1.0.0`, date-hash like `20250118-a3f2c1b`, or `local`)
-- `installed_at`: ISO 8601 timestamp (`date -u +"%Y-%m-%dT%H:%M:%SZ"`)
-- `source`: `github` or `local`
+- `version`: Version identifier
+  - Tagged releases: `v0.1.0`
+  - Local installations: `local-<branch>-<hash>`
+  - Remote installations: `remote-<branch>-<hash>`
+- `installed_at`: ISO 8601 timestamp in UTC (`date -u +"%Y-%m-%dT%H:%M:%SZ"`)
+- `source`: Full GitHub URL
+  - Tagged releases: `https://github.com/untillpro/seeai/releases/tag/<tag>`
+  - Branch installations: `https://github.com/untillpro/seeai/tree/<branch>`
 - `files`: List of installed base filenames (not transformed names)
 
 For Copilot installations, the metadata file is placed in the prompts directory alongside the transformed files.
@@ -274,8 +325,8 @@ Search locations: See "Installation Locations" section above.
 Version metadata reading:
 
 - Check for `seeai-version.yml` in each installation directory
-- Parse version, source, and installed_at fields
-- Display in format: `[version, source, timestamp]`
+- Parse version and installed_at fields
+- Display in format: `[version, timestamp]`
 - If metadata file missing, show files without version info
 
 ### Output Example
@@ -283,14 +334,14 @@ Version metadata reading:
 ```text
 Found SeeAI installations:
 
-Workspace (Augment) [v1.0.0, github, 2025-01-18T14:30:00Z]:
+Workspace (Augment) [v0.1.0, 2025-01-18T14:30:00Z]:
   ./.augment/commands/seeai/design.md
   ./.augment/commands/seeai/gherkin.md
 
-User (Claude) [local, local, 2025-01-18T10:15:00Z]:
+User (Claude) [local-main-4e24576, 2025-01-18T10:15:00Z]:
   /home/user/.claude/commands/seeai/design.md
 
-User (Copilot) [20250118-a3f2c1b, github, 2025-01-18T16:45:00Z]:
+User (Copilot) [remote-main-a3f2c1b, 2025-01-18T16:45:00Z]:
   C:/Users/Usuario/AppData/Roaming/Code/User/prompts/seeai-design.prompt.md
   C:/Users/Usuario/AppData/Roaming/Code/User/prompts/seeai-gherkin.prompt.md
 ```

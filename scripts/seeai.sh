@@ -219,11 +219,11 @@ list_command() {
       # Determine label
       local label=""
       case "$location" in
-        ./.augment/commands/*) label="Workspace (Augment)" ;;
-        ./.github/prompts/*) label="Workspace (Copilot)" ;;
-        ./.claude/commands/*) label="Workspace (Claude)" ;;
-        "$HOME/.augment/commands"*) label="User (Augment)" ;;
-        "$HOME/.claude/commands"*) label="User (Claude)" ;;
+        ./.augment/commands/*) label="Workspace (auggie)" ;;
+        ./.github/prompts/*) label="Workspace (copilot)" ;;
+        ./.claude/commands/*) label="Workspace (claude)" ;;
+        "$HOME/.augment/commands"*) label="User (auggie)" ;;
+        "$HOME/.claude/commands"*) label="User (claude)" ;;
         *) label="User (Copilot)" ;;
       esac
 
@@ -271,9 +271,9 @@ ask_agent() {
   fi
 
   echo "Which agent?"
-  echo "1) Augment"
-  echo "2) Claude"
-  echo "3) GitHub Copilot"
+  echo "1) auggie"
+  echo "2) claude"
+  echo "3) copilot"
   read -p "Select (1-3): " -r choice </dev/tty
 
   case $choice in

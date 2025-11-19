@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 11 Desktop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #desktop-environment {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #wallpaper-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyMCIgaGVpZ2h0PSIxMDgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzAwNzhkNDtzdG9wLW9wYWNpdHk6MSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6IzAwNTI5YztzdG9wLW9wYWNpdHk6MSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIxOTIwIiBoZWlnaHQ9IjEwODAiIGZpbGw9InVybCgjZykiLz48cGF0aCBkPSJNOTYwIDU0MGw0MDAgMjMwVjMxMHoiIGZpbGw9IiMwMDkxZWEiIG9wYWNpdHk9IjAuMyIvPjxwYXRoIGQ9Ik05NjAgNTQwbC00MDAgMjMwVjMxMHoiIGZpbGw9IiMwMGI4ZDQiIG9wYWNpdHk9IjAuMyIvPjwvc3ZnPg==');
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+        }
+
+        #icon-grid {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 100px);
+            grid-auto-rows: 100px;
+            gap: 20px;
+            z-index: 1;
+        }
+
+        .desktop-icon {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            user-select: none;
+        }
+
+        .desktop-icon:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .desktop-icon.selected {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .icon-image {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 4px;
+        }
+
+        .icon-label {
+            color: white;
+            font-size: 11px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            word-wrap: break-word;
+            max-width: 80px;
+        }
+
+        #window-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 48px);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .window {
+            position: absolute;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            pointer-events: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .window.minimized {
+            display: none;
+        }
+
+        .window.maximized {
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: calc(100vh - 48px) !important;
+            border-radius: 0;
+        }
+
+        .window-titlebar {
+            height: 32px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            cursor: move;
+            user-select: none;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .window-title {
+            font-size: 12px;
+            font-weight: 400;
+            color: #000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .window-control-btn {
+            width: 46px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 10px;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.1s;
+        }
+
+        .window-control-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .window-control-btn.close:hover {
+            background-color: #c42b1c;
+            color: white;
+        }
+
+        .window-content {
+            flex: 1;
+            overflow: auto;
+            background: white;
+        }
+
+        #taskbar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 48px;
+            background: rgba(243, 243, 243, 0.85);
+            backdrop-filter: blur(30px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .taskbar-start {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .taskbar-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.1s;
+        }
+
+        .taskbar-icon:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .taskbar-icon.active {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .taskbar-icon img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .system-tray {
+            position: absolute;
+            right: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .system-clock {
+            font-size: 11px;
+            color: #000;
+            text-align: right;
+            line-height: 1.3;
+        }
+
+        .word-app {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .word-toolbar {
+            display: flex;
+            gap: 4px;
+            padding: 8px;
+            background: #f3f3f3;
+            border-bottom: 1px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+
+        .word-toolbar button {
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            background: white;
+            cursor: pointer;
+            border-radius: 2px;
+            font-size: 11px;
+        }
+
+        .word-toolbar button:hover {
+            background: #e8e8e8;
+        }
+
+        .word-editor {
+            flex: 1;
+            padding: 20px;
+            outline: none;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .paint-app {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: #f0f0f0;
+        }
+
+        .paint-toolbar {
+            display: flex;
+            gap: 8px;
+            padding: 8px;
+            background: #f3f3f3;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .paint-toolbar button {
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            background: white;
+            cursor: pointer;
+            border-radius: 2px;
+            font-size: 11px;
+        }
+
+        .paint-toolbar input[type="color"] {
+            width: 40px;
+            height: 28px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .paint-canvas-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .paint-canvas {
+            background: white;
+            cursor: crosshair;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .calculator-app {
+            display: grid;
+            grid-template-rows: 80px 1fr;
+            height: 100%;
+            background: #f3f3f3;
+        }
+
+        .calc-display {
+            background: white;
+            padding: 20px;
+            font-size: 32px;
+            text-align: right;
+            border-bottom: 1px solid #e0e0e0;
+            overflow: hidden;
+            word-wrap: break-word;
+        }
+
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: #e0e0e0;
+        }
+
+        .calc-btn {
+            background: white;
+            border: none;
+            padding: 20px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.1s;
+        }
+
+        .calc-btn:hover {
+            background: #e8e8e8;
+        }
+
+        .calc-btn:active {
+            background: #d0d0d0;
+        }
+
+        .calc-btn.operator {
+            background: #f0f0f0;
+        }
+
+        .calc-btn.equals {
+            background: #0078d4;
+            color: white;
+        }
+
+        .calc-btn.equals:hover {
+            background: #106ebe;
+        }
+
+        .chrome-app {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chrome-toolbar {
+            display: flex;
+            gap: 8px;
+            padding: 8px;
+            background: #f3f3f3;
+            border-bottom: 1px solid #e0e0e0;
+            align-items: center;
+        }
+
+        .chrome-toolbar button {
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            background: white;
+            cursor: pointer;
+            border-radius: 2px;
+            font-size: 11px;
+        }
+
+        .chrome-address-bar {
+            flex: 1;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-radius: 16px;
+            font-size: 13px;
+        }
+
+        .chrome-content {
+            flex: 1;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .chrome-home {
+            text-align: center;
+        }
+
+        .chrome-home h1 {
+            font-size: 48px;
+            color: #5f6368;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="desktop-environment">
+        <div id="wallpaper-background"></div>
+        <div id="icon-grid"></div>
+        <div id="window-container"></div>
+        <div id="taskbar">
+            <div class="taskbar-start"></div>
+            <div class="system-tray">
+                <div class="system-clock">
+                    <div id="clock-time">12:00 PM</div>
+                    <div id="clock-date">1/1/2024</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // SVG Icons as data URIs
+        const ICONS = {
+            word: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIGZpbGw9IiMyYjU3OTciLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPldcPC90ZXh0Pjwvc3ZnPg==',
+            paint: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIGZpbGw9IiNmZmM4MzciLz48cGF0aCBkPSJNMTIgMzZsMTItMTIgNiA2LTEyIDEyeiIgZmlsbD0id2hpdGUiLz48Y2lyY2xlIGN4PSIzMCIgY3k9IjE4IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==',
+            calculator: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIGZpbGw9IiMwMDc4ZDQiLz48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMzIiIGhlaWdodD0iMTAiIGZpbGw9IndoaXRlIi8+PHJlY3QgeD0iOCIgeT0iMjIiIHdpZHRoPSI2IiBoZWlnaHQ9IjYiIGZpbGw9IndoaXRlIi8+PHJlY3QgeD0iMTgiIHk9IjIyIiB3aWR0aD0iNiIgaGVpZ2h0PSI2IiBmaWxsPSJ3aGl0ZSIvPjxyZWN0IHg9IjI4IiB5PSIyMiIgd2lkdGg9IjYiIGhlaWdodD0iNiIgZmlsbD0id2hpdGUiLz48cmVjdCB4PSI4IiB5PSIzMiIgd2lkdGg9IjYiIGhlaWdodD0iNiIgZmlsbD0id2hpdGUiLz48cmVjdCB4PSIxOCIgeT0iMzIiIHdpZHRoPSI2IiBoZWlnaHQ9IjYiIGZpbGw9IndoaXRlIi8+PHJlY3QgeD0iMjgiIHk9IjMyIiB3aWR0aD0iNiIgaGVpZ2h0PSI2IiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==',
+            chrome: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyNCIgY3k9IjI0IiByPSIyNCIgZmlsbD0iI2ZmZiIvPjxjaXJjbGUgY3g9IjI0IiBjeT0iMjQiIHI9IjIwIiBmaWxsPSIjZmZjODM3Ii8+PGNpcmNsZSBjeD0iMjQiIGN5PSIyNCIgcj0iMTYiIGZpbGw9IiNmZjU3MjIiLz48Y2lyY2xlIGN4PSIyNCIgY3k9IjI0IiByPSIxMiIgZmlsbD0iI2VhNDMzNSIvPjxjaXJjbGUgY3g9IjI0IiBjeT0iMjQiIHI9IjgiIGZpbGw9IiMzNGE4NTMiLz48Y2lyY2xlIGN4PSIyNCIgY3k9IjI0IiByPSI0IiBmaWxsPSIjNDI4NWY0Ii8+PC9zdmc+'
+        };
+
+        // Desktop State Management
+        class DesktopState {
+            constructor() {
+                this.openWindows = [];
+                this.activeWindow = null;
+                this.nextZIndex = 100;
+                this.iconPositions = new Map();
+            }
+
+            addWindow(window) {
+                if (this.openWindows.length >= 10) {
+                    alert('Maximum 10 windows allowed');
+                    return false;
+                }
+                this.openWindows.push(window);
+                this.activeWindow = window;
+                return true;
+            }
+
+            removeWindow(window) {
+                const index = this.openWindows.indexOf(window);
+                if (index > -1) {
+                    this.openWindows.splice(index, 1);
+                }
+                if (this.activeWindow === window) {
+                    this.activeWindow = this.openWindows[this.openWindows.length - 1] || null;
+                }
+            }
+
+            getNextZIndex() {
+                return this.nextZIndex++;
+            }
+        }
+
+        // Window Class
+        class Window {
+            constructor(id, appType, title, config) {
+                this.id = id;
+                this.appType = appType;
+                this.title = title;
+                this.config = config;
+                this.position = { x: 100, y: 100 };
+                this.size = { width: config.defaultWidth || 800, height: config.defaultHeight || 600 };
+                this.state = 'NORMAL';
+                this.element = null;
+            }
+        }
+
+        // Window Manager
+        class WindowManager {
+            constructor(desktopState) {
+                this.desktopState = desktopState;
+                this.container = document.getElementById('window-container');
+                this.dragState = null;
+                this.resizeState = null;
+            }
+
+            createWindow(appType, title, contentFactory, config = {}) {
+                const windowId = 'window-' + Date.now();
+                const windowObj = new Window(windowId, appType, title, config);
+
+                const windowEl = document.createElement('div');
+                windowEl.className = 'window';
+                windowEl.id = windowId;
+                windowEl.style.left = windowObj.position.x + 'px';
+                windowEl.style.top = windowObj.position.y + 'px';
+                windowEl.style.width = windowObj.size.width + 'px';
+                windowEl.style.height = windowObj.size.height + 'px';
+                windowEl.style.zIndex = this.desktopState.getNextZIndex();
+
+                const titlebar = document.createElement('div');
+                titlebar.className = 'window-titlebar';
+                titlebar.innerHTML = `
+                    <div class="window-title">
+                        <img src="${ICONS[appType]}" style="width: 16px; height: 16px;">
+                        <span>${title}</span>
+                    </div>
+                    <div class="window-controls">
+                        <button class="window-control-btn minimize">−</button>
+                        <button class="window-control-btn maximize">□</button>
+                        <button class="window-control-btn close">×</button>
+                    </div>
+                `;
+
+                const content = document.createElement('div');
+                content.className = 'window-content';
+                content.appendChild(contentFactory());
+
+                windowEl.appendChild(titlebar);
+                windowEl.appendChild(content);
+                this.container.appendChild(windowEl);
+
+                windowObj.element = windowEl;
+
+                if (this.desktopState.addWindow(windowObj)) {
+                    this.attachWindowEvents(windowObj);
+                    this.updateTaskbar();
+                    return windowObj;
+                } else {
+                    windowEl.remove();
+                    return null;
+                }
+            }
+
+            attachWindowEvents(windowObj) {
+                const windowEl = windowObj.element;
+                const titlebar = windowEl.querySelector('.window-titlebar');
+                const minimizeBtn = windowEl.querySelector('.minimize');
+                const maximizeBtn = windowEl.querySelector('.maximize');
+                const closeBtn = windowEl.querySelector('.close');
+
+                titlebar.addEventListener('mousedown', (e) => {
+                    if (e.target === titlebar || e.target.closest('.window-title')) {
+                        this.startDrag(windowObj, e);
+                    }
+                });
+
+                windowEl.addEventListener('mousedown', () => {
+                    this.bringToFront(windowObj);
+                });
+
+                minimizeBtn.addEventListener('click', () => this.minimizeWindow(windowObj));
+                maximizeBtn.addEventListener('click', () => this.toggleMaximize(windowObj));
+                closeBtn.addEventListener('click', () => this.closeWindow(windowObj));
+            }
+
+            startDrag(windowObj, e) {
+                if (windowObj.state === 'MAXIMIZED') return;
+
+                this.dragState = {
+                    window: windowObj,
+                    startX: e.clientX,
+                    startY: e.clientY,
+                    initialX: windowObj.position.x,
+                    initialY: windowObj.position.y
+                };
+
+                const onMouseMove = (e) => {
+                    if (!this.dragState) return;
+                    const dx = e.clientX - this.dragState.startX;
+                    const dy = e.clientY - this.dragState.startY;
+                    const newX = Math.max(0, this.dragState.initialX + dx);
+                    const newY = Math.max(0, this.dragState.initialY + dy);
+
+                    windowObj.position.x = newX;
+                    windowObj.position.y = newY;
+                    windowObj.element.style.left = newX + 'px';
+                    windowObj.element.style.top = newY + 'px';
+                };
+
+                const onMouseUp = () => {
+                    this.dragState = null;
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                };
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            }
+
+            bringToFront(windowObj) {
+                windowObj.element.style.zIndex = this.desktopState.getNextZIndex();
+                this.desktopState.activeWindow = windowObj;
+            }
+
+            minimizeWindow(windowObj) {
+                windowObj.state = 'MINIMIZED';
+                windowObj.element.classList.add('minimized');
+                this.updateTaskbar();
+            }
+
+            restoreWindow(windowObj) {
+                windowObj.state = 'NORMAL';
+                windowObj.element.classList.remove('minimized');
+                this.bringToFront(windowObj);
+                this.updateTaskbar();
+            }
+
+            toggleMaximize(windowObj) {
+                if (windowObj.state === 'MAXIMIZED') {
+                    windowObj.state = 'NORMAL';
+                    windowObj.element.classList.remove('maximized');
+                } else {
+                    windowObj.state = 'MAXIMIZED';
+                    windowObj.element.classList.add('maximized');
+                }
+            }
+
+            closeWindow(windowObj) {
+                windowObj.element.remove();
+                this.desktopState.removeWindow(windowObj);
+                this.updateTaskbar();
+            }
+
+            updateTaskbar() {
+                const taskbarStart = document.querySelector('.taskbar-start');
+                taskbarStart.innerHTML = '';
+
+                this.desktopState.openWindows.forEach(win => {
+                    const icon = document.createElement('div');
+                    icon.className = 'taskbar-icon';
+                    if (win.state !== 'MINIMIZED') {
+                        icon.classList.add('active');
+                    }
+                    icon.innerHTML = `<img src="${ICONS[win.appType]}" alt="${win.title}">`;
+                    icon.addEventListener('click', () => {
+                        if (win.state === 'MINIMIZED') {
+                            this.restoreWindow(win);
+                        } else {
+                            this.bringToFront(win);
+                        }
+                    });
+                    taskbarStart.appendChild(icon);
+                });
+            }
+        }
+
+        // Application Factories
+        const AppFactory = {
+            createWordApp() {
+                const container = document.createElement('div');
+                container.className = 'word-app';
+                container.innerHTML = `
+                    <div class="word-toolbar">
+                        <button onclick="document.execCommand('bold')">Bold</button>
+                        <button onclick="document.execCommand('italic')">Italic</button>
+                        <button onclick="document.execCommand('underline')">Underline</button>
+                        <button onclick="document.execCommand('fontSize', false, '5')">Large</button>
+                        <button onclick="document.execCommand('fontSize', false, '3')">Normal</button>
+                        <button onclick="document.execCommand('fontSize', false, '1')">Small</button>
+                    </div>
+                    <div class="word-editor" contenteditable="true">
+                        Start typing your document here...
+                    </div>
+                `;
+                return container;
+            },
+
+            createPaintApp() {
+                const container = document.createElement('div');
+                container.className = 'paint-app';
+
+                const toolbar = document.createElement('div');
+                toolbar.className = 'paint-toolbar';
+
+                const clearBtn = document.createElement('button');
+                clearBtn.textContent = 'Clear';
+
+                const colorPicker = document.createElement('input');
+                colorPicker.type = 'color';
+                colorPicker.value = '#000000';
+
+                const sizeLabel = document.createElement('label');
+                sizeLabel.textContent = 'Brush Size:';
+
+                const sizeSlider = document.createElement('input');
+                sizeSlider.type = 'range';
+                sizeSlider.min = '1';
+                sizeSlider.max = '20';
+                sizeSlider.value = '3';
+
+                toolbar.appendChild(clearBtn);
+                toolbar.appendChild(colorPicker);
+                toolbar.appendChild(sizeLabel);
+                toolbar.appendChild(sizeSlider);
+
+                const canvasContainer = document.createElement('div');
+                canvasContainer.className = 'paint-canvas-container';
+
+                const canvas = document.createElement('canvas');
+                canvas.className = 'paint-canvas';
+                canvas.width = 700;
+                canvas.height = 500;
+
+                canvasContainer.appendChild(canvas);
+                container.appendChild(toolbar);
+                container.appendChild(canvasContainer);
+
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                let isDrawing = false;
+                let lastX = 0;
+                let lastY = 0;
+
+                canvas.addEventListener('mousedown', (e) => {
+                    isDrawing = true;
+                    const rect = canvas.getBoundingClientRect();
+                    lastX = e.clientX - rect.left;
+                    lastY = e.clientY - rect.top;
+                });
+
+                canvas.addEventListener('mousemove', (e) => {
+                    if (!isDrawing) return;
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    const color = colorPicker.value;
+                    const size = sizeSlider.value;
+
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = size;
+                    ctx.lineCap = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(lastX, lastY);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+
+                    lastX = x;
+                    lastY = y;
+                });
+
+                canvas.addEventListener('mouseup', () => {
+                    isDrawing = false;
+                });
+
+                canvas.addEventListener('mouseleave', () => {
+                    isDrawing = false;
+                });
+
+                clearBtn.addEventListener('click', () => {
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                });
+
+                return container;
+            },
+
+            createCalculatorApp() {
+                const container = document.createElement('div');
+                container.className = 'calculator-app';
+
+                const display = document.createElement('div');
+                display.className = 'calc-display';
+                display.textContent = '0';
+
+                const buttons = document.createElement('div');
+                buttons.className = 'calc-buttons';
+
+                const buttonLayout = [
+                    ['C', '÷', '×', '←'],
+                    ['7', '8', '9', '-'],
+                    ['4', '5', '6', '+'],
+                    ['1', '2', '3', '='],
+                    ['0', '.', '', '']
+                ];
+
+                let currentValue = '0';
+                let previousValue = '';
+                let operation = null;
+
+                const calculate = () => {
+                    const prev = parseFloat(previousValue);
+                    const curr = parseFloat(currentValue);
+
+                    switch (operation) {
+                        case '+': return prev + curr;
+                        case '-': return prev - curr;
+                        case '×': return prev * curr;
+                        case '÷': return prev / curr;
+                        default: return curr;
+                    }
+                };
+
+                const handleButton = (btn) => {
+                    if (btn >= '0' && btn <= '9') {
+                        currentValue = currentValue === '0' ? btn : currentValue + btn;
+                    } else if (btn === '.') {
+                        if (!currentValue.includes('.')) {
+                            currentValue += '.';
+                        }
+                    } else if (btn === 'C') {
+                        currentValue = '0';
+                        previousValue = '';
+                        operation = null;
+                    } else if (btn === '←') {
+                        currentValue = currentValue.length > 1 ? currentValue.slice(0, -1) : '0';
+                    } else if (['+', '-', '×', '÷'].includes(btn)) {
+                        if (operation && previousValue) {
+                            currentValue = String(calculate());
+                        }
+                        previousValue = currentValue;
+                        currentValue = '0';
+                        operation = btn;
+                    } else if (btn === '=') {
+                        if (operation && previousValue) {
+                            currentValue = String(calculate());
+                            previousValue = '';
+                            operation = null;
+                        }
+                    }
+                    display.textContent = currentValue;
+                };
+
+                buttonLayout.forEach(row => {
+                    row.forEach(btn => {
+                        if (btn) {
+                            const button = document.createElement('button');
+                            button.className = 'calc-btn';
+                            if (['+', '-', '×', '÷'].includes(btn)) {
+                                button.classList.add('operator');
+                            }
+                            if (btn === '=') {
+                                button.classList.add('equals');
+                            }
+                            button.textContent = btn;
+                            button.addEventListener('click', () => handleButton(btn));
+                            buttons.appendChild(button);
+                        } else {
+                            const empty = document.createElement('div');
+                            buttons.appendChild(empty);
+                        }
+                    });
+                });
+
+                container.appendChild(display);
+                container.appendChild(buttons);
+
+                return container;
+            },
+
+            createChromeApp() {
+                const container = document.createElement('div');
+                container.className = 'chrome-app';
+
+                const toolbar = document.createElement('div');
+                toolbar.className = 'chrome-toolbar';
+
+                const backBtn = document.createElement('button');
+                backBtn.textContent = '←';
+                backBtn.title = 'Back';
+
+                const forwardBtn = document.createElement('button');
+                forwardBtn.textContent = '→';
+                forwardBtn.title = 'Forward';
+
+                const refreshBtn = document.createElement('button');
+                refreshBtn.textContent = '⟳';
+                refreshBtn.title = 'Refresh';
+
+                const addressBar = document.createElement('input');
+                addressBar.type = 'text';
+                addressBar.className = 'chrome-address-bar';
+                addressBar.value = 'https://www.wikipedia.org';
+                addressBar.placeholder = 'Enter URL...';
+
+                toolbar.appendChild(backBtn);
+                toolbar.appendChild(forwardBtn);
+                toolbar.appendChild(refreshBtn);
+                toolbar.appendChild(addressBar);
+
+                const content = document.createElement('div');
+                content.className = 'chrome-content';
+                content.innerHTML = `
+                    <div class="chrome-home">
+                        <h1>Chrome Browser</h1>
+                        <p>Enter a URL in the address bar above and press Enter</p>
+                    </div>
+                `;
+
+                container.appendChild(toolbar);
+                container.appendChild(content);
+
+                // Handle URL navigation
+                const loadUrl = (url) => {
+                    // Ensure URL has protocol
+                    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                        url = 'https://' + url;
+                    }
+
+                    // Clear content and create iframe
+                    content.innerHTML = '';
+                    const iframe = document.createElement('iframe');
+                    iframe.src = url;
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                    iframe.style.border = 'none';
+                    content.appendChild(iframe);
+
+                    addressBar.value = url;
+                };
+
+                // Address bar Enter key
+                addressBar.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        loadUrl(addressBar.value);
+                    }
+                });
+
+                // Refresh button
+                refreshBtn.addEventListener('click', () => {
+                    const iframe = content.querySelector('iframe');
+                    if (iframe) {
+                        iframe.src = iframe.src;
+                    }
+                });
+
+                // Back button (basic implementation)
+                backBtn.addEventListener('click', () => {
+                    const iframe = content.querySelector('iframe');
+                    if (iframe && iframe.contentWindow) {
+                        try {
+                            iframe.contentWindow.history.back();
+                        } catch (e) {
+                            console.log('Cannot navigate back');
+                        }
+                    }
+                });
+
+                // Forward button (basic implementation)
+                forwardBtn.addEventListener('click', () => {
+                    const iframe = content.querySelector('iframe');
+                    if (iframe && iframe.contentWindow) {
+                        try {
+                            iframe.contentWindow.history.forward();
+                        } catch (e) {
+                            console.log('Cannot navigate forward');
+                        }
+                    }
+                });
+
+                return container;
+            }
+        };
+
+        // Desktop Icon Manager
+        class DesktopIconManager {
+            constructor(windowManager) {
+                this.windowManager = windowManager;
+                this.container = document.getElementById('icon-grid');
+                this.icons = [];
+                this.selectedIcon = null;
+            }
+
+            createIcon(appType, label) {
+                const icon = document.createElement('div');
+                icon.className = 'desktop-icon';
+                icon.dataset.appType = appType;
+                icon.innerHTML = `
+                    <img class="icon-image" src="${ICONS[appType]}" alt="${label}">
+                    <div class="icon-label">${label}</div>
+                `;
+
+                let clickCount = 0;
+                let clickTimer = null;
+
+                icon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    clickCount++;
+
+                    if (clickCount === 1) {
+                        clickTimer = setTimeout(() => {
+                            clickCount = 0;
+                            this.selectIcon(icon);
+                        }, 300);
+                    } else if (clickCount === 2) {
+                        clearTimeout(clickTimer);
+                        clickCount = 0;
+                        this.openApplication(appType);
+                    }
+                });
+
+                this.container.appendChild(icon);
+                this.icons.push(icon);
+                return icon;
+            }
+
+            selectIcon(icon) {
+                if (this.selectedIcon) {
+                    this.selectedIcon.classList.remove('selected');
+                }
+                this.selectedIcon = icon;
+                icon.classList.add('selected');
+            }
+
+            openApplication(appType) {
+                const appConfigs = {
+                    word: {
+                        title: 'Microsoft Word',
+                        factory: AppFactory.createWordApp,
+                        defaultWidth: 800,
+                        defaultHeight: 600
+                    },
+                    paint: {
+                        title: 'Paint',
+                        factory: AppFactory.createPaintApp,
+                        defaultWidth: 900,
+                        defaultHeight: 700
+                    },
+                    calculator: {
+                        title: 'Calculator',
+                        factory: AppFactory.createCalculatorApp,
+                        defaultWidth: 320,
+                        defaultHeight: 480
+                    },
+                    chrome: {
+                        title: 'Chrome',
+                        factory: AppFactory.createChromeApp,
+                        defaultWidth: 1000,
+                        defaultHeight: 700
+                    }
+                };
+
+                const config = appConfigs[appType];
+                if (config) {
+                    this.windowManager.createWindow(appType, config.title, config.factory, config);
+                }
+            }
+
+            init() {
+                this.createIcon('word', 'Microsoft Word');
+                this.createIcon('paint', 'Paint');
+                this.createIcon('calculator', 'Calculator');
+                this.createIcon('chrome', 'Chrome');
+            }
+        }
+
+        // Clock Update
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+            const dateStr = now.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
+
+            document.getElementById('clock-time').textContent = timeStr;
+            document.getElementById('clock-date').textContent = dateStr;
+        }
+
+        // Initialize Desktop
+        function initDesktop() {
+            const desktopState = new DesktopState();
+            const windowManager = new WindowManager(desktopState);
+            const iconManager = new DesktopIconManager(windowManager);
+
+            iconManager.init();
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            // Deselect icon when clicking on desktop
+            document.getElementById('desktop-environment').addEventListener('click', () => {
+                if (iconManager.selectedIcon) {
+                    iconManager.selectedIcon.classList.remove('selected');
+                    iconManager.selectedIcon = null;
+                }
+            });
+        }
+
+        // Start the desktop when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDesktop);
+        } else {
+            initDesktop();
+        }
+    </script>
+</body>
+
+</html>

@@ -56,15 +56,8 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 ### Describe your problem in a written form
 
 - cd `<your-project-folder>`
-- Prepare a description. E.g.:
-
-```bash
-$ cat > myproblem.md << 'EOF'
-# Tetrust
-
-A Tetris board game implemented in Rust, with simple synthesized sound effects.
-EOF
-```
+- Prepare a problem description
+  - If you have a simple problem, like "Creating a clone of the Windows 11 desktop", describe like this: [desktop.md](examples/explorer/desktop.md)
 
 ### Design the solution
 
@@ -72,14 +65,14 @@ EOF
 - Invoke the design command with your problem file tagged (`@` for claude/auggie, `#` for copilot):
 
 ```text
-> /seeai:design @myfeature.md
+> /seeai:design @desktop.md
 
 or
 
-> /seeai:design #myfeature.md
+> /seeai:design #desktop.md
 ```
 
-- As a result you will get the `myproblem-design.md` file
+- As a result you will get the [desktop-design.md](examples/explorer/desktop-design.md)
 - Now see AI, 👀 the design, apply changes, if needed
 
 ### Implement the solution
@@ -88,3 +81,10 @@ or
 - Run and see 👀, provide feedback to AI
 - Iterate until satisfied
 - Happy vibecoding! 🚀
+
+<details>
+<summary>Desktop</summary>
+
+![desktop](examples/explorer/desktop.png)
+
+</details>

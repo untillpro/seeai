@@ -64,9 +64,6 @@ Natural language patterns embedded in Agents Config Files (AGENTS.md or CLAUDE.m
 Example:
 
 ```markdown
-<!-- seeai:version:v0.1.0 -->
-<!-- seeai:installed_at:2025-01-18T14:30:00Z -->
-<!-- seeai:source:https://github.com/untillpro/seeai/releases/tag/v0.1.0 -->
 <!-- seeai:triggering_instructions:begin -->
 # SeeAI Triggering Instructions
 

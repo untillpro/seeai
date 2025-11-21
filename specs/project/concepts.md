@@ -1,21 +1,53 @@
 # Concepts
 
-## Agent (SeeAI Agent)
+## SeeAI Command
 
-A file located in `specs/agents/seeai/` that defines a specific role or function within the SeeAI framework. Each agent has its own set of instructions and capabilities.
+A specialized prompt file (e.g., `design.md`, `gherkin.md`) installed into user scope directories. Commands are invoked explicitly using command syntax like `/seeai:design @file.md`.
+
+Installation location examples:
+
+- `~/.augment/commands/seeai/`
+- `~/.claude/commands/seeai/`
+- `{user_prompts_dir}/seeai-*.prompt.md`
 
 References
 
 - https://code.visualstudio.com/docs/copilot/customization/custom-agents
 
+## SeeAI Action
+
+A specialized prompt file installed into project scope specs/agents/seaa directory. Actions are invoked implicitly through Natural Language Invocation (NLI) - natural language patterns (e.g., "let me see a design") matched by triggering instructions in Agent Triggering Files (AGENTS.md or CLAUDE.md).
+
+Installation locations:
+
+- `./.augment/commands/seeai/`
+- `./.claude/commands/seeai/`
+- `./.github/prompts/seeai-*.prompt.md`
+
+Note: The same source files become either Commands or Actions depending on installation scope.
+
+## Natural Language Invocation (NLI)
+
+The capability to invoke SeeAI Actions through natural language patterns instead of explicit command syntax. NLI is enabled by triggering instructions embedded in Agent Triggering Files (AGENTS.md or CLAUDE.md) that match user requests to specific actions.
+
+Example flow:
+
+1. User says: "let me see a design for login feature"
+2. AI reads triggering instructions from ATF
+3. Pattern matches "let me see a design"
+4. AI invokes the design action automatically
+5. Action guides AI through the workflow
+
+NLI allows users to interact with SeeAI Actions naturally without memorizing command syntax.
+
 ## Agent Triggering File (ATF)
 
-A markdown file (AGENTS.md or CLAUDE.md) located in the project root that contains triggering instructions for invoking SeeAI agents through natural language commands.
+A markdown file (AGENTS.md or CLAUDE.md) located in the project root that contains triggering instructions for invoking SeeAI commands through natural language requests.
 
 - AGENTS.md: Used by auggie, gemini, and copilot
 - CLAUDE.md: Used by claude
 
-The ATF contains HTML comment markers (`<!-- SEEAI:BEGIN -->` / `<!-- SEEAI:END -->`) that wrap the triggering instructions and version metadata.
+The ATF contains HTML comment markers that wrap the triggering instructions and version metadata.
 
 ## Project Scope
 
@@ -27,18 +59,21 @@ Note: The term "project" is preferred over "workspace" to avoid confusion with V
 
 ## Triggering Instructions
 
-Natural language patterns embedded in Agent Triggering Files (AGENTS.md or CLAUDE.md) that tell AI agents when and how to invoke specific SeeAI agents based on user requests.
+Natural language patterns embedded in Agent Triggering Files (AGENTS.md or CLAUDE.md) that tell AI agents when and how to invoke specific SeeAI commands based on user requests.
 
 Example:
 
 ```markdown
-<!-- SEEAI:BEGIN [version info]-->
+<!-- seeai:version:v0.1.0 -->
+<!-- seeai:installed_at:2025-01-18T14:30:00Z -->
+<!-- seeai:source:https://github.com/untillpro/seeai/releases/tag/v0.1.0 -->
+<!-- seeai:triggering_instructions:begin -->
 # SeeAI Triggering Instructions
 
 - Always open `@/specs/agents/seeai/registrar.md` and follow the instructions there when the request sounds like "let me see a change [change description]"
 - Always open `@/specs/agents/seeai/analyst.md` and follow the instructions there when the request sounds like "let me see an analysis [change reference]"
 
-<!-- SEEAI:END -->
+<!-- seeai:triggering_instructions:end -->
 ```
 
 ## User Scope

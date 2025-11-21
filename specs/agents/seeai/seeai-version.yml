@@ -1,0 +1,6 @@
+version: local-agents.md-a20d9e2
+installed_at: 2025-11-21T18:05:41Z
+source: https://github.com/untillpro/seeai/tree/agents.md
+files:
+  - design.md
+  - gherkin.md

@@ -15,14 +15,24 @@ Windows: install [Git for Windows](https://git-scm.com/download/win) to get both
 
 ### Install
 
-Run the command below for your preferred AI agent. You'll be prompted before any changes are applied.
+Run the command below for your preferred AI agent and installation scope.
+
+Installation scopes:
+
+- User scope: Installs to your home directory, available across all projects
+- Project scope: Installs to current project directory, only available in this project
 
 <details>
 <summary>auggie</summary>
 
-Main branch:
+User scope (main branch):
 ```bash
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent auggie
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent auggie --scope user
+```
+
+Project scope (main branch):
+```bash
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent auggie --scope project
 ```
 
 </details>
@@ -30,9 +40,14 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 <details>
 <summary>claude</summary>
 
-Main branch:
+User scope (main branch):
 ```bash
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent claude
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent claude --scope user
+```
+
+Project scope (main branch):
+```bash
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent claude --scope project
 ```
 
 </details>
@@ -40,9 +55,14 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 <details>
 <summary>copilot</summary>
 
-Main branch:
+User scope (main branch):
 ```bash
-curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent copilot
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent copilot --scope user
+```
+
+Project scope (main branch):
+```bash
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install main --agent copilot --scope project
 ```
 
 </details>

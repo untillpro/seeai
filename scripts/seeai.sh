@@ -37,6 +37,7 @@ AGENT=""
 VERSION=""
 AGENT_INTERNAL=""
 SCOPE=""
+SCOPE_PROVIDED=false
 TARGET_DIR=""
 REF=""
 
@@ -476,51 +477,59 @@ install_files() {
     resolve_version
   fi
 
-  # Show initial preview for user scope
+  # Show initial preview
   show_install_preview
 
-  # Prompt with Y/w/n options
-  echo
-  echo "Proceed? (Y/w/n) [Y]: "
-  echo "  Y - Install to user scope"
-  echo "  w - Switch to project scope (will be prompted again)"
-  echo "  n - Cancel"
-  echo
-  read -p "> " -r choice </dev/tty
-  echo
+  # Skip prompt if scope was provided via parameter
+  if [[ "$SCOPE_PROVIDED" == true ]]; then
+    # Non-interactive mode: proceed directly
+    echo
+    echo "Proceeding with non-interactive installation..."
+    echo
+  else
+    # Interactive mode: prompt with Y/w/n options
+    echo
+    echo "Proceed? (Y/w/n) [Y]: "
+    echo "  Y - Install to user scope"
+    echo "  w - Switch to project scope (will be prompted again)"
+    echo "  n - Cancel"
+    echo
+    read -p "> " -r choice </dev/tty
+    echo
 
-  # Default to Y if empty
-  choice=${choice:-Y}
+    # Default to Y if empty
+    choice=${choice:-Y}
 
-  case $choice in
-    [Yy])
-      # Continue with user scope (already set)
-      ;;
-    [Ww])
-      # Switch to project scope
-      SCOPE="project"
-      TARGET_DIR=$(get_project_dir "$AGENT_INTERNAL")
+    case $choice in
+      [Yy])
+        # Continue with user scope (already set)
+        ;;
+      [Ww])
+        # Switch to project scope
+        SCOPE="project"
+        TARGET_DIR=$(get_project_dir "$AGENT_INTERNAL")
 
-      # Show new preview for project
-      show_install_preview
+        # Show new preview for project
+        show_install_preview
 
-      # Simple Y/n confirmation
-      read -p "Proceed? (Y/n) [Y]: " -r confirm </dev/tty
-      echo
+        # Simple Y/n confirmation
+        read -p "Proceed? (Y/n) [Y]: " -r confirm </dev/tty
+        echo
 
-      # Default to Y if empty, exit only on explicit n/N
-      if [[ -n $confirm && $confirm =~ ^[Nn]$ ]]; then
+        # Default to Y if empty, exit only on explicit n/N
+        if [[ -n $confirm && $confirm =~ ^[Nn]$ ]]; then
+          exit 0
+        fi
+        ;;
+      [Nn])
         exit 0
-      fi
-      ;;
-    [Nn])
-      exit 0
-      ;;
-    *)
-      echo "Error: Invalid choice"
-      exit 1
-      ;;
-  esac
+        ;;
+      *)
+        echo "Error: Invalid choice"
+        exit 1
+        ;;
+    esac
+  fi
 
   # Create target directory
   mkdir -p "$TARGET_DIR"
@@ -586,6 +595,11 @@ install_command() {
         AGENT="$2"
         shift 2
         ;;
+      --scope)
+        SCOPE="$2"
+        SCOPE_PROVIDED=true
+        shift 2
+        ;;
       *)
         VERSION="$1"
         shift
@@ -601,6 +615,19 @@ install_command() {
         ;;
       *)
         echo "Error: Invalid agent '$AGENT'. Must be: auggie, claude, or copilot"
+        exit 1
+        ;;
+    esac
+  fi
+
+  # Validate scope if provided
+  if [[ "$SCOPE_PROVIDED" == true ]]; then
+    case $SCOPE in
+      user|project)
+        # Valid scope
+        ;;
+      *)
+        echo "Error: Invalid scope '$SCOPE'. Must be: user or project"
         exit 1
         ;;
     esac
@@ -625,13 +652,19 @@ install_command() {
     esac
   fi
 
-  # Step 2: Ask installation scope
-  ask_scope
+  # Step 2: Ask installation scope (skip if --scope provided)
+  if [[ "$SCOPE_PROVIDED" != true ]]; then
+    ask_scope
+  fi
 
-  # Set target directory
+  # Set target directory based on scope
   if [[ "$SCOPE" == "project" ]]; then
     TARGET_DIR=$(get_project_dir "$AGENT_INTERNAL")
   else
+    # Default to global/user scope
+    if [[ -z "$SCOPE" ]]; then
+      SCOPE="global"
+    fi
     TARGET_DIR=$(get_global_dir "$AGENT_INTERNAL")
   fi
 

@@ -21,8 +21,12 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 # Install specific version - interactive
 curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install v0.1.0
 
-# Install for specific agent (non-interactive)
+# Install for specific agent (non-interactive agent, interactive scope)
 curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent auggie
+
+# Install fully non-interactive (agent and scope specified)
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent auggie --scope user
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent claude --scope project
 
 # Install from local ../src folder (for development)
 ./scripts/seeai.sh install -l --agent claude
@@ -49,13 +53,18 @@ Options (for install):
   -l                - Use local files from ../src folder (relative to script path, for development)
   --agent <name>    - Specify agent (auggie, claude, copilot) - skips interactive prompt
                       For copilot, uses default profile
+  --scope <scope>   - Specify installation scope (user, project) - skips interactive scope prompt
+                      user: Install to user's home directory
+                      project: Install to current project directory
 
 Examples:
-  seeai.sh install                    # Interactive install, latest version
-  seeai.sh install main               # Interactive install, main branch
-  seeai.sh install --agent auggie     # Non-interactive, Augment agent
-  seeai.sh install -l --agent claude  # Local files, Claude agent
-  seeai.sh list                       # List installed files
+  seeai.sh install                              # Interactive install, latest version
+  seeai.sh install main                         # Interactive install, main branch
+  seeai.sh install --agent auggie               # Non-interactive agent, interactive scope
+  seeai.sh install --agent auggie --scope user  # Fully non-interactive, user scope
+  seeai.sh install --agent claude --scope project  # Fully non-interactive, project scope
+  seeai.sh install -l --agent claude            # Local files, Claude agent
+  seeai.sh list                                 # List installed files
 ```
 
 ## Source Files
@@ -113,12 +122,22 @@ Parse options before starting interactive flow:
 
 - `-l` flag: Use local files from `../src` folder
 - `--agent <name>`: Pre-select agent (auggie, claude, copilot)
+- `--scope <scope>`: Pre-select installation scope (user, project)
 
 If `--agent` is specified:
 
 - Skip Step 1 (agent selection)
 - For copilot: Use default profile, skip profile selection
-- Still ask for installation scope (project vs user) unless additional options are added
+
+If `--scope` is specified:
+
+- Skip Step 2 (scope selection prompt)
+- Proceed directly with the specified scope
+
+If both `--agent` and `--scope` are specified:
+
+- Fully non-interactive installation
+- No prompts, proceed directly to installation
 
 ### Step 1: Ask Agent Type
 
@@ -132,6 +151,8 @@ Which agent?
 ```
 
 ### Step 2: Show Installation Preview (User Scope Default)
+
+Skip this step if `--scope` option is provided.
 
 Default to user scope and show installation preview:
 

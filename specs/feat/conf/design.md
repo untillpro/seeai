@@ -224,9 +224,12 @@ Installation complete!
 
 For Copilot, files are transformed with `seeai-` prefix and `.prompt.md` extension during installation (show the transformed names in the file list).
 
-### Step 4: Create Version Metadata File
+### Step 4: Create VersionInfo File
 
-After successful file installation, create `seeai-version.yml` in the target directory.
+After successful file installation, create `seeai-version.yml` in the appropriate location:
+
+- User scope: In the target directory (e.g., `~/.augment/commands/seeai/seeai-version.yml`)
+- Project scope: In `specs/agents/seeai/seeai-version.yml`
 
 Version string generation:
 
@@ -311,13 +314,40 @@ Fields:
   - Branch installations: `https://github.com/untillpro/seeai/tree/<branch>`
 - `files`: List of installed base filenames (not transformed names)
 
-For Copilot installations, the metadata file is placed in the prompts directory alongside the transformed files.
+For Copilot installations, the VersionInfo file is placed in the prompts directory alongside the transformed files.
 
 Error handling: The `set -Eeuo pipefail` header ensures the script exits on any error (curl failure, copy failure, etc.).
 
+### Step 5: Install Triggering Instructions (Project Scope Only)
+
+For project scope installations, write triggering instructions to the Agents Config File (ACF):
+
+- AGENTS.md for auggie, gemini, copilot
+- CLAUDE.md for claude
+
+Format:
+
+```markdown
+<!-- seeai:triggering_instructions:begin -->
+# SeeAI Triggering Instructions
+
+- Always open `@/specs/agents/seeai/registrar.md` and follow the instructions there when the request sounds like "let me see a change [change description]"
+- Always open `@/specs/agents/seeai/analyst.md` and follow the instructions there when the request sounds like "let me see an analysis [change reference]"
+- Always open `@/specs/agents/seeai/specifier.md` and follow the instructions there when the request sounds like "let me see a specification [change reference]"
+
+<!-- seeai:triggering_instructions:end -->
+```
+
+Notes:
+
+- Only the begin/end markers are used (no version metadata in ACF)
+- Version metadata is stored separately in VersionInfo file
+- If ACF already exists, update the triggering instructions block
+- If ACF doesn't exist, create it with the triggering instructions
+
 ## List Command
 
-Searches for installed SeeAI files and displays their locations with version metadata.
+Searches for installed SeeAI files and displays their locations with VersionInfo metadata.
 
 Search patterns:
 
@@ -326,12 +356,13 @@ Search patterns:
 
 Search locations: See "Installation Locations" section above.
 
-Version metadata reading:
+VersionInfo reading:
 
-- Check for `seeai-version.yml` in each installation directory
+- User scope: Check for `seeai-version.yml` in each installation directory
+- Project scope: Check for `specs/agents/seeai/seeai-version.yml`
 - Parse version and installed_at fields
 - Display in format: `[version, timestamp]`
-- If metadata file missing, show files without version info
+- If VersionInfo file missing, show files without version info
 
 ### Output Example
 

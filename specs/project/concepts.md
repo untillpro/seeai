@@ -47,7 +47,7 @@ A markdown file (AGENTS.md or CLAUDE.md) located in the project root that contai
 - AGENTS.md: Used by auggie, gemini, and copilot
 - CLAUDE.md: Used by claude
 
-The ACF contains HTML comment markers that wrap the triggering instructions and version metadata.
+The ACF contains HTML comment markers that wrap the triggering instructions.
 
 ## Project Scope
 
@@ -71,6 +71,28 @@ Example:
 - Always open `@/specs/agents/seeai/analyst.md` and follow the instructions there when the request sounds like "let me see an analysis [change reference]"
 
 <!-- seeai:triggering_instructions:end -->
+```
+
+## VersionInfo
+
+A YAML configuration file that tracks version information for SeeAI installations in both user and project scopes.
+
+Format: `seeai-version.yml`
+
+Locations:
+
+- User scope: `~/.augment/commands/seeai/`, `~/.claude/commands/seeai/`, `{prompts_dir}/`
+- Project scope: `specs/agents/seeai/`
+
+Example:
+
+```yaml
+version: v0.1.0
+installed_at: 2025-01-18T14:30:00Z
+source: https://github.com/untillpro/seeai/releases/tag/v0.1.0
+files:
+  - design.md
+  - gherkin.md
 ```
 
 ## User Scope

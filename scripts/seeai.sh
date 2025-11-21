@@ -120,9 +120,10 @@ get_github_commit_hash() {
   fi
 }
 
-# Create version metadata file
-create_version_metadata() {
-  local target_dir="$1"
+# Create VersionInfo file
+create_version_info() {
+  local scope="$1"  # "user" or "project"
+  local target_dir="$2"
   local version_string
   local source_url
   local branch_name
@@ -152,9 +153,19 @@ create_version_metadata() {
   local timestamp
   timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
+  # Determine VersionInfo file location
+  local version_info_file
+  if [[ "$scope" == "project" ]]; then
+    # Project scope: specs/agents/seeai/seeai-version.yml
+    version_info_file="specs/agents/seeai/seeai-version.yml"
+    mkdir -p "specs/agents/seeai"
+  else
+    # User scope: in target directory
+    version_info_file="$target_dir/seeai-version.yml"
+  fi
+
   # Create YAML file
-  local metadata_file="$target_dir/seeai-version.yml"
-  cat > "$metadata_file" <<EOF
+  cat > "$version_info_file" <<EOF
 version: $version_string
 installed_at: $timestamp
 source: $source_url
@@ -163,8 +174,52 @@ EOF
 
   # Add file list
   for file in "${FILES[@]}"; do
-    echo "  - $file" >> "$metadata_file"
+    echo "  - $file" >> "$version_info_file"
   done
+}
+
+# Install triggering instructions to ACF (project scope only)
+install_triggering_instructions() {
+  local agent_internal="$1"
+
+  # Determine ACF filename based on agent
+  local acf_file
+  if [[ "$agent_internal" == "claude" ]]; then
+    acf_file="CLAUDE.md"
+  else
+    acf_file="AGENTS.md"
+  fi
+
+  # Triggering instructions content
+  local instructions='<!-- seeai:triggering_instructions:begin -->
+# SeeAI Triggering Instructions
+
+- Always open `@/specs/agents/seeai/registrar.md` and follow the instructions there when the request sounds like "let me see a change [change description]"
+- Always open `@/specs/agents/seeai/analyst.md` and follow the instructions there when the request sounds like "let me see an analysis [change reference]"
+- Always open `@/specs/agents/seeai/specifier.md` and follow the instructions there when the request sounds like "let me see a specification [change reference]"
+
+<!-- seeai:triggering_instructions:end -->'
+
+  # Check if ACF exists
+  if [[ -f "$acf_file" ]]; then
+    # Check if triggering instructions block already exists
+    if grep -q "<!-- seeai:triggering_instructions:begin -->" "$acf_file"; then
+      # Update existing block
+      # Create temp file with content before the block
+      sed '/<!-- seeai:triggering_instructions:begin -->/,/<!-- seeai:triggering_instructions:end -->/d' "$acf_file" > "${acf_file}.tmp"
+      # Append new instructions
+      echo "$instructions" >> "${acf_file}.tmp"
+      # Replace original file
+      mv "${acf_file}.tmp" "$acf_file"
+    else
+      # Append to existing file
+      echo "" >> "$acf_file"
+      echo "$instructions" >> "$acf_file"
+    fi
+  else
+    # Create new ACF with instructions
+    echo "$instructions" > "$acf_file"
+  fi
 }
 
 # Read version metadata from seeai-version.yml
@@ -216,30 +271,37 @@ list_command() {
     if [[ ${#files[@]} -gt 0 ]]; then
       found_any=true
 
-      # Determine label
+      # Determine label and scope
       local label=""
+      local scope=""
       case "$location" in
-        ./.augment/commands/*) label="Project (auggie)" ;;
-        ./.github/prompts/*) label="Project (copilot)" ;;
-        ./.claude/commands/*) label="Project (claude)" ;;
-        "$HOME/.augment/commands"*) label="User (auggie)" ;;
-        "$HOME/.claude/commands"*) label="User (claude)" ;;
-        *) label="User (copilot)" ;;
+        ./.augment/commands/*) label="Project (auggie)"; scope="project" ;;
+        ./.github/prompts/*) label="Project (copilot)"; scope="project" ;;
+        ./.claude/commands/*) label="Project (claude)"; scope="project" ;;
+        "$HOME/.augment/commands"*) label="User (auggie)"; scope="user" ;;
+        "$HOME/.claude/commands"*) label="User (claude)"; scope="user" ;;
+        *) label="User (copilot)"; scope="user" ;;
       esac
 
-      # Read version metadata
+      # Read VersionInfo
       local metadata_file
       local version_info
 
-      if [[ "$location" == *"/prompts/"* ]]; then
-        # copilot: metadata in prompts directory
-        metadata_file="$location/seeai-version.yml"
-      elif [[ "$location" == *"/seeai/" ]]; then
-        # Already in seeai subdirectory
-        metadata_file="$location/seeai-version.yml"
+      if [[ "$scope" == "project" ]]; then
+        # Project scope: check specs/agents/seeai/seeai-version.yml
+        metadata_file="specs/agents/seeai/seeai-version.yml"
       else
-        # Augment/Claude: metadata in seeai subdirectory
-        metadata_file="$location/seeai/seeai-version.yml"
+        # User scope: check in installation directory
+        if [[ "$location" == *"/prompts/"* ]]; then
+          # copilot: metadata in prompts directory
+          metadata_file="$location/seeai-version.yml"
+        elif [[ "$location" == *"/seeai/" ]]; then
+          # Already in seeai subdirectory
+          metadata_file="$location/seeai-version.yml"
+        else
+          # Augment/Claude: metadata in seeai subdirectory
+          metadata_file="$location/seeai/seeai-version.yml"
+        fi
       fi
 
       version_info=$(read_version_metadata "$metadata_file")
@@ -495,10 +557,17 @@ install_files() {
     done
   fi
 
-  # Create version metadata file
+  # Create VersionInfo file
   echo -n "Creating seeai-version.yml... "
-  create_version_metadata "$TARGET_DIR"
+  create_version_info "$SCOPE" "$TARGET_DIR"
   echo "OK"
+
+  # Install triggering instructions (project scope only)
+  if [[ "$SCOPE" == "project" ]]; then
+    echo -n "Installing triggering instructions to ACF... "
+    install_triggering_instructions "$AGENT_INTERNAL"
+    echo "OK"
+  fi
 
   echo
   echo "Installation complete!"

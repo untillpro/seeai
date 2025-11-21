@@ -6,5 +6,5 @@ We need to track which version of SeeAI configuration is installed in different 
 
 ## What
 
-- UserConfig model: YAML metadata file for user-scoped installations
-- ProjectConfig model: HTML comments in Agents Config Files for project-scoped installations
+- VersionInfo model: YAML metadata file for both user-scoped and project-scoped installations
+- Triggering Instructions model: Natural language patterns in Agents Config Files that enable NLI

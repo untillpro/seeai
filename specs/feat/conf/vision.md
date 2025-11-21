@@ -21,9 +21,11 @@ Users need an easy way to install and manage seeai prompt templates for differen
 
 ### NLI support
 
-- System installs Triggering Instructions into Agents Config Files:
+- System installs Triggering Instructions into Agents Config Files (project scope only):
   - AGENTS.md for auggie, gemini, copilot
   - CLAUDE.md for claude
+- Version metadata is stored separately in VersionInfo file at `specs/agents/seeai/seeai-version.yml`
+- Only instruction block markers are written to ACF (no version metadata in HTML comments)
 
 ```markdown
 <!-- SEEAI:BEGIN [version info]-->

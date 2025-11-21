@@ -54,14 +54,17 @@ Rules:
 - Push tags: `git push origin v1.0.0`
 - List tags: `git tag -l`
 
-## Version Metadata File
+## VersionInfo File
 
-`seeai-version.yml` is installed alongside prompt files to track installation metadata.
+`seeai-version.yml` tracks installation metadata for both user and project scopes.
 
 Location:
 
-- Augment/Claude: `{commands_dir}/seeai/seeai-version.yml`
-- Copilot: `{prompts_dir}/seeai-version.yml`
+- User scope:
+  - Augment/Claude: `{commands_dir}/seeai/seeai-version.yml`
+  - Copilot: `{prompts_dir}/seeai-version.yml`
+- Project scope:
+  - `specs/agents/seeai/seeai-version.yml`
 
 Format:
 

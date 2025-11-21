@@ -1,8 +1,8 @@
 # Feature: Configuration
 
-## Why
+## Stories
 
-Users need an easy way to install and manage seeai prompt templates for different agentic tools without manually copying files.
+- As a User I need an easy way to install and manage seeai files in both user and project scopes so that I can keep my environment up to date and consistent.
 
 ## How
 

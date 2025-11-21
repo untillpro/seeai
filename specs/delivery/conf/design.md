@@ -1,8 +1,12 @@
-# SeeAI Configuration Script Design
+# Design: SeeAI Configuration Script
 
 ## Overview
 
 [scripts/seeai.sh](../../../scripts/seeai.sh) - a multi-command installation script for seeai prompt templates that supports multiple agentic tools and installation scopes.
+
+## Principles
+
+- Ask
 
 ## Command Structure
 
@@ -74,7 +78,7 @@ These files are transformed during installation based on the target agent (see "
 - **Augment & Claude**: Files are installed in a `seeai/` subdirectory
   - Example: `seeai/design.md`, `seeai/gherkin.md`
 
-### Workspace
+### Project
 
 - Augment: `./.augment/commands/seeai/`
 - Copilot: `./.github/prompts/` (files: `seeai-design.prompt.md`, etc.)
@@ -114,7 +118,7 @@ If `--agent` is specified:
 
 - Skip Step 1 (agent selection)
 - For copilot: Use default profile, skip profile selection
-- Still ask for installation scope (workspace vs user) unless additional options are added
+- Still ask for installation scope (project vs user) unless additional options are added
 
 ### Step 1: Ask Agent Type
 
@@ -141,19 +145,19 @@ The following files will be installed:
 
 Proceed? (Y/w/n) [Y]:
   Y - Install to user scope
-  w - Switch to workspace scope (will be prompted again)
+  w - Switch to project scope (will be prompted again)
   n - Cancel
 ```
 
 User scope is the default. Options:
 
 - `Y` or Enter: Install to user scope (proceed)
-- `w`: Switch to workspace scope, show new preview, ask Y/n again
+- `w`: Switch to project scope, show new preview, ask Y/n again
 - `n`: Cancel installation
 
-### Step 2a: Workspace Scope (if 'w' selected)
+### Step 2a: Project Scope (if 'w' selected)
 
-If user types 'w', switch to workspace scope and show new preview:
+If user types 'w', switch to project scope and show new preview:
 
 ```text
 Installing from: latest
@@ -185,7 +189,7 @@ See "Installation Locations" section for specific paths.
 
 ### Step 3: Download and Install
 
-After user confirms (either Y for user scope or Y after switching to workspace), create target directory and install files:
+After user confirms (either Y for user scope or Y after switching to project), create target directory and install files:
 
 ```bash
 mkdir -p "$TARGET_DIR"
@@ -334,7 +338,7 @@ Version metadata reading:
 ```text
 Found SeeAI installations:
 
-Workspace (Augment) [v0.1.0, 2025-01-18T14:30:00Z]:
+Project (Augment) [v0.1.0, 2025-01-18T14:30:00Z]:
   ./.augment/commands/seeai/design.md
   ./.augment/commands/seeai/gherkin.md
 

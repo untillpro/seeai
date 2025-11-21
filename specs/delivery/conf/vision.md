@@ -1,0 +1,41 @@
+# Feature: Configuration
+
+## Why
+
+Users need an easy way to install and manage seeai prompt templates for different agentic tools without manually copying files.
+
+## How
+
+- Bash script with install and list commands.
+- Install: Interactive, downloads from GitHub, creates version metadata.
+- List: Shows installed files with version info.
+
+## Requirements
+
+### General
+
+- Distinguish stable vs unstable versions
+- Handle multiple agents with different conventions
+- Project and user scopes
+- Visibility into installed versions
+
+### NLI support
+
+- System installs Triggering Instructions into:
+  - AGENTS.md for auggie, gemini, copilot:
+  - CLAUDE.md for claude
+
+```markdown
+<!-- SEEAI:BEGIN [version info]-->
+# SeeAI Triggering Instructions
+
+- Always open `@/specs/agents/seeai/registrar.md` and follow the instructions there when the request sounds like "let me see a change [change description]"
+- Always open `@/specs/agents/seeai/analyst.md` and follow the instructions there when the request sounds like "let me see an analysis [change reference]"
+- Always open `@/specs/agents/seeai/specifier.md` and follow the instructions there when the request sounds like "let me see an analysis [change reference]"
+
+<!-- SEEAI:END -->
+```  
+
+## What
+
+- scripts/seeai.sh

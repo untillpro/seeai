@@ -8,7 +8,7 @@ FILES=(
 )
 
 # Location definitions - declarative configuration
-declare -A WORKSPACE_BASE_DIRS=(
+declare -A PROJECT_BASE_DIRS=(
   [augment]="./.augment/commands"
   [copilot]="./.github/prompts"
   [claude]="./.claude/commands"
@@ -58,12 +58,12 @@ normalize_path() {
 # Get installation directory
 # copilot doesn't support subfolders, so files go directly in base dir with seeai- prefix
 # Other agents use seeai/ subdirectory
-get_workspace_dir() {
+get_project_dir() {
   local agent=$1
   if [[ $agent == "copilot" ]]; then
-    echo "${WORKSPACE_BASE_DIRS[$agent]}/"
+    echo "${PROJECT_BASE_DIRS[$agent]}/"
   else
-    echo "${WORKSPACE_BASE_DIRS[$agent]}/$SEEAI_SUBDIR/"
+    echo "${PROJECT_BASE_DIRS[$agent]}/$SEEAI_SUBDIR/"
   fi
 }
 
@@ -80,9 +80,9 @@ get_global_dir() {
 get_all_locations() {
   local locations=()
 
-  # Workspace locations - base and seeai subdirectories
+  # Project locations - base and seeai subdirectories
   for agent in augment copilot claude; do
-    local base="${WORKSPACE_BASE_DIRS[$agent]}"
+    local base="${PROJECT_BASE_DIRS[$agent]}"
     locations+=("$base/")
     locations+=("$base/$SEEAI_SUBDIR/")
   done
@@ -219,9 +219,9 @@ list_command() {
       # Determine label
       local label=""
       case "$location" in
-        ./.augment/commands/*) label="Workspace (auggie)" ;;
-        ./.github/prompts/*) label="Workspace (copilot)" ;;
-        ./.claude/commands/*) label="Workspace (claude)" ;;
+        ./.augment/commands/*) label="Project (auggie)" ;;
+        ./.github/prompts/*) label="Project (copilot)" ;;
+        ./.claude/commands/*) label="Project (claude)" ;;
         "$HOME/.augment/commands"*) label="User (auggie)" ;;
         "$HOME/.claude/commands"*) label="User (claude)" ;;
         *) label="User (copilot)" ;;
@@ -421,7 +421,7 @@ install_files() {
   echo
   echo "Proceed? (Y/w/n) [Y]: "
   echo "  Y - Install to user scope"
-  echo "  w - Switch to workspace scope (will be prompted again)"
+  echo "  w - Switch to project scope (will be prompted again)"
   echo "  n - Cancel"
   echo
   read -p "> " -r choice </dev/tty
@@ -435,11 +435,11 @@ install_files() {
       # Continue with user scope (already set)
       ;;
     [Ww])
-      # Switch to workspace scope
-      SCOPE="workspace"
-      TARGET_DIR=$(get_workspace_dir "$AGENT_INTERNAL")
+      # Switch to project scope
+      SCOPE="project"
+      TARGET_DIR=$(get_project_dir "$AGENT_INTERNAL")
 
-      # Show new preview for workspace
+      # Show new preview for project
       show_install_preview
 
       # Simple Y/n confirmation
@@ -560,8 +560,8 @@ install_command() {
   ask_scope
 
   # Set target directory
-  if [[ "$SCOPE" == "workspace" ]]; then
-    TARGET_DIR=$(get_workspace_dir "$AGENT_INTERNAL")
+  if [[ "$SCOPE" == "project" ]]; then
+    TARGET_DIR=$(get_project_dir "$AGENT_INTERNAL")
   else
     TARGET_DIR=$(get_global_dir "$AGENT_INTERNAL")
   fi

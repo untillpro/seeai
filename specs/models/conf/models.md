@@ -29,9 +29,9 @@ files:
 
 ## ProjectConfig
 
-HTML comment markers embedded in Agent Triggering Files that configure project-scoped SeeAI installations with version tracking and triggering instructions.
+HTML comment markers embedded in Agents Config Files that configure project-scoped SeeAI installations with version tracking and triggering instructions.
 
-- Format: HTML comments in Agent Triggering Files
+- Format: HTML comments in Agents Config Files
 - Location:
   - AGENTS.md for auggie, gemini, copilot
   - CLAUDE.md for claude

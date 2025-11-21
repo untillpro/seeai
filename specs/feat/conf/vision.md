@@ -21,8 +21,8 @@ Users need an easy way to install and manage seeai prompt templates for differen
 
 ### NLI support
 
-- System installs Triggering Instructions into:
-  - AGENTS.md for auggie, gemini, copilot:
+- System installs Triggering Instructions into Agents Config Files:
+  - AGENTS.md for auggie, gemini, copilot
   - CLAUDE.md for claude
 
 ```markdown

@@ -16,7 +16,7 @@ References
 
 ## SeeAI Action
 
-A specialized prompt file installed into project scope specs/agents/seaa directory. Actions are invoked implicitly through Natural Language Invocation (NLI) - natural language patterns (e.g., "let me see a design") matched by triggering instructions in Agent Triggering Files (AGENTS.md or CLAUDE.md).
+A specialized prompt file installed into project scope specs/agents/seaa directory. Actions are invoked implicitly through Natural Language Invocation (NLI) - natural language patterns (e.g., "let me see a design") matched by triggering instructions in Agents Config Files (AGENTS.md or CLAUDE.md).
 
 Installation locations:
 
@@ -28,26 +28,26 @@ Note: The same source files become either Commands or Actions depending on insta
 
 ## Natural Language Invocation (NLI)
 
-The capability to invoke SeeAI Actions through natural language patterns instead of explicit command syntax. NLI is enabled by triggering instructions embedded in Agent Triggering Files (AGENTS.md or CLAUDE.md) that match user requests to specific actions.
+The capability to invoke SeeAI Actions through natural language patterns instead of explicit command syntax. NLI is enabled by triggering instructions embedded in Agents Config Files (AGENTS.md or CLAUDE.md) that match user requests to specific actions.
 
 Example flow:
 
 1. User says: "let me see a design for login feature"
-2. AI reads triggering instructions from ATF
+2. AI reads triggering instructions from ACF
 3. Pattern matches "let me see a design"
 4. AI invokes the design action automatically
 5. Action guides AI through the workflow
 
 NLI allows users to interact with SeeAI Actions naturally without memorizing command syntax.
 
-## Agent Triggering File (ATF)
+## Agents Config File (ACF)
 
 A markdown file (AGENTS.md or CLAUDE.md) located in the project root that contains triggering instructions for invoking SeeAI commands through natural language requests.
 
 - AGENTS.md: Used by auggie, gemini, and copilot
 - CLAUDE.md: Used by claude
 
-The ATF contains HTML comment markers that wrap the triggering instructions and version metadata.
+The ACF contains HTML comment markers that wrap the triggering instructions and version metadata.
 
 ## Project Scope
 
@@ -59,7 +59,7 @@ Note: The term "project" is preferred over "workspace" to avoid confusion with V
 
 ## Triggering Instructions
 
-Natural language patterns embedded in Agent Triggering Files (AGENTS.md or CLAUDE.md) that tell AI agents when and how to invoke specific SeeAI commands based on user requests.
+Natural language patterns embedded in Agents Config Files (AGENTS.md or CLAUDE.md) that tell AI agents when and how to invoke specific SeeAI commands based on user requests.
 
 Example:
 

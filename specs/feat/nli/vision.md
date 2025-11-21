@@ -16,10 +16,10 @@ Ok, I prepared a new change in the /changes/251121-new-feature folder
 
 ## How
 
-- Feature is installed per repository using the Agent Triggering File (ATF):
+- Feature is installed per repository using the Agents Config File (ACF):
   - AGENTS.md for auggie, gemini, copilot
   - CLAUDE.md for claude
-- Triggering Instructions are written to ATF
+- Triggering Instructions are written to ACF
 
 ```markdown
 <!-- SEEAI:BEGIN [version info]-->

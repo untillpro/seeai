@@ -1,8 +1,8 @@
 # Model: Configuration Version Tracking
 
-## UserVersion
+## UserConfig
 
-A YAML metadata file that tracks version information for user-scoped SeeAI installations that apply globally across all projects.
+A YAML configuration file that tracks version information for user-scoped SeeAI installations that apply globally across all projects.
 
 - Format: YAML metadata file (`seeai-version.yml`)
 - Location:
@@ -27,9 +27,9 @@ files:
   - gherkin.md
 ```
 
-## ProjectVersion
+## ProjectConfig
 
-HTML comment markers embedded in Agent Triggering Files that track version information for project-scoped SeeAI installations.
+HTML comment markers embedded in Agent Triggering Files that configure project-scoped SeeAI installations with version tracking and triggering instructions.
 
 - Format: HTML comments in Agent Triggering Files
 - Location:

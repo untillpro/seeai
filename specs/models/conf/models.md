@@ -36,21 +36,28 @@ HTML comment markers embedded in Agent Triggering Files that configure project-s
   - AGENTS.md for auggie, gemini, copilot
   - CLAUDE.md for claude
 - Structure:
-  - `<!-- SEEAI:BEGIN [version info]-->` marker with version metadata
+  - `<!-- seeai:version:... -->` - Version identifier
+  - `<!-- seeai:installed_at:... -->` - ISO 8601 timestamp in UTC
+  - `<!-- seeai:source:... -->` - Full GitHub URL
+  - `<!-- seeai:triggering_instructions:begin -->` - Block start marker
   - Triggering instructions content
-  - `<!-- SEEAI:END -->` closing marker
+  - `<!-- seeai:triggering_instructions:end -->` - Block end marker
 - Purpose: Track project-specific installations with version info embedded in triggering instructions
 - Benefit: Version info stays with the configuration that uses it
+- Note: Files list is omitted (can be discovered by scanning installation directory)
 
 Example:
 
 ```markdown
-<!-- SEEAI:BEGIN [version info]-->
+<!-- seeai:version:v0.1.0 -->
+<!-- seeai:installed_at:2025-01-18T14:30:00Z -->
+<!-- seeai:source:https://github.com/untillpro/seeai/releases/tag/v0.1.0 -->
+<!-- seeai:triggering_instructions:begin -->
 # SeeAI Triggering Instructions
 
 - Always open `@/specs/agents/seeai/registrar.md` and follow the instructions there when the request sounds like "let me see a change [change description]"
 - Always open `@/specs/agents/seeai/analyst.md` and follow the instructions there when the request sounds like "let me see an analysis [change reference]"
 - Always open `@/specs/agents/seeai/specifier.md` and follow the instructions there when the request sounds like "let me see an analysis [change reference]"
 
-<!-- SEEAI:END -->
+<!-- seeai:triggering_instructions:end -->
 ```

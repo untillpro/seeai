@@ -1,6 +1,6 @@
 # Feature: Natural Language Invocation
 
-## Why
+## Stories
 
 As a User I want to invoke functions using natural language commands so that I can interact with the system more intuitively.
 

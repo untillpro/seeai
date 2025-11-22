@@ -33,6 +33,7 @@ Each test runs in isolated environment:
 ## Tests
 
 - [test_user_scope_installs.bats](../../../tests/test_user_scope_installs.bats)
+- [test_project_scope_installs.bats](../../../tests/test_project_scope_installs.bats)
 
 ## Test Specifications
 
@@ -55,7 +56,11 @@ Test verifies:
 
 ### Project Scope Installation Tests
 
-Not yet implemented. Should verify:
+Covered by: [test_project_scope_installs.bats](../../../tests/test_project_scope_installs.bats)
+
+Verifies that all 6 files (Commands + Actions) are correctly installed in Project Scope for all agents (auggie, claude, copilot) across different versions (latest, main, specific tags) and modes (remote, local).
+
+Mega test verifies:
 
 - All 6 SeeAI files (Commands + Actions) are installed in Project Scope configuration directories
   - Commands: design.md, gherkin.md
@@ -64,10 +69,17 @@ Not yet implemented. Should verify:
   - Claude: `./.claude/commands/seeai/`
   - Copilot: `./.github/prompts/` (with seeai- prefix and .prompt.md extension)
 - VersionInfo file is created at `specs/agents/seeai/seeai-version.yml` with all 6 files listed
-- Triggering Instructions are correctly generated in ACF (AGENTS.md or CLAUDE.md)
-  - All 6 Actions have correct patterns matching models.md example
-  - Instructions are wrapped in correct HTML comment markers
-  - Existing ACF content is preserved when updating
+- ACF file (AGENTS.md or CLAUDE.md) exists with triggering instructions
+- Actions are NOT installed in user scope (negative assertions)
+
+Separate ACF update tests verify:
+
+- ACF creation when no file exists (auggie, latest, remote)
+- ACF append when file exists without triggering instructions (claude, latest, remote)
+- ACF update when file exists with old triggering instructions (auggie, latest, remote)
+- All 6 action patterns present in triggering instructions block
+- HTML comment markers correctly wrap triggering instructions
+- Existing ACF content is preserved when updating
 
 ## References
 

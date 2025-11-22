@@ -26,7 +26,11 @@ version: v0.1.0
 installed_at: 2025-01-18T14:30:00Z
 source: https://github.com/untillpro/seeai/releases/tag/v0.1.0
 files:
+  - register.md
   - design.md
+  - analyze.md
+  - exec.md
+  - archive.md
   - gherkin.md
 ```
 
@@ -51,9 +55,12 @@ Example:
 <!-- seeai:triggering_instructions:begin -->
 # SeeAI Triggering Instructions
 
-- Always open `@/specs/agents/seeai/registrar.md` and follow the instructions there when the request sounds like "let me see a change [change description]"
-- Always open `@/specs/agents/seeai/analyze.md` and follow the instructions there when the request sounds like "let me see an analysis [change reference]"
-- Always open `@/specs/agents/seeai/specifier.md` and follow the instructions there when the request sounds like "let me see a specification [change reference]"
+- Always load `@/specs/agents/seeai/register.md` and follow the instructions there when the request sounds like "Register a change [change description]"
+- Always load `@/specs/agents/seeai/design.md` and follow the instructions there when the request sounds like "Design a solution for [problem description]"
+- Always load `@/specs/agents/seeai/analyze.md` and follow the instructions there when the request sounds like "Analyze a change"
+- Always load `@/specs/agents/seeai/exec.md` and follow the instructions there when the request sounds like "implement todo items" or "implement specifications"
+- Always load `@/specs/agents/seeai/archive.md` and follow the instructions there when the request sounds like "archive a change [change reference]"
+- Always load `@/specs/agents/seeai/gherkin.md` and follow the instructions there when the request sounds like "Generate Gherkin scenarios for [feature description]"
 
 <!-- seeai:triggering_instructions:end -->
 ```

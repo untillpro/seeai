@@ -34,6 +34,28 @@ Each test runs in isolated environment:
 
 - [test_user_scope_installs.bats](../../../tests/test_user_scope_installs.bats)
 
+## Test Specifications
+
+### User Scope Installation Tests
+
+Covered by: [test_user_scope_installs.bats](../../../tests/test_user_scope_installs.bats)
+
+Verifies that all 6 SeeAI files (register.md, design.md, analyze.md, exec.md, archive.md, gherkin.md) are correctly installed in User Scope for all agents (auggie, claude, copilot) across different versions (latest, main, specific tags) and modes (remote, local).
+
+### Project Scope Installation Tests
+
+Not yet implemented. Should verify:
+
+- All 6 SeeAI files are installed in Project Scope configuration directories
+  - Augment: `./.augment/commands/seeai/`
+  - Claude: `./.claude/commands/seeai/`
+  - Copilot: `./.github/prompts/` (with seeai- prefix and .prompt.md extension)
+- VersionInfo file is created at `specs/agents/seeai/seeai-version.yml`
+- Triggering Instructions are correctly generated in ACF (AGENTS.md or CLAUDE.md)
+  - All 6 ACTIONS have correct patterns matching models.md example
+  - Instructions are wrapped in correct HTML comment markers
+  - Existing ACF content is preserved when updating
+
 ## References
 
 - [BATS Documentation](https://bats-core.readthedocs.io/)

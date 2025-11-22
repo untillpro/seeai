@@ -41,25 +41,35 @@ Create or update `analysis.md` in the change folder with these sections:
 
 ### Specifications to create
 
-List all specification files that you recommend creating:
+List all specification files that you recommend creating with specific things to specify (high-level only):
 
 ```markdown
-- [ ][folder1/filename1](relative/path): Description of the new specification
-- [ ][folder2/filename2](relative/path): Description of the new specification
+- [folder1/filename1](relative/path)
+  - [ ] Specific thing to specify 1
+  - [ ] Specific thing to specify 2
+  - [ ] Specific thing to specify 3
+- [folder2/filename2](relative/path)
+  - [ ] Specific thing to specify 1
+  - [ ] Specific thing to specify 2
 ```
 
 ### Specifications to update
 
-List all specification files that need changes:
+List all specification files that need changes with specific things to update:
 
 ```markdown
-- [ ][folder1/filename1](relative/path): What should be changed
-- [ ][folder2/filename2](relative/path): What should be changed
+- [folder1/filename1](relative/path)
+  - [ ] Specific thing to update 1
+  - [ ] Specific thing to update 2
+  - [ ] Specific thing to update 3
+- [folder2/filename2](relative/path)
+  - [ ] Specific thing to update 1
+  - [ ] Specific thing to update 2
 ```
 
-### Affected files
+### Affected files and tests
 
-List all non-specification files that need changes.
+List all non-specification files that need changes and related tests to run.
 
 Example:
 
@@ -69,6 +79,11 @@ Example:
   - [ ] Update timeout value from 30 to 60 (line 89)
 - move: [src/config.json](../../../src/config.json)
   - [ ] Relocate to [config/app.json](../../../config/app.json)
+- configure: Flutter dependencies
+  - [ ] Related file: [pubspec.yaml](../../../pubspec.yaml)
+  - [ ] Run `flutter pub get` to update dependencies
+- test: Widget tests
+  - [ ] Run `flutter test test/widget_test.dart` to verify widget changes
 ```
 
 Format:
@@ -83,6 +98,12 @@ Format:
   - [ ] Relocate to [new/folder/filename](relative/path)
 - delete: [folder/filename](relative/path)
   - [ ] Reason for deletion
+- configure: Description of configuration task
+  - [ ] Related file: [folder/filename](relative/path)
+  - [ ] Related file: [folder/filename2](relative/path) (if applicable)
+  - [ ] Run command (e.g., `flutter pub get`, `npm install`, `go mod tidy`)
+- test: Description of test suite or verification
+  - [ ] Test command to run (e.g., `flutter test test/widget_test.dart`, `go test -short ./...`)
 ```
 
 Guidelines:
@@ -93,7 +114,10 @@ Guidelines:
 - Respect current file status - skip already-updated content
 - Use sub-items (indented checkboxes) to list specific changes for each file
 - File-level lines do not have checkboxes, only sub-items do
-- If there are tests that are related to the changed files, create a todo item to run these tests only after all files related to these tests are modified
+- If there are tests that are related to the changed files, create a test: item to run these tests only after all files related to these tests are modified
+- If project configuration is needed (dependencies, code generation, etc.), create configure: items in the appropriate order (e.g., before tests that depend on them)
+- Place configure: and test: items at the appropriate point in the sequence to maintain project correctness
+- Always re-analyze if tests should be executed and fit then into the sequence properly
 
 ### Notes
 

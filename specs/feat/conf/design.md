@@ -93,6 +93,8 @@ These files are transformed during installation based on the target agent (see "
 
 ## Installation Locations
 
+See [Installation File Structure Model](../../models/mconf-files/model.md) for detailed directory patterns, file transformations, and version file locations.
+
 ### File Organization Strategy
 
 **Copilot** does not support subfolders in the prompts directory. Therefore:

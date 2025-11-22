@@ -5,7 +5,7 @@
 A YAML configuration file that tracks version information for SeeAI installations in both user and project scopes.
 
 - Format: YAML metadata file (`seeai-version.yml`)
-- Location:
+- Location (see [Installation File Structure](../mconf-files/model.md) for detailed directory patterns):
   - User scope:
     - Augment: `~/.augment/commands/seeai/seeai-version.yml`
     - Claude: `~/.claude/commands/seeai/seeai-version.yml`

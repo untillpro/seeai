@@ -13,6 +13,10 @@ You are analyzing a registered change to identify impact on specifications and g
 - If $ChangeID may not be identified, ask user for clarification and repeat Step 1
 - Load and understand all the change description files from `@/changes/active/$ChangeID`
 
+## Step 1a: Load existing analysis (if any)
+
+- If the `analysis.md` file already exists in the change folder read it carefully and load and understand all specifications mentioned there
+
 ## Step 2: Find related spec files to update
 
 - Extract key concepts from the change (domain entities, actions, technical terms)
@@ -26,14 +30,14 @@ You are analyzing a registered change to identify impact on specifications and g
 - Load and understand the specification structure from `@/specs/project/specs.md`
 - If something in the change is not covered by existing specs, identify what new spec files need to be created
 
-## Step 4: Identify guideline files to update and create
+## Step 4: Identify files to update and create
 
 - Identify any guideline (e.g. README.md) files that need updated/created based on the change
 - CRITICAL: These files should be in `@/specs/**` folders
 
 ## Step 5: Generate analysis report
 
-Create `analysis.md` in the change folder with these sections:
+Create or update `analysis.md` in the change folder with these sections:
 
 ### Specifications to create
 
@@ -53,20 +57,26 @@ List all specification files that need changes:
 - [ ][folder2/filename2](relative/path): What should be changed
 ```
 
-### Guidelines to create
+### Affected files
 
-List all guideline files that need creation:
-
-```markdown
-- [ ][folder1/filename1](relative/path): Description of the new guideline
-- [ ][folder2/filename2](relative/path): Description of the new guideline
-```
-
-### Guidelines to update
-
-List all guideline files that need changes:
+List all non-specification files that need changes.
 
 ```markdown
-- [ ][folder1/filename1](relative/path): What should be changed
-- [ ][folder2/filename2](relative/path): What should be changed
+- [ ] CREATE: [folder/filename](relative/path): Description of new file
+- [ ] UPDATE: [folder/filename](relative/path): What should be changed
+- [ ] MOVE: [folder/filename](relative/path) -> [new/path]: Reason for move
+- [ ] DELETE: [folder/filename](relative/path): Reason for deletion
 ```
+
+Guidelines:
+
+- Files should be ordered to minimize impact on project correctness, ideally allowing one-by-one modifications without breaking the project
+- Group logically related files if it does nit affect correctness
+- Update guidelines and README files last
+- Respect current file status - skip already-updated content
+
+### Notes
+
+Provide any additional context or notes about the change that may help implementers understand the impact. 3-5 sentences max.
+
+CRITICAL: Do not create other sections beyond those specified above.

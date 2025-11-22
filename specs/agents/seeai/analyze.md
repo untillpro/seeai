@@ -35,6 +35,8 @@ Example:
 3. Answer3 - rationale
 ```
 
+Answers must be integrated to the Change file, preserve original formatting, style, be concise.
+
 ## Step 1b: Load existing analysis (if any) and the specifications
 
 - If the `analysis.md` file already exists in the change folder read it carefully and load and understand all specifications mentioned there

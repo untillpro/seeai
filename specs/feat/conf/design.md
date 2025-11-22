@@ -28,7 +28,7 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent auggie --scope user
 curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent claude --scope project
 
-# Install from local ../src folder (for development)
+# Install from local ../specs/agents/seeai folder (for development)
 ./scripts/seeai.sh install -l --agent claude
 
 # List installed files
@@ -50,7 +50,7 @@ Version (for install):
   v0.1.0            - Specific version tag
 
 Options (for install):
-  -l                - Use local files from ../src folder (relative to script path, for development)
+  -l                - Use local files from ../specs/agents/seeai folder (relative to script path, for development)
   --agent <name>    - Specify agent (auggie, claude, copilot) - skips interactive prompt
                       For copilot, uses default profile
   --scope <scope>   - Specify installation scope (user, project) - skips interactive scope prompt
@@ -69,7 +69,7 @@ Examples:
 
 ## Source Files
 
-Source files are stored in the `src/` directory with simple names:
+Source files are stored in the `specs/agents/seeai/` directory with simple names:
 
 - `design.md` - Software Engineering Design prompt
 - `gherkin.md` - Gherkin/BDD prompt
@@ -120,7 +120,7 @@ The list command searches for files using current installation patterns only:
 
 Parse options before starting interactive flow:
 
-- `-l` flag: Use local files from `../src` folder
+- `-l` flag: Use local files from `../specs/agents/seeai` folder
 - `--agent <name>`: Pre-select agent (auggie, claude, copilot)
 - `--scope <scope>`: Pre-select installation scope (user, project)
 
@@ -224,10 +224,10 @@ Creating seeai-version.yml... OK
 Installation complete!
 ```
 
-If `-l` flag is used, show "local (../src)" as source and "Copying" instead of "Downloading":
+If `-l` flag is used, show "local (../specs/agents/seeai)" as source and "Copying" instead of "Downloading":
 
 ```text
-Installing from: local (../src)
+Installing from: local (../specs/agents/seeai)
 Target: /home/user/myproject/.augment/commands/seeai/
 
 The following files will be installed:
@@ -508,12 +508,12 @@ fi
 
 ### File Download
 
-Files are downloaded from the `src` folder in the repository.
+Files are downloaded from the `specs/agents/seeai` folder in the repository.
 
 For remote installation (default):
 
 ```bash
-BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/src"
+BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/specs/agents/seeai"
 
 FILES=(
   "design.md"
@@ -529,7 +529,7 @@ For local installation (`-l` flag):
 
 ```bash
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SRC_DIR="$SCRIPT_DIR/../src"
+SRC_DIR="$SCRIPT_DIR/../specs/agents/seeai"
 
 FILES=(
   "design.md"

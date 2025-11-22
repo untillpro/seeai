@@ -6,8 +6,8 @@ None. The existing specification structure already supports agent specifications
 
 ## Specifications to update
 
-- [ ] [specs/project/dev.md](../../../specs/project/dev.md): Update Project Structure section to reflect new location of prompt files (design.md and gherkin.md should be under specs/agents/seeai instead of src)
-- [ ] [specs/feat/conf/design.md](../../../specs/feat/conf/design.md): Update Source Files section and File Download section to reflect new location (specs/agents/seeai instead of src directory)
+- [x] [specs/project/dev.md](../../../specs/project/dev.md): Update Project Structure section to reflect new location of prompt files (design.md and gherkin.md should be under specs/agents/seeai instead of src)
+- [x] [specs/feat/conf/design.md](../../../specs/feat/conf/design.md): Update Source Files section and File Download section to reflect new location (specs/agents/seeai instead of src directory)
 
 ## Affected files
 

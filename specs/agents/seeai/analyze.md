@@ -106,6 +106,8 @@ Example:
 - configure: Flutter dependencies
   - [ ] Related file: [pubspec.yaml](../../../pubspec.yaml)
   - [ ] Run `flutter pub get` to update dependencies
+- update: [.gitignore](../../../.gitignore)
+  - [ ] Add Flutter-specific patterns: `*.g.dart`, `*.freezed.dart`, `build/`, `.dart_tool/`
 - test: Widget tests
   - [ ] Run `flutter test test/widget_test.dart` to verify widget changes
 ```
@@ -142,6 +144,7 @@ Guidelines:
 - If project configuration is needed (dependencies, code generation, etc.), create configure: items in the appropriate order (e.g., before tests that depend on them)
 - Place configure: and test: items at the appropriate point in the sequence to maintain project correctness
 - Always re-analyze if tests should be executed and fit then into the sequence properly
+- If project-level configuration changes are detected, include an "update: .gitignore" item with technology-specific patterns to prevent committing generated or temporary files (detection criteria: configure: items for dependencies, new project directories like .augment/, .claude/, .github/, or framework-specific configuration files). Examples: Flutter project - add `*.g.dart`, `*.freezed.dart`, `build/`, `.dart_tool/`; Go project - add `*.exe`, `*.test`, `vendor/`, `bin/`
 
 ### Notes
 

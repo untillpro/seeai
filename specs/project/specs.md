@@ -38,3 +38,28 @@ Do NOT create specs for:
 - Temporary or one-off changes
 - Bug fixes that don't change contracts or models
 - Internal refactoring that doesn't affect architecture or contracts
+
+Example
+
+```markdown
+## Specifications to create
+
+- [specs/integrations/mcp/vision.md](../../../specs/integrations/mcp/vision.md)
+  - [ ] Define the purpose and benefits of MCP server integration
+  - [ ] Describe the extension architecture and tool-based approach
+  - [ ] Explain how Actions will interact with the MCP server
+- [specs/integrations/mcp/integration.md](../../../specs/integrations/mcp/integration.md)
+  - [ ] Specify MCP protocol version and transport mechanisms (stdio/HTTP)
+  - [ ] Define extension discovery protocol and tool listing format
+  - [ ] Specify extension invocation protocol and response handling
+  - [ ] Define error handling and fallback mechanisms
+  - [ ] Specify configuration format for MCP server connection
+- [specs/models/mcp-config/vision.md](../../../specs/models/mcp-config/vision.md)
+  - [ ] Define the need for MCP server configuration tracking
+  - [ ] Describe configuration scope (user vs project)
+- [specs/models/mcp-config/model.md](../../../specs/models/mcp-config/model.md)
+  - [ ] Specify MCP server configuration file format
+  - [ ] Define connection parameters (transport type, endpoint, authentication)
+  - [ ] Specify extension registry format
+  - [ ] Define configuration file locations for user and project scopes
+```

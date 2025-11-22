@@ -11,7 +11,7 @@
   - integrations: Specifications for integrations with external systems
     - vision.md, integration.md
   - models: Specifications related to data models, see below
-    - vision.md, model.md
+    - vision.md, models.md
   - project: Project-level specifications that must be followed across the codebase
 
 ## Models

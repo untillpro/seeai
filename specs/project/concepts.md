@@ -16,15 +16,15 @@ References
 
 ## SeeAI Action
 
-A specialized prompt file installed into project scope specs/agents/seaa directory. Actions are invoked implicitly through Natural Language Invocation (NLI) - natural language patterns (e.g., "let me see a design") matched by triggering instructions in Agents Config Files (AGENTS.md or CLAUDE.md).
+A specialized prompt file stored in project scope at specs/agents/seeai/ directory. Actions are invoked implicitly through Natural Language Invocation (NLI) - natural language patterns (e.g., "let me see a design") matched by triggering instructions in Agents Config Files (AGENTS.md or CLAUDE.md).
 
-Installation locations:
+Source location:
 
-- `./.augment/commands/seeai/`
-- `./.claude/commands/seeai/`
-- `./.github/prompts/seeai-*.prompt.md`
+- `specs/agents/seeai/` - Single source of truth for all Actions in project scope
 
-Note: The same source files become either Commands or Actions depending on installation scope.
+Actions are referenced directly from specs/agents/seeai/ by AI agents via triggering instructions. Unlike Commands, Actions are not copied to agent-specific directories in project scope.
+
+Note: The same source files become either Commands or Actions depending on installation scope. In user scope, files are copied to agent-specific directories. In project scope, files remain in specs/agents/seeai/.
 
 ## SeeAI Spec
 
@@ -65,9 +65,11 @@ The ACF contains HTML comment markers that wrap the triggering instructions.
 
 ## Project Scope
 
-Installation scope that applies to a single project folder. Files are installed in project-specific configuration directories (e.g., `.augment/`, `.github/`, `.claude/` within the project folder).
+Installation scope that applies to a single project folder. In project scope, SeeAI Actions and Specs are stored in specs/agents/seeai/ directory and referenced directly by AI agents through triggering instructions in Agents Config Files (AGENTS.md or CLAUDE.md).
 
-Contrast with User Scope, which applies globally across all projects for a user.
+Agent-specific directories (.augment/, .github/, .claude/) are only used in user scope installations where files are copied to user home directories. In project scope, these directories are not used.
+
+Contrast with User Scope, which applies globally across all projects for a user and copies files to agent-specific directories.
 
 Note: The term "project" is preferred over "workspace" to avoid confusion with VS Code's multi-root workspace concept, where a workspace can contain multiple project folders linked together.
 
@@ -96,7 +98,9 @@ Format: `seeai-version.yml`
 Locations:
 
 - User scope: `~/.augment/commands/seeai/`, `~/.claude/commands/seeai/`, `{prompts_dir}/`
-- Project scope: `specs/agents/seeai/`
+- Project scope: `specs/agents/seeai/` (single location for all agents)
+
+In project scope, the version file is created only in specs/agents/seeai/ directory, not in agent-specific directories, since files are not copied to those locations.
 
 Example:
 

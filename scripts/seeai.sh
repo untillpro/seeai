@@ -102,18 +102,14 @@ get_global_dir() {
   fi
 }
 
-# Get all search locations for list command (base dirs + seeai subdirs)
+# Get all search locations for list command
 get_all_locations() {
   local locations=()
 
-  # Project locations - base and seeai subdirectories
-  for agent in augment copilot claude; do
-    local base="${PROJECT_BASE_DIRS[$agent]}"
-    locations+=("$base/")
-    locations+=("$base/$SEEAI_SUBDIR/")
-  done
+  # Project scope: Check specs/agents/seeai/ (single source location for all agents)
+  locations+=("specs/agents/seeai/")
 
-  # Global locations - base and seeai subdirectories
+  # User scope: Global locations - base and seeai subdirectories
   for agent in augment claude; do
     local base="${GLOBAL_BASE_DIRS[$agent]}"
     locations+=("$base/")
@@ -306,29 +302,38 @@ list_command() {
     fi
 
     local files=()
+    local label=""
+    local scope=""
 
-    if [[ "$location" == *"/prompts/"* ]]; then
+    # Determine scope and label based on location
+    if [[ "$location" == "specs/agents/seeai/" ]]; then
+      # Project scope: single source location for all agents
+      label="Project (all agents)"
+      scope="project"
+      # Find all .md files in specs/agents/seeai/ (excluding subdirectories for now)
+      mapfile -t files < <(find "$location" -maxdepth 1 -type f -name "*.md" 2>/dev/null || true)
+      # Also add files from specs subdirectory
+      mapfile -t spec_files < <(find "$location/specs" -type f -name "*.md" 2>/dev/null || true)
+      files+=("${spec_files[@]}")
+    elif [[ "$location" == *"/prompts/"* ]]; then
       # copilot locations: search for seeai-*.prompt.md
       mapfile -t files < <(find "$location" -maxdepth 1 -type f -name "seeai-*.prompt.md" 2>/dev/null || true)
+      case "$location" in
+        "$HOME"*) label="User (copilot)"; scope="user" ;;
+        *) label="User (copilot)"; scope="user" ;;
+      esac
     else
       # Augment/Claude locations: search in seeai/ subfolder
       mapfile -t files < <(find "$location" -maxdepth 1 -type f -name "*.md" -path "*/seeai/*.md" 2>/dev/null || true)
+      case "$location" in
+        "$HOME/.augment/commands"*) label="User (auggie)"; scope="user" ;;
+        "$HOME/.claude/commands"*) label="User (claude)"; scope="user" ;;
+        *) continue ;;
+      esac
     fi
 
     if [[ ${#files[@]} -gt 0 ]]; then
       found_any=true
-
-      # Determine label and scope
-      local label=""
-      local scope=""
-      case "$location" in
-        ./.augment/commands/*) label="Project (auggie)"; scope="project" ;;
-        ./.github/prompts/*) label="Project (copilot)"; scope="project" ;;
-        ./.claude/commands/*) label="Project (claude)"; scope="project" ;;
-        "$HOME/.augment/commands"*) label="User (auggie)"; scope="user" ;;
-        "$HOME/.claude/commands"*) label="User (claude)"; scope="user" ;;
-        *) label="User (copilot)"; scope="user" ;;
-      esac
 
       # Read VersionInfo
       local metadata_file
@@ -487,17 +492,6 @@ show_install_preview() {
     source_label="$VERSION"
   fi
 
-  # Convert to absolute path without creating directories
-  local abs_target_dir
-  if [[ "$TARGET_DIR" != /* && "$TARGET_DIR" != [A-Za-z]:/* ]]; then
-    # Relative path: prepend current directory
-    abs_target_dir="$(pwd)/$TARGET_DIR"
-  else
-    # Already absolute
-    abs_target_dir="$TARGET_DIR"
-  fi
-  abs_target_dir=$(normalize_path "$abs_target_dir")
-
   # Determine which files to show based on scope
   local preview_files=()
   if [[ "$SCOPE" == "user" ]]; then
@@ -508,18 +502,45 @@ show_install_preview() {
 
   echo
   echo "Installing from: $source_label"
-  echo "Target: $abs_target_dir"
-  echo
-  echo "The following files will be installed:"
 
-  for file in "${preview_files[@]}"; do
-    local target_file="$file"
-    if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
-      # copilot: add seeai- prefix and change extension to .prompt.md
-      target_file="seeai-${file%.md}.prompt.md"
+  if [[ "$SCOPE" == "project" ]]; then
+    # Project scope: Files remain in specs/agents/seeai/
+    echo "Source location: specs/agents/seeai/"
+    echo
+    echo "The following files are available in specs/agents/seeai/:"
+    for file in "${preview_files[@]}"; do
+      echo "  specs/agents/seeai/$file"
+    done
+    echo
+    echo "Installation will:"
+    echo "  - Create seeai-version.yml in specs/agents/seeai/"
+    echo "  - Update triggering instructions in AGENTS.md or CLAUDE.md"
+  else
+    # User scope: Files will be copied to target directory
+    # Convert to absolute path without creating directories
+    local abs_target_dir
+    if [[ "$TARGET_DIR" != /* && "$TARGET_DIR" != [A-Za-z]:/* ]]; then
+      # Relative path: prepend current directory
+      abs_target_dir="$(pwd)/$TARGET_DIR"
+    else
+      # Already absolute
+      abs_target_dir="$TARGET_DIR"
     fi
-    echo "  $abs_target_dir$target_file"
-  done
+    abs_target_dir=$(normalize_path "$abs_target_dir")
+
+    echo "Target: $abs_target_dir"
+    echo
+    echo "The following files will be installed:"
+
+    for file in "${preview_files[@]}"; do
+      local target_file="$file"
+      if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
+        # copilot: add seeai- prefix and change extension to .prompt.md
+        target_file="seeai-${file%.md}.prompt.md"
+      fi
+      echo "  $abs_target_dir$target_file"
+    done
+  fi
   echo
 }
 
@@ -584,77 +605,83 @@ install_files() {
     esac
   fi
 
-  # Create target directory
-  mkdir -p "$TARGET_DIR"
-
   # Determine which files to install based on scope
   local files_to_install=()
   if [[ "$SCOPE" == "user" ]]; then
     # User scope: Install only Commands
     files_to_install=("${COMMAND_FILES[@]}")
   else
-    # Project scope: Install all files (Commands + Actions)
+    # Project scope: All files (Commands + Actions + Specs) for version tracking
     files_to_install=("${ALL_FILES[@]}")
   fi
 
-  # Install files
-  if [[ "$LOCAL_MODE" == true ]]; then
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    SRC_DIR="$SCRIPT_DIR/../specs/agents/seeai"
+  # Install files (user scope only)
+  # Project scope: Files remain in specs/agents/seeai/, no copying needed
+  if [[ "$SCOPE" == "user" ]]; then
+    # Create target directory
+    mkdir -p "$TARGET_DIR"
 
-    for file in "${files_to_install[@]}"; do
-      local target_file="$file"
-      if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
-        # copilot: add seeai- prefix and change extension to .prompt.md
-        # For files in subdirectories, flatten the path
-        local base_name="${file##*/}"
-        local dir_name="${file%/*}"
-        if [[ "$dir_name" != "$file" ]]; then
-          # File is in subdirectory, use directory name as part of prefix
-          target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
-        else
-          target_file="seeai-${file%.md}.prompt.md"
+    if [[ "$LOCAL_MODE" == true ]]; then
+      SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+      SRC_DIR="$SCRIPT_DIR/../specs/agents/seeai"
+
+      for file in "${files_to_install[@]}"; do
+        local target_file="$file"
+        if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
+          # copilot: add seeai- prefix and change extension to .prompt.md
+          # For files in subdirectories, flatten the path
+          local base_name="${file##*/}"
+          local dir_name="${file%/*}"
+          if [[ "$dir_name" != "$file" ]]; then
+            # File is in subdirectory, use directory name as part of prefix
+            target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
+          else
+            target_file="seeai-${file%.md}.prompt.md"
+          fi
         fi
-      fi
 
-      # Create subdirectory if needed
-      local target_dir_path="$(dirname "$TARGET_DIR/$target_file")"
-      if [[ "$target_dir_path" != "$TARGET_DIR" ]]; then
-        mkdir -p "$target_dir_path"
-      fi
+        # Create subdirectory if needed
+        local target_dir_path="$(dirname "$TARGET_DIR/$target_file")"
+        if [[ "$target_dir_path" != "$TARGET_DIR" ]]; then
+          mkdir -p "$target_dir_path"
+        fi
 
-      echo -n "Copying $file... "
-      cp "$SRC_DIR/$file" "$TARGET_DIR/$target_file"
-      echo "OK"
-    done
+        echo -n "Copying $file... "
+        cp "$SRC_DIR/$file" "$TARGET_DIR/$target_file"
+        echo "OK"
+      done
+    else
+      BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/specs/agents/seeai"
+
+      for file in "${files_to_install[@]}"; do
+        local target_file="$file"
+        if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
+          # copilot: add seeai- prefix and change extension to .prompt.md
+          # For files in subdirectories, flatten the path
+          local base_name="${file##*/}"
+          local dir_name="${file%/*}"
+          if [[ "$dir_name" != "$file" ]]; then
+            # File is in subdirectory, use directory name as part of prefix
+            target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
+          else
+            target_file="seeai-${file%.md}.prompt.md"
+          fi
+        fi
+
+        # Create subdirectory if needed
+        local target_dir_path="$(dirname "$TARGET_DIR/$target_file")"
+        if [[ "$target_dir_path" != "$TARGET_DIR" ]]; then
+          mkdir -p "$target_dir_path"
+        fi
+
+        echo -n "Downloading $file... "
+        curl -fsSL "${BASE_URL}/${file}" -o "$TARGET_DIR/$target_file"
+        echo "OK"
+      done
+    fi
   else
-    BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/specs/agents/seeai"
-
-    for file in "${files_to_install[@]}"; do
-      local target_file="$file"
-      if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
-        # copilot: add seeai- prefix and change extension to .prompt.md
-        # For files in subdirectories, flatten the path
-        local base_name="${file##*/}"
-        local dir_name="${file%/*}"
-        if [[ "$dir_name" != "$file" ]]; then
-          # File is in subdirectory, use directory name as part of prefix
-          target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
-        else
-          target_file="seeai-${file%.md}.prompt.md"
-        fi
-      fi
-
-      # Create subdirectory if needed
-      local target_dir_path="$(dirname "$TARGET_DIR/$target_file")"
-      if [[ "$target_dir_path" != "$TARGET_DIR" ]]; then
-        mkdir -p "$target_dir_path"
-      fi
-
-      echo -n "Downloading $file... "
-      curl -fsSL "${BASE_URL}/${file}" -o "$TARGET_DIR/$target_file"
-      echo "OK"
-    done
+    # Project scope: Files already exist in specs/agents/seeai/, skip copying
+    echo "Using existing files in specs/agents/seeai/"
   fi
 
   # Create VersionInfo file

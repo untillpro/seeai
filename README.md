@@ -19,8 +19,8 @@ Run the command below for your preferred AI agent and installation scope.
 
 Installation scopes:
 
-- User scope: Installs to your home directory, available across all projects
-- Project scope: Installs to current project directory, only available in this project
+- User scope: Copies Commands (design.md, gherkin.md) to your home directory, available across all projects
+- Project scope: Uses Actions and Specs from specs/agents/seeai/ directory, available only in this project. Actions are invoked through Natural Language Invocation via triggering instructions in AGENTS.md or CLAUDE.md
 
 <details>
 <summary>auggie</summary>

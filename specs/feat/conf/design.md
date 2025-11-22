@@ -95,6 +95,14 @@ These files are transformed during installation based on the target agent (see "
 
 See [Installation File Structure Model](../../models/mconf-files/model.md) for detailed directory patterns, file transformations, and version file locations.
 
+### Source Directory
+
+In project scope, all Actions and Specs are stored in:
+
+- `specs/agents/seeai/` - Single source of truth for all Actions and Specs
+
+Actions are referenced directly from this location via triggering instructions in Agents Config Files (AGENTS.md or CLAUDE.md). In project scope, files are NOT copied to agent-specific directories - they remain in specs/agents/seeai/. Only the seeai-version.yml file is created in specs/agents/seeai/ to track installation metadata.
+
 ### File Organization Strategy
 
 **Copilot** does not support subfolders in the prompts directory. Therefore:
@@ -106,13 +114,11 @@ See [Installation File Structure Model](../../models/mconf-files/model.md) for d
   - Example: `seeai/design.md`, `seeai/gherkin.md`
   - Specs are installed in subdirectory: `seeai/specs/specs.md`
 
-### Project
+Note: This organization applies to user scope installations only. In project scope, files remain in specs/agents/seeai/.
 
-- Augment: `./.augment/commands/seeai/` (specs: `./.augment/commands/seeai/specs/specs.md`)
-- Copilot: `./.github/prompts/` (files: `seeai-design.prompt.md`, specs: `seeai-specs-specs.prompt.md`)
-- Claude: `./.claude/commands/seeai/` (specs: `./.claude/commands/seeai/specs/specs.md`)
+### User Scope Target Directories
 
-### User
+For user scope installations, files are copied from specs/agents/seeai/ to:
 
 - Augment: `~/.augment/commands/seeai/`
 - Copilot: Default profile or specific profile (user selects during installation)

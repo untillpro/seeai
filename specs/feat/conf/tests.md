@@ -58,18 +58,20 @@ Test verifies:
 
 Covered by: [test_project_scope_installs.bats](../../../tests/test_project_scope_installs.bats)
 
-Verifies that all 6 files (Commands + Actions) are correctly installed in Project Scope for all agents (auggie, claude, copilot) across different versions (latest, main, specific tags) and modes (remote, local).
+Verifies that project scope installations store all Actions and Specs in specs/agents/seeai/ directory and do NOT copy files to agent-specific directories.
 
 Mega test verifies:
 
-- All 6 SeeAI files (Commands + Actions) are installed in Project Scope configuration directories
+- All SeeAI files (Commands + Actions + Specs) remain in source directory specs/agents/seeai/
   - Commands: design.md, gherkin.md
   - Actions: register.md, analyze.md, implement.md, archive.md
-  - Augment: `./.augment/commands/seeai/`
-  - Claude: `./.claude/commands/seeai/`
-  - Copilot: `./.github/prompts/` (with seeai- prefix and .prompt.md extension)
-- VersionInfo file is created at `specs/agents/seeai/seeai-version.yml` with all 6 files listed
-- ACF file (AGENTS.md or CLAUDE.md) exists with triggering instructions
+  - Specs: specs/specs.md
+- Files are NOT copied to agent-specific directories in project scope:
+  - NOT in `./.augment/commands/seeai/`
+  - NOT in `./.claude/commands/seeai/`
+  - NOT in `./.github/prompts/`
+- VersionInfo file is created at `specs/agents/seeai/seeai-version.yml` with all files listed
+- ACF file (AGENTS.md or CLAUDE.md) exists with triggering instructions that reference specs/agents/seeai/
 - Actions are NOT installed in user scope (negative assertions)
 
 Separate ACF update tests verify:

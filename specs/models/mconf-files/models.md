@@ -2,35 +2,31 @@
 
 ## Directory Structure Patterns
 
-### Project Scope
+### Source Location
+
+In project scope, all Actions and Specs are stored in a single source location:
 
 ```text
-Project Scope (Augment, Claude):
-.{augment|claude}/commands/seeai/
+Source Directory (All Agents):
+specs/agents/seeai/
 ├── design.md
 ├── gherkin.md
 ├── register.md
 ├── analyze.md
 ├── implement.md
 ├── archive.md
-└── specs/
-    └── specs.md
-
-Project Scope (Copilot):
-.github/prompts/
-├── seeai-design.prompt.md
-├── seeai-gherkin.prompt.md
-├── seeai-register.prompt.md
-├── seeai-analyze.prompt.md
-├── seeai-implement.prompt.md
-├── seeai-archive.prompt.md
-└── seeai-specs-specs.prompt.md
+├── specs/
+│   └── specs.md
+└── seeai-version.yml
 ```
 
-### User Scope
+Actions are referenced directly from this location via triggering instructions in Agents Config Files (AGENTS.md or CLAUDE.md). Files are not copied to agent-specific directories in project scope.
+
+### User Scope Target Directories
+
+For user scope installations, files are copied from specs/agents/seeai/ to agent-specific directories in user home:
 
 ```text
-
 User Scope (Augment, Claude):
 ~/.{augment|claude}/commands/seeai/
 ├── design.md
@@ -42,11 +38,9 @@ User Scope (Copilot):
 ├── seeai-design.prompt.md
 ├── seeai-gherkin.prompt.md
 └── seeai-version.yml
-
-Project Scope Version File (All Agents):
-specs/agents/seeai/
-└── seeai-version.yml
 ```
+
+Note: User scope installs only Commands (design.md, gherkin.md), not Actions or Specs.
 
 ## Variable Definitions
 

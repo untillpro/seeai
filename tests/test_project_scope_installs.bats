@@ -103,13 +103,13 @@ get_expected_version() {
           continue
         fi
 
-        # Get target directory (project scope)
+        # Project scope: Verify files are NOT copied to agent-specific directories
         local target_dir
         target_dir=$(get_project_scope_dir "$agent")
 
-        # Validate directory exists
-        if [[ ! -d "$target_dir" ]]; then
-          echo "FAILED: Directory does not exist: $target_dir"
+        # Verify agent-specific directory does NOT exist (files should not be copied there)
+        if [[ -d "$target_dir" ]]; then
+          echo "FAILED: Agent-specific directory should not exist in project scope: $target_dir"
           continue
         fi
 
@@ -138,13 +138,12 @@ get_expected_version() {
           fi
         fi
 
-        # Check all 7 files exist (Commands + Actions + Specs)
+        # Check all 7 files exist in specs/agents/seeai/ (Commands + Actions + Specs)
         local files_ok=true
-        local agent_files
-        agent_files=$(get_all_agent_files "$agent")
-        for file in $agent_files; do
-          if [[ ! -f "$target_dir/$file" ]]; then
-            echo "FAILED: Missing file $file"
+        local source_files="design.md gherkin.md register.md analyze.md implement.md archive.md specs/specs.md"
+        for file in $source_files; do
+          if [[ ! -f "specs/agents/seeai/$file" ]]; then
+            echo "FAILED: Missing file in specs/agents/seeai/$file"
             files_ok=false
             break
           fi
@@ -154,29 +153,10 @@ get_expected_version() {
           continue
         fi
 
-        # Verify specs directory exists for auggie/claude
-        if [[ "$agent" != "copilot" ]]; then
-          if [[ ! -d "$target_dir/specs" ]]; then
-            echo "FAILED: specs directory not created"
-            files_ok=false
-            continue
-          fi
-        fi
-
-        # Check Actions-only files do NOT exist in user scope
-        local user_dir
-        user_dir=$(get_user_scope_dir "$agent")
-        local action_files
-        action_files=$(get_action_files "$agent")
-        for file in $action_files; do
-          if [[ -f "$user_dir/$file" ]]; then
-            echo "FAILED: Action-only file $file should not be in user scope"
-            files_ok=false
-            break
-          fi
-        done
-
-        if [[ "$files_ok" == "false" ]]; then
+        # Verify specs directory exists in specs/agents/seeai/
+        if [[ ! -d "specs/agents/seeai/specs" ]]; then
+          echo "FAILED: specs directory not found in specs/agents/seeai/"
+          files_ok=false
           continue
         fi
 

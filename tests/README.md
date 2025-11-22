@@ -28,5 +28,5 @@ bats tests/test_user_scope_installs.bats -f "user scope"
   - `tags.json`: Mock GitHub tags response
   - `tags_empty.json`: Empty tags for error testing
   - `commits_main.json`: Mock commit info response
-  - `src/design.md`: Mock source file
-  - `src/gherkin.md`: Mock source file
+  - `specs/agents/seeai/design.md`: Mock source file
+  - `specs/agents/seeai/gherkin.md`: Mock source file

@@ -27,6 +27,7 @@ A markdown file path containing todo items in the format:
 - Parse todo items marked with `- [ ]` from the specified section or entire file
 - Identify task hierarchy (main tasks and sub-tasks)
 - Create internal task list for tracking
+- Report to the user what you are going to process
 
 ### Step 2: Process todo items
 

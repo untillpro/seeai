@@ -12,23 +12,23 @@ None. The existing specification structure already supports agent specifications
 ## Affected files
 
 - move: [src/design.md](../../../src/design.md)
-  - [ ] Relocate to [specs/agents/seeai/design.md](../../../specs/agents/seeai/design.md)
+  - [x] Relocate to [specs/agents/seeai/design.md](../../../specs/agents/seeai/design.md)
 - move: [src/gherkin.md](../../../src/gherkin.md)
-  - [ ] Relocate to [specs/agents/seeai/gherkin.md](../../../specs/agents/seeai/gherkin.md)
+  - [x] Relocate to [specs/agents/seeai/gherkin.md](../../../specs/agents/seeai/gherkin.md)
 - update: [scripts/seeai.sh](../../../scripts/seeai.sh)
-  - [ ] Update SRC_DIR path from `$SCRIPT_DIR/../src` to `$SCRIPT_DIR/../specs/agents/seeai` (line 555)
-  - [ ] Update BASE_URL from `https://raw.githubusercontent.com/untillpro/seeai/${REF}/src` to `https://raw.githubusercontent.com/untillpro/seeai/${REF}/specs/agents/seeai` (line 569)
+  - [x] Update SRC_DIR path from `$SCRIPT_DIR/../src` to `$SCRIPT_DIR/../specs/agents/seeai` (line 555)
+  - [x] Update BASE_URL from `https://raw.githubusercontent.com/untillpro/seeai/${REF}/src` to `https://raw.githubusercontent.com/untillpro/seeai/${REF}/specs/agents/seeai` (line 569)
 - move: [tests/fixtures/src/design.md](../../../tests/fixtures/src/design.md)
-  - [ ] Relocate to [tests/fixtures/specs/agents/seeai/design.md](../../../tests/fixtures/specs/agents/seeai/design.md)
+  - [x] Relocate to [tests/fixtures/specs/agents/seeai/design.md](../../../tests/fixtures/specs/agents/seeai/design.md)
 - move: [tests/fixtures/src/gherkin.md](../../../tests/fixtures/src/gherkin.md)
-  - [ ] Relocate to [tests/fixtures/specs/agents/seeai/gherkin.md](../../../tests/fixtures/specs/agents/seeai/gherkin.md)
+  - [x] Relocate to [tests/fixtures/specs/agents/seeai/gherkin.md](../../../tests/fixtures/specs/agents/seeai/gherkin.md)
 - update: [tests/mocks/curl](../../../tests/mocks/curl)
-  - [ ] Update URL pattern matching from `/src/` to `/specs/agents/seeai/` (line 66)
-  - [ ] Update fixture path from `$fixtures_dir/src/$filename` to `$fixtures_dir/specs/agents/seeai/$filename` (line 68, 70, 72)
+  - [x] Update URL pattern matching from `/src/` to `/specs/agents/seeai/` (line 66)
+  - [x] Update fixture path from `$fixtures_dir/src/$filename` to `$fixtures_dir/specs/agents/seeai/$filename` (line 68, 70, 72)
 - update: [tests/README.md](../../../tests/README.md)
-  - [ ] Update fixture documentation from `src/design.md` and `src/gherkin.md` to `specs/agents/seeai/design.md` and `specs/agents/seeai/gherkin.md`
+  - [x] Update fixture documentation from `src/design.md` and `src/gherkin.md` to `specs/agents/seeai/design.md` and `specs/agents/seeai/gherkin.md`
 - update: [docs/devguide.md](../../../docs/devguide.md)
-  - [ ] Update comment from `../src` to `../specs/agents/seeai` (line 7)
+  - [x] Update comment from `../src` to `../specs/agents/seeai` (line 7)
 
 ## Notes
 

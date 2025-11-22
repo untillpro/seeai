@@ -552,7 +552,7 @@ install_files() {
   # Install files
   if [[ "$LOCAL_MODE" == true ]]; then
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    SRC_DIR="$SCRIPT_DIR/../src"
+    SRC_DIR="$SCRIPT_DIR/../specs/agents/seeai"
 
     for file in "${FILES[@]}"; do
       local target_file="$file"
@@ -566,7 +566,7 @@ install_files() {
       echo "OK"
     done
   else
-    BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/src"
+    BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/specs/agents/seeai"
 
     for file in "${FILES[@]}"; do
       local target_file="$file"

@@ -3,8 +3,8 @@
 ## Testing Installation Script Locally
 
 ```bash
-# To test the installation script with local files from the src folder:
-# The `-l` flag uses local files from `../src` (relative to script path) instead of downloading from GitHub.
+# To test the installation script with local files from the specs/agents/seeai folder:
+# The `-l` flag uses local files from `../specs/agents/seeai` (relative to script path) instead of downloading from GitHub.
 ./scripts/seeai.sh install -l --agent <auggie|claude|copilot>
 
 

@@ -6,7 +6,7 @@ You are analyzing a registered change to identify impact on specifications and g
 
 - If not specified otherwise, use sentence capitalization for all headings and lists
 - Load and understand all specs from the `@/specs/project` folder, strictly follow all rules that are contained there
-- Uppercase terms from `@/project/concepts*.md` files everywhere, use terms consistently where applicable
+- Use title case for terms from `@/project/concepts*.md` files everywhere (e.g., "Command", "Action", "Natural Language Invocation"), use terms consistently where applicable
 
 ## Step 1: Identify the Change
 

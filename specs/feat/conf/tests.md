@@ -40,19 +40,32 @@ Each test runs in isolated environment:
 
 Covered by: [test_user_scope_installs.bats](../../../tests/test_user_scope_installs.bats)
 
-Verifies that all 6 SeeAI files (register.md, design.md, analyze.md, implement.md, archive.md, gherkin.md) are correctly installed in User Scope for all agents (auggie, claude, copilot) across different versions (latest, main, specific tags) and modes (remote, local).
+Verifies that only Commands (design.md, gherkin.md) are correctly installed in User Scope for all agents (auggie, claude, copilot) across different versions (latest, main, specific tags) and modes (remote, local).
+
+Commands vs Actions distinction:
+
+- Commands (design.md, gherkin.md): Installed in user scope, can be invoked explicitly via command syntax
+- Actions (register.md, analyze.md, implement.md, archive.md): NOT installed in user scope, require Triggering Instructions which only exist in project scope
+
+Test verifies:
+
+- Only design.md and gherkin.md are installed in user scope
+- Actions-only files (register.md, analyze.md, implement.md, archive.md) are NOT present in user scope
+- VersionInfo file is created with only Commands listed
 
 ### Project Scope Installation Tests
 
 Not yet implemented. Should verify:
 
-- All 6 SeeAI files are installed in Project Scope configuration directories
+- All 6 SeeAI files (Commands + Actions) are installed in Project Scope configuration directories
+  - Commands: design.md, gherkin.md
+  - Actions: register.md, analyze.md, implement.md, archive.md
   - Augment: `./.augment/commands/seeai/`
   - Claude: `./.claude/commands/seeai/`
   - Copilot: `./.github/prompts/` (with seeai- prefix and .prompt.md extension)
-- VersionInfo file is created at `specs/agents/seeai/seeai-version.yml`
+- VersionInfo file is created at `specs/agents/seeai/seeai-version.yml` with all 6 files listed
 - Triggering Instructions are correctly generated in ACF (AGENTS.md or CLAUDE.md)
-  - All 6 ACTIONS have correct patterns matching models.md example
+  - All 6 Actions have correct patterns matching models.md example
   - Instructions are wrapped in correct HTML comment markers
   - Existing ACF content is preserved when updating
 

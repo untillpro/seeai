@@ -7,9 +7,9 @@ None - all necessary specifications already exist.
 ## Specifications to update
 
 - [specs/feat/conf/tests.md](../../../specs/feat/conf/tests.md)
-  - [ ] Add test specification for Commands vs Actions distinction
-  - [ ] Document that user scope tests should verify only Commands (design.md, gherkin.md) are installed
-  - [ ] Document that project scope tests should verify all 6 files (Commands + Actions) are installed
+  - [x] Add test specification for Commands vs Actions distinction
+  - [x] Document that user scope tests should verify only Commands (design.md, gherkin.md) are installed
+  - [x] Document that project scope tests should verify all 6 files (Commands + Actions) are installed
 
 ## Affected files and tests
 

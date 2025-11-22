@@ -108,3 +108,28 @@ or
 ![desktop](examples/explorer/desktop.png)
 
 </details>
+
+## Development
+
+### Running Tests
+
+The project includes comprehensive tests for the installation script using BATS (Bash Automated Testing System).
+
+Install BATS:
+```bash
+# macOS
+brew install bats-core
+
+# Ubuntu/Debian
+sudo apt-get install bats
+
+# Windows (Git Bash)
+npm install -g bats
+```
+
+Run tests:
+```bash
+bats tests/test_remote_user_agent.bats
+```
+
+See [tests/README.md](tests/README.md) for more details.

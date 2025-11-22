@@ -121,6 +121,22 @@ get_github_commit_hash() {
   fi
 }
 
+# Get latest tag from GitHub API
+get_latest_tag() {
+  local api_url="https://api.github.com/repos/untillpro/seeai/tags"
+
+  # Try to fetch tags from GitHub API
+  local response
+  response=$(curl -fsSL "$api_url" 2>/dev/null)
+
+  if [[ $? -eq 0 && -n "$response" ]]; then
+    # Extract first tag name from JSON array
+    echo "$response" | grep -o '"name": *"[^"]*"' | head -1 | sed 's/"name": *"\([^"]*\)"/\1/'
+  else
+    echo ""
+  fi
+}
+
 # Create VersionInfo file
 create_version_info() {
   local scope="$1"  # "user" or "project"
@@ -420,8 +436,7 @@ resolve_version() {
   if [[ $VERSION == "main" ]]; then
     REF="main"
   elif [[ $VERSION == "latest" ]]; then
-    REF=$(git ls-remote --tags --refs --sort='v:refname' \
-      https://github.com/untillpro/seeai.git | tail -n1 | sed 's/.*\///')
+    REF=$(get_latest_tag)
     # Fail if no tags found
     if [[ -z "$REF" ]]; then
       echo "Error: No releases found. Use 'bash -s install main' to install from the main branch."

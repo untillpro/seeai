@@ -1,0 +1,24 @@
+{
+  "sha": "a20d9e2f1234567890abcdef1234567890abcdef",
+  "node_id": "C_kwDOExample",
+  "commit": {
+    "author": {
+      "name": "Test Author",
+      "email": "test@example.com",
+      "date": "2025-11-22T12:00:00Z"
+    },
+    "committer": {
+      "name": "Test Author",
+      "email": "test@example.com",
+      "date": "2025-11-22T12:00:00Z"
+    },
+    "message": "Test commit",
+    "tree": {
+      "sha": "tree123",
+      "url": "https://api.github.com/repos/untillpro/seeai/git/trees/tree123"
+    }
+  },
+  "url": "https://api.github.com/repos/untillpro/seeai/commits/a20d9e2f1234567890abcdef1234567890abcdef",
+  "html_url": "https://github.com/untillpro/seeai/commit/a20d9e2f1234567890abcdef1234567890abcdef"
+}
+

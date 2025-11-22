@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Mock curl for testing
+# Returns fixture data based on URL
+
+# Parse arguments to find URL
+url=""
+for arg in "$@"; do
+  if [[ "$arg" =~ ^https?:// ]]; then
+    url="$arg"
+    break
+  fi
+done
+
+# Determine fixtures directory
+if [[ -n "$FIXTURES_DIR" ]]; then
+  fixtures_dir="$FIXTURES_DIR"
+else
+  # Default to relative path from mocks directory
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  fixtures_dir="$script_dir/../fixtures"
+fi
+
+# Return appropriate fixture based on URL
+if [[ "$url" == *"api.github.com/repos/untillpro/seeai/tags"* ]]; then
+  # Check if we should return empty tags (for error testing)
+  if [[ "$MOCK_EMPTY_TAGS" == "true" ]]; then
+    cat "$fixtures_dir/tags_empty.json"
+  else
+    cat "$fixtures_dir/tags.json"
+  fi
+  exit 0
+
+elif [[ "$url" == *"api.github.com/repos/untillpro/seeai/commits/main"* ]]; then
+  cat "$fixtures_dir/commits_main.json"
+  exit 0
+
+elif [[ "$url" == *"raw.githubusercontent.com/untillpro/seeai"* ]]; then
+  # Extract filename from URL
+  # URL format: https://raw.githubusercontent.com/untillpro/seeai/{ref}/src/{filename}
+  if [[ "$url" =~ /src/([^/]+)$ ]]; then
+    filename="${BASH_REMATCH[1]}"
+    if [[ -f "$fixtures_dir/src/$filename" ]]; then
+      cat "$fixtures_dir/src/$filename"
+      exit 0
+    fi
+  fi
+  echo "Mock curl: File not found in fixtures" >&2
+  exit 1
+
+else
+  echo "Mock curl: Unknown URL: $url" >&2
+  exit 1
+fi
+

@@ -87,7 +87,7 @@ Example:
 <!-- seeai:triggering_instructions:end -->
 ```
 
-## VersionInfo
+## seeai-version.yml
 
 A YAML configuration file that tracks version information for SeeAI installations in both user and project scopes.
 

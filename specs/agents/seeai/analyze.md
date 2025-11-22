@@ -62,7 +62,8 @@ After receiving answers from Step 1a:
 
 ## Step 3: Identify spec files to create
 
-- Load and understand the specification structure from `@/specs/project/specs.md`
+- Load and understand the specification structure and creation criteria from `@/specs/project/specs.md`
+- Apply the criteria to determine what new spec files need to be created based on the change
 - If something in the change is not covered by existing specs, identify what new spec files need to be created
 
 ## Step 4: Identify files to update and create

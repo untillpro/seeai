@@ -14,7 +14,28 @@ You are analyzing a registered change to identify impact on specifications and g
 - If $ChangeID may not be identified, ask user for clarification and repeat Step 1
 - Load and understand all the change description files from `@/changes/active/$ChangeID`
 
-## Step 1a: Load existing analysis (if any)
+## Step 1a: Ask clarifying questions (if analysis.md does not exist)
+
+If the `analysis.md` file does not exist in the change folder, ask the user three clarifying questions to better understand the change.
+
+Keep questions and solutions extremely concise, ask about unclear requirements or ambiguous specifications.
+
+Format for suggestions:
+
+- Present suggestions as numbered lists
+- First option should be the recommended approach with rationale
+
+Example:
+
+```markdown
+## Q1: Question?
+
+1. Answer1 (recommended) - rationale
+2. Answer2 - rationale
+3. Answer3 - rationale
+```
+
+## Step 1b: Load existing analysis (if any) and the specifications
 
 - If the `analysis.md` file already exists in the change folder read it carefully and load and understand all specifications mentioned there
 

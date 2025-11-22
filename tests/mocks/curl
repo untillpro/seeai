@@ -2,13 +2,17 @@
 # Mock curl for testing
 # Returns fixture data based on URL
 
-# Parse arguments to find URL
+# Parse arguments to find URL and output file
 url=""
+output_file=""
+prev_arg=""
 for arg in "$@"; do
   if [[ "$arg" =~ ^https?:// ]]; then
     url="$arg"
-    break
+  elif [[ "$prev_arg" == "-o" ]]; then
+    output_file="$arg"
   fi
+  prev_arg="$arg"
 done
 
 # Determine fixtures directory
@@ -20,18 +24,40 @@ else
   fixtures_dir="$script_dir/../fixtures"
 fi
 
+# Helper function to output content (to file or stdout)
+output_content() {
+  local content="$1"
+  if [[ -n "$output_file" ]]; then
+    echo "$content" > "$output_file"
+  else
+    echo "$content"
+  fi
+}
+
 # Return appropriate fixture based on URL
 if [[ "$url" == *"api.github.com/repos/untillpro/seeai/tags"* ]]; then
   # Check if we should return empty tags (for error testing)
   if [[ "$MOCK_EMPTY_TAGS" == "true" ]]; then
-    cat "$fixtures_dir/tags_empty.json"
+    if [[ -n "$output_file" ]]; then
+      cat "$fixtures_dir/tags_empty.json" > "$output_file"
+    else
+      cat "$fixtures_dir/tags_empty.json"
+    fi
   else
-    cat "$fixtures_dir/tags.json"
+    if [[ -n "$output_file" ]]; then
+      cat "$fixtures_dir/tags.json" > "$output_file"
+    else
+      cat "$fixtures_dir/tags.json"
+    fi
   fi
   exit 0
 
 elif [[ "$url" == *"api.github.com/repos/untillpro/seeai/commits/main"* ]]; then
-  cat "$fixtures_dir/commits_main.json"
+  if [[ -n "$output_file" ]]; then
+    cat "$fixtures_dir/commits_main.json" > "$output_file"
+  else
+    cat "$fixtures_dir/commits_main.json"
+  fi
   exit 0
 
 elif [[ "$url" == *"raw.githubusercontent.com/untillpro/seeai"* ]]; then
@@ -40,7 +66,11 @@ elif [[ "$url" == *"raw.githubusercontent.com/untillpro/seeai"* ]]; then
   if [[ "$url" =~ /src/([^/]+)$ ]]; then
     filename="${BASH_REMATCH[1]}"
     if [[ -f "$fixtures_dir/src/$filename" ]]; then
-      cat "$fixtures_dir/src/$filename"
+      if [[ -n "$output_file" ]]; then
+        cat "$fixtures_dir/src/$filename" > "$output_file"
+      else
+        cat "$fixtures_dir/src/$filename"
+      fi
       exit 0
     fi
   fi

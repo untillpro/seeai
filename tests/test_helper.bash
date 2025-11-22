@@ -5,22 +5,21 @@
 setup_mock_env() {
   # Set fixtures directory
   export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures"
-  
+
   # Add mocks to PATH
   export PATH="$BATS_TEST_DIRNAME/mocks:$PATH"
-  
+
   # Create temporary test directory
-  export TEST_TEMP_DIR="$(mktemp -d)"
-  
+  TEST_TEMP_DIR="$(mktemp -d)"
+  export TEST_TEMP_DIR
+
   # Set HOME to temp directory for user scope tests
   export HOME="$TEST_TEMP_DIR/home"
   mkdir -p "$HOME"
-  
-  # For Windows, also set APPDATA
-  if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
-    export APPDATA="$TEST_TEMP_DIR/appdata"
-    mkdir -p "$APPDATA"
-  fi
+
+  # Always set APPDATA for testing (needed for copilot on Windows)
+  export APPDATA="$TEST_TEMP_DIR/appdata"
+  mkdir -p "$APPDATA"
 }
 
 # Cleanup mock environment
@@ -33,21 +32,68 @@ cleanup_mock_env() {
 # Get user scope directory for agent
 get_user_scope_dir() {
   local agent="$1"
-  
+
+  # Map external agent names to internal names
+  local agent_internal
   case "$agent" in
-    augment|claude)
-      if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
-        echo "$APPDATA/Claude/commands/seeai"
-      else
-        echo "$HOME/.claude/commands/seeai"
-      fi
+    auggie) agent_internal="augment" ;;
+    claude) agent_internal="claude" ;;
+    copilot) agent_internal="copilot" ;;
+    *) agent_internal="$agent" ;;
+  esac
+
+  case "$agent_internal" in
+    augment)
+      echo "$HOME/.augment/commands/seeai"
+      ;;
+    claude)
+      echo "$HOME/.claude/commands/seeai"
       ;;
     copilot)
-      if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
-        echo "$APPDATA/GitHub Copilot/prompts"
-      else
-        echo "$HOME/.github-copilot/prompts"
-      fi
+      case "$(uname -s)" in
+        MINGW*|MSYS*|CYGWIN*)
+          echo "$APPDATA/Code/User/prompts/"
+          ;;
+        Darwin*)
+          echo "$HOME/Library/Application Support/Code/User/prompts/"
+          ;;
+        Linux*)
+          echo "$HOME/.config/Code/User/prompts/"
+          ;;
+        *)
+          echo "$HOME/.config/Code/User/prompts/"
+          ;;
+      esac
+      ;;
+    *)
+      echo "Unknown agent: $agent" >&2
+      return 1
+      ;;
+  esac
+}
+
+# Get project scope directory for agent
+get_project_scope_dir() {
+  local agent="$1"
+
+  # Map external agent names to internal names
+  local agent_internal
+  case "$agent" in
+    auggie) agent_internal="augment" ;;
+    claude) agent_internal="claude" ;;
+    copilot) agent_internal="copilot" ;;
+    *) agent_internal="$agent" ;;
+  esac
+
+  case "$agent_internal" in
+    augment)
+      echo "./.augment/commands/seeai"
+      ;;
+    claude)
+      echo "./.claude/commands/seeai"
+      ;;
+    copilot)
+      echo "./.github/prompts"
       ;;
     *)
       echo "Unknown agent: $agent" >&2

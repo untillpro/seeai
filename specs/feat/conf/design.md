@@ -83,7 +83,11 @@ Actions (installed in project scope only):
 - `implement.md` - Implement specifications action
 - `archive.md` - Archive a change action
 
-Commands can be invoked explicitly via command syntax (e.g., `/seeai:design @file.md`) and work in both user and project scope. Actions require Triggering Instructions in Agents Config Files (AGENTS.md or CLAUDE.md) which only exist in project scope, enabling Natural Language Invocation.
+Specs (installed in project scope only):
+
+- `specs/specs.md` - Specification structure and creation criteria template
+
+Commands can be invoked explicitly via command syntax (e.g., `/seeai:design @file.md`) and work in both user and project scope. Actions require Triggering Instructions in Agents Config Files (AGENTS.md or CLAUDE.md) which only exist in project scope, enabling Natural Language Invocation. Specs are internal templates used by Actions to maintain consistency.
 
 These files are transformed during installation based on the target agent (see "File Organization Strategy" below).
 
@@ -95,14 +99,16 @@ These files are transformed during installation based on the target agent (see "
 
 - **Copilot**: Files are installed directly in the prompts directory with a `seeai-` prefix
   - Example: `seeai-design.prompt.md`, `seeai-gherkin.prompt.md`
+  - Specs are installed flat: `seeai-specs.prompt.md`
 - **Augment & Claude**: Files are installed in a `seeai/` subdirectory
   - Example: `seeai/design.md`, `seeai/gherkin.md`
+  - Specs are installed in subdirectory: `seeai/specs/specs.md`
 
 ### Project
 
-- Augment: `./.augment/commands/seeai/`
-- Copilot: `./.github/prompts/` (files: `seeai-design.prompt.md`, etc.)
-- Claude: `./.claude/commands/seeai/`
+- Augment: `./.augment/commands/seeai/` (specs: `./.augment/commands/seeai/specs/specs.md`)
+- Copilot: `./.github/prompts/` (files: `seeai-design.prompt.md`, specs: `seeai-specs.prompt.md`)
+- Claude: `./.claude/commands/seeai/` (specs: `./.claude/commands/seeai/specs/specs.md`)
 
 ### User
 

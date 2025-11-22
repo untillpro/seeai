@@ -24,16 +24,16 @@ teardown() {
   cleanup_mock_env
 }
 
-# Helper function to get all files for agent (Commands + Actions)
-# Project scope: All 6 files
+# Helper function to get all files for agent (Commands + Actions + Specs)
+# Project scope: All 7 files
 get_all_agent_files() {
   local agent="$1"
   case "$agent" in
     auggie|claude)
-      echo "design.md gherkin.md register.md analyze.md implement.md archive.md"
+      echo "design.md gherkin.md register.md analyze.md implement.md archive.md specs/specs.md"
       ;;
     copilot)
-      echo "seeai-design.prompt.md seeai-gherkin.prompt.md seeai-register.prompt.md seeai-analyze.prompt.md seeai-implement.prompt.md seeai-archive.prompt.md"
+      echo "seeai-design.prompt.md seeai-gherkin.prompt.md seeai-register.prompt.md seeai-analyze.prompt.md seeai-implement.prompt.md seeai-archive.prompt.md seeai-specs-specs.prompt.md"
       ;;
   esac
 }
@@ -138,7 +138,7 @@ get_expected_version() {
           fi
         fi
 
-        # Check all 6 files exist (Commands + Actions)
+        # Check all 7 files exist (Commands + Actions + Specs)
         local files_ok=true
         local agent_files
         agent_files=$(get_all_agent_files "$agent")
@@ -152,6 +152,15 @@ get_expected_version() {
 
         if [[ "$files_ok" == "false" ]]; then
           continue
+        fi
+
+        # Verify specs directory exists for auggie/claude
+        if [[ "$agent" != "copilot" ]]; then
+          if [[ ! -d "$target_dir/specs" ]]; then
+            echo "FAILED: specs directory not created"
+            files_ok=false
+            continue
+          fi
         fi
 
         # Check Actions-only files do NOT exist in user scope

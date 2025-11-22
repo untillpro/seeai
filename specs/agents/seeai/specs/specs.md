@@ -63,3 +63,4 @@ Example
   - [ ] Specify extension registry format
   - [ ] Define configuration file locations for user and project scopes
 ```
+

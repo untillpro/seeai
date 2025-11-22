@@ -61,15 +61,16 @@ elif [[ "$url" == *"api.github.com/repos/untillpro/seeai/commits/main"* ]]; then
   exit 0
 
 elif [[ "$url" == *"raw.githubusercontent.com/untillpro/seeai"* ]]; then
-  # Extract filename from URL
-  # URL format: https://raw.githubusercontent.com/untillpro/seeai/{ref}/specs/agents/seeai/{filename}
-  if [[ "$url" =~ /specs/agents/seeai/([^/]+)$ ]]; then
-    filename="${BASH_REMATCH[1]}"
-    if [[ -f "$fixtures_dir/specs/agents/seeai/$filename" ]]; then
+  # Extract file path from URL
+  # URL format: https://raw.githubusercontent.com/untillpro/seeai/{ref}/specs/agents/seeai/{filepath}
+  # filepath can be a simple filename or include subdirectories like specs/specs.md
+  if [[ "$url" =~ /specs/agents/seeai/(.+)$ ]]; then
+    filepath="${BASH_REMATCH[1]}"
+    if [[ -f "$fixtures_dir/specs/agents/seeai/$filepath" ]]; then
       if [[ -n "$output_file" ]]; then
-        cat "$fixtures_dir/specs/agents/seeai/$filename" > "$output_file"
+        cat "$fixtures_dir/specs/agents/seeai/$filepath" > "$output_file"
       else
-        cat "$fixtures_dir/specs/agents/seeai/$filename"
+        cat "$fixtures_dir/specs/agents/seeai/$filepath"
       fi
       exit 0
     fi

@@ -16,6 +16,11 @@ ACTION_FILES=(
   "archive.md"
 )
 
+# Specs: Internal templates used by Actions, work only in project scope
+SPEC_FILES=(
+  "specs/specs.md"
+)
+
 # All files (for project scope and version info)
 ALL_FILES=(
   "register.md"
@@ -24,6 +29,7 @@ ALL_FILES=(
   "implement.md"
   "archive.md"
   "gherkin.md"
+  "specs/specs.md"
 )
 
 # Location definitions - declarative configuration
@@ -600,7 +606,21 @@ install_files() {
       local target_file="$file"
       if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
         # copilot: add seeai- prefix and change extension to .prompt.md
-        target_file="seeai-${file%.md}.prompt.md"
+        # For files in subdirectories, flatten the path
+        local base_name="${file##*/}"
+        local dir_name="${file%/*}"
+        if [[ "$dir_name" != "$file" ]]; then
+          # File is in subdirectory, use directory name as part of prefix
+          target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
+        else
+          target_file="seeai-${file%.md}.prompt.md"
+        fi
+      fi
+
+      # Create subdirectory if needed
+      local target_dir_path="$(dirname "$TARGET_DIR/$target_file")"
+      if [[ "$target_dir_path" != "$TARGET_DIR" ]]; then
+        mkdir -p "$target_dir_path"
       fi
 
       echo -n "Copying $file... "
@@ -614,7 +634,21 @@ install_files() {
       local target_file="$file"
       if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
         # copilot: add seeai- prefix and change extension to .prompt.md
-        target_file="seeai-${file%.md}.prompt.md"
+        # For files in subdirectories, flatten the path
+        local base_name="${file##*/}"
+        local dir_name="${file%/*}"
+        if [[ "$dir_name" != "$file" ]]; then
+          # File is in subdirectory, use directory name as part of prefix
+          target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
+        else
+          target_file="seeai-${file%.md}.prompt.md"
+        fi
+      fi
+
+      # Create subdirectory if needed
+      local target_dir_path="$(dirname "$TARGET_DIR/$target_file")"
+      if [[ "$target_dir_path" != "$TARGET_DIR" ]]; then
+        mkdir -p "$target_dir_path"
       fi
 
       echo -n "Downloading $file... "

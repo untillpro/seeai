@@ -26,6 +26,20 @@ Installation locations:
 
 Note: The same source files become either Commands or Actions depending on installation scope.
 
+## SeeAI Spec
+
+A reusable specification template stored in `/specs/agents/seeai/specs/` that defines common patterns and structures used by SeeAI Actions. SeeAI Specs are internal templates that guide Actions in creating consistent specifications across different workflows.
+
+Key characteristics:
+
+- Stored in `/specs/agents/seeai/specs/` directory
+- Referenced by Actions using relative paths (e.g., `@/specs/agents/seeai/specs/specs.md`)
+- Distributed only to project scope via seeai.sh installation script
+- Not versioned separately - they evolve with Actions
+- Not user-facing configuration - internal templates for Actions
+
+Example: `specs.md` defines the specification structure and criteria for when to create new specifications, which is used by the analyze action to guide specification creation.
+
 ## Natural Language Invocation (NLI)
 
 The capability to invoke SeeAI Actions through natural language patterns instead of explicit command syntax. NLI is enabled by triggering instructions embedded in Agents Config Files (AGENTS.md or CLAUDE.md) that match user requests to specific actions.

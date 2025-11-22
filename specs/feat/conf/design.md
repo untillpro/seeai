@@ -71,12 +71,19 @@ Examples:
 
 Source files are stored in the `specs/agents/seeai/` directory with simple names:
 
-- `register.md` - Register a change action
+Commands (installed in both user and project scope):
+
 - `design.md` - Software Engineering Design prompt
+- `gherkin.md` - Gherkin/BDD prompt
+
+Actions (installed in project scope only):
+
+- `register.md` - Register a change action
 - `analyze.md` - Analyze a change action
 - `implement.md` - Implement specifications action
 - `archive.md` - Archive a change action
-- `gherkin.md` - Gherkin/BDD prompt
+
+Commands can be invoked explicitly via command syntax (e.g., `/seeai:design @file.md`) and work in both user and project scope. Actions require Triggering Instructions in Agents Config Files (AGENTS.md or CLAUDE.md) which only exist in project scope, enabling Natural Language Invocation.
 
 These files are transformed during installation based on the target agent (see "File Organization Strategy" below).
 

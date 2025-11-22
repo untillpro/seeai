@@ -1,8 +1,23 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# File list - update when adding/removing templates
-FILES=(
+# File lists - update when adding/removing templates
+# Commands: Can be invoked explicitly, work in both user and project scope
+COMMAND_FILES=(
+  "design.md"
+  "gherkin.md"
+)
+
+# Actions: Require Triggering Instructions, work only in project scope
+ACTION_FILES=(
+  "register.md"
+  "analyze.md"
+  "implement.md"
+  "archive.md"
+)
+
+# All files (for project scope and version info)
+ALL_FILES=(
   "register.md"
   "design.md"
   "analyze.md"
@@ -145,6 +160,8 @@ get_latest_tag() {
 create_version_info() {
   local scope="$1"  # "user" or "project"
   local target_dir="$2"
+  shift 2
+  local files_list=("$@")  # Remaining arguments are the file list
   local version_string
   local source_url
   local branch_name
@@ -194,7 +211,7 @@ files:
 EOF
 
   # Add file list
-  for file in "${FILES[@]}"; do
+  for file in "${files_list[@]}"; do
     echo "  - $file" >> "$version_info_file"
   done
 }
@@ -475,13 +492,21 @@ show_install_preview() {
   fi
   abs_target_dir=$(normalize_path "$abs_target_dir")
 
+  # Determine which files to show based on scope
+  local preview_files=()
+  if [[ "$SCOPE" == "user" ]]; then
+    preview_files=("${COMMAND_FILES[@]}")
+  else
+    preview_files=("${ALL_FILES[@]}")
+  fi
+
   echo
   echo "Installing from: $source_label"
   echo "Target: $abs_target_dir"
   echo
   echo "The following files will be installed:"
 
-  for file in "${FILES[@]}"; do
+  for file in "${preview_files[@]}"; do
     local target_file="$file"
     if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
       # copilot: add seeai- prefix and change extension to .prompt.md
@@ -556,12 +581,22 @@ install_files() {
   # Create target directory
   mkdir -p "$TARGET_DIR"
 
+  # Determine which files to install based on scope
+  local files_to_install=()
+  if [[ "$SCOPE" == "user" ]]; then
+    # User scope: Install only Commands
+    files_to_install=("${COMMAND_FILES[@]}")
+  else
+    # Project scope: Install all files (Commands + Actions)
+    files_to_install=("${ALL_FILES[@]}")
+  fi
+
   # Install files
   if [[ "$LOCAL_MODE" == true ]]; then
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     SRC_DIR="$SCRIPT_DIR/../specs/agents/seeai"
 
-    for file in "${FILES[@]}"; do
+    for file in "${files_to_install[@]}"; do
       local target_file="$file"
       if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
         # copilot: add seeai- prefix and change extension to .prompt.md
@@ -575,7 +610,7 @@ install_files() {
   else
     BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/specs/agents/seeai"
 
-    for file in "${FILES[@]}"; do
+    for file in "${files_to_install[@]}"; do
       local target_file="$file"
       if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
         # copilot: add seeai- prefix and change extension to .prompt.md
@@ -590,7 +625,7 @@ install_files() {
 
   # Create VersionInfo file
   echo -n "Creating seeai-version.yml... "
-  create_version_info "$SCOPE" "$TARGET_DIR"
+  create_version_info "$SCOPE" "$TARGET_DIR" "${files_to_install[@]}"
   echo "OK"
 
   # Install triggering instructions (project scope only)

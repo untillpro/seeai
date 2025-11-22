@@ -11,14 +11,28 @@ teardown() {
 }
 
 # Helper function to get expected files for agent
+# User scope: Only Commands (design.md, gherkin.md)
 get_agent_files() {
   local agent="$1"
   case "$agent" in
     auggie|claude)
-      echo "register.md design.md analyze.md implement.md archive.md gherkin.md"
+      echo "design.md gherkin.md"
       ;;
     copilot)
-      echo "seeai-register.prompt.md seeai-design.prompt.md seeai-analyze.prompt.md seeai-implement.prompt.md seeai-archive.prompt.md seeai-gherkin.prompt.md"
+      echo "seeai-design.prompt.md seeai-gherkin.prompt.md"
+      ;;
+  esac
+}
+
+# Helper function to get Actions-only files (should NOT be in user scope)
+get_action_files() {
+  local agent="$1"
+  case "$agent" in
+    auggie|claude)
+      echo "register.md analyze.md implement.md archive.md"
+      ;;
+    copilot)
+      echo "seeai-register.prompt.md seeai-analyze.prompt.md seeai-implement.prompt.md seeai-archive.prompt.md"
       ;;
   esac
 }
@@ -110,13 +124,28 @@ get_expected_version() {
           fi
         fi
 
-        # Check expected files exist
+        # Check expected files exist (Commands only)
         local files_ok=true
         local agent_files
         agent_files=$(get_agent_files "$agent")
         for file in $agent_files; do
           if [[ ! -f "$target_dir/$file" ]]; then
-            echo "FAILED: Missing file $file"
+            echo "FAILED: Missing Command file $file"
+            files_ok=false
+            break
+          fi
+        done
+
+        if [[ "$files_ok" == "false" ]]; then
+          continue
+        fi
+
+        # Check Actions-only files do NOT exist in user scope
+        local action_files
+        action_files=$(get_action_files "$agent")
+        for file in $action_files; do
+          if [[ -f "$target_dir/$file" ]]; then
+            echo "FAILED: Action-only file $file should not be in user scope"
             files_ok=false
             break
           fi

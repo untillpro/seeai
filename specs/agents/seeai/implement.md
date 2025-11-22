@@ -69,6 +69,15 @@ After processing all items:
 - List any tasks that need user input
 - Suggest testing if code changes were made
 
+## Content Rules
+
+### Do not add unsolicited content
+
+- NEVER add sections, summaries, or documentation that are not explicitly requested in the task
+- NEVER create "Implementation Summary" or similar sections unless the task specifically asks for it
+- Only make changes that are directly required by the task description
+- If you think additional documentation would be helpful, ask the user first
+
 ## Safety Rules
 
 ### Never execute generated code

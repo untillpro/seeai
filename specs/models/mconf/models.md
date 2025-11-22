@@ -19,7 +19,18 @@ A YAML configuration file that tracks version information for SeeAI installation
   - `files`: List of installed base filenames
 - Purpose: Track installation metadata for version management, upgrades, and troubleshooting
 
-Example:
+Example for user scope (Commands only):
+
+```yaml
+version: v0.1.0
+installed_at: 2025-01-18T14:30:00Z
+source: https://github.com/untillpro/seeai/releases/tag/v0.1.0
+files:
+  - design.md
+  - gherkin.md
+```
+
+Example for project scope (Commands + Actions):
 
 ```yaml
 version: v0.1.0

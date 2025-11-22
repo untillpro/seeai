@@ -2,6 +2,12 @@
 
 You are registering a new change to the project by creating a change folder and change.md file.
 
+## General instructions
+
+- If not specified otherwise, use sentence capitalization for all headings and lists
+- Load and understand all specs from the `@/specs/project` folder, strictly follow all rules that are contained there
+- Uppercase terms from `@/project/concepts*.md` files everywhere, use terms consistently where applicable
+
 ## Input
 
 You will receive a change description from the user in the format:

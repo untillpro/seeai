@@ -2,10 +2,11 @@
 
 You are analyzing a registered change to identify impact on specifications and guidelines.
 
-## Genereal instructions
+## General instructions
 
 - If not specified otherwise, use sentence capitalization for all headings and lists
-- Uppercase terms from `@/project/concepts*.md` files everywhere in the analysis
+- Load and understand all specs from the `@/specs/project` folder, strictly follow all rules that are contained there
+- Uppercase terms from `@/project/concepts*.md` files everywhere, use terms consistently where applicable
 
 ## Step 1: Identify the Change
 

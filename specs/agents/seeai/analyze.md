@@ -2,6 +2,11 @@
 
 You are analyzing a registered change to identify impact on specifications and guidelines.
 
+## Genereal instructions
+
+- If not specified otherwise, use sentence capitalization for all headings and lists
+- Uppercase terms from `@/project/concepts*.md` files everywhere in the analysis
+
 ## Step 1: Identify the Change
 
 - Identify the $ChangeID in the `@/changes/active` folder

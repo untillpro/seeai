@@ -13,18 +13,6 @@ Black Box Testing:
 - No access to internal functions or variables
 - Validate behavior through observable outputs and side effects
 
-## Testing Framework
-
-BATS (Bash Automated Testing System)
-
-Why BATS:
-
-- Industry standard for bash script testing
-- Built-in assertion library
-- Good test isolation
-- Readable test syntax
-- Easy to capture stdout, stderr, and exit codes
-
 ## Test Environment Strategy
 
 ### Isolated Test Environment

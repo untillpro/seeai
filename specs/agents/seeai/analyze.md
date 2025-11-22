@@ -61,11 +61,28 @@ List all specification files that need changes:
 
 List all non-specification files that need changes.
 
+Example:
+
 ```markdown
-- [ ] CREATE: [folder/filename](relative/path): Description of new file
-- [ ] UPDATE: [folder/filename](relative/path): What should be changed
-- [ ] MOVE: [folder/filename](relative/path) -> [new/path]: Reason for move
-- [ ] DELETE: [folder/filename](relative/path): Reason for deletion
+- update: [scripts/deploy.sh](../../../scripts/deploy.sh)
+  - [ ] Update API_URL from `api.old.com` to `api.new.com` (line 42)
+  - [ ] Update timeout value from 30 to 60 (line 89)
+- move: [src/config.json](../../../src/config.json)
+  - [ ] Relocate to [config/app.json](../../../config/app.json)
+```
+
+Format:
+
+```markdown
+- create: [folder/filename](relative/path)
+  - [ ] Description of new file and its purpose
+- update: [folder/filename](relative/path)
+  - [ ] Description of what should be changed
+  - [ ] Another change to the same file (if applicable)
+- move: [folder/filename](relative/path)
+  - [ ] Relocate to [new/folder/filename](relative/path)
+- delete: [folder/filename](relative/path)
+  - [ ] Reason for deletion
 ```
 
 Guidelines:
@@ -74,6 +91,8 @@ Guidelines:
 - Group logically related files if it does nit affect correctness
 - Update guidelines and README files last
 - Respect current file status - skip already-updated content
+- Use sub-items (indented checkboxes) to list specific changes for each file
+- File-level lines do not have checkboxes, only sub-items do
 
 ### Notes
 

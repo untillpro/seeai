@@ -40,7 +40,7 @@ Each test runs in isolated environment:
 
 Covered by: [test_user_scope_installs.bats](../../../tests/test_user_scope_installs.bats)
 
-Verifies that all 6 SeeAI files (register.md, design.md, analyze.md, exec.md, archive.md, gherkin.md) are correctly installed in User Scope for all agents (auggie, claude, copilot) across different versions (latest, main, specific tags) and modes (remote, local).
+Verifies that all 6 SeeAI files (register.md, design.md, analyze.md, implement.md, archive.md, gherkin.md) are correctly installed in User Scope for all agents (auggie, claude, copilot) across different versions (latest, main, specific tags) and modes (remote, local).
 
 ### Project Scope Installation Tests
 

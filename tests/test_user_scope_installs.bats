@@ -15,10 +15,10 @@ get_agent_files() {
   local agent="$1"
   case "$agent" in
     auggie|claude)
-      echo "register.md design.md analyze.md exec.md archive.md gherkin.md"
+      echo "register.md design.md analyze.md implement.md archive.md gherkin.md"
       ;;
     copilot)
-      echo "seeai-register.prompt.md seeai-design.prompt.md seeai-analyze.prompt.md seeai-exec.prompt.md seeai-archive.prompt.md seeai-gherkin.prompt.md"
+      echo "seeai-register.prompt.md seeai-design.prompt.md seeai-analyze.prompt.md seeai-implement.prompt.md seeai-archive.prompt.md seeai-gherkin.prompt.md"
       ;;
   esac
 }

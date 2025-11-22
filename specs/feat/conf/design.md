@@ -74,7 +74,7 @@ Source files are stored in the `specs/agents/seeai/` directory with simple names
 - `register.md` - Register a change action
 - `design.md` - Software Engineering Design prompt
 - `analyze.md` - Analyze a change action
-- `exec.md` - Execute specifications action
+- `implement.md` - Implement specifications action
 - `archive.md` - Archive a change action
 - `gherkin.md` - Gherkin/BDD prompt
 

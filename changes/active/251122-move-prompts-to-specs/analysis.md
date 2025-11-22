@@ -32,4 +32,7 @@ None. The existing specification structure already supports agent specifications
 
 ## Notes
 
-The change aligns with the project's specification structure where agent-related specifications belong under `specs/agents/`. The src directory currently contains prompt files that are actually specifications for how AGENTS should behave (SeeAI ACTIONS), not source code for the seeai tool itself. The installation script (seeai.sh) copies files from the source location to various target locations (.augment/commands/seeai/, .claude/commands/seeai/, .github/prompts/). This change only affects the source location within the repository, not the installation targets.
+- The change aligns with the project's specification structure where agent-related specifications belong under `specs/agents/`
+- The src directory currently contains prompt files that are actually specifications for how AGENTS should behave (SeeAI ACTIONS), not source code for the seeai tool itself
+- The installation script (seeai.sh) copies files from the source location to various target locations (.augment/commands/seeai/, .claude/commands/seeai/, .github/prompts/)
+- This change only affects the source location within the repository, not the installation targets

@@ -96,6 +96,6 @@ Guidelines:
 
 ### Notes
 
-Provide any additional context or notes about the change that may help implementers understand the impact. 3-5 sentences max.
+Provide any additional context or notes about the change that may help implementers understand the impact. Use bullet list format. 3-5 bullets max.
 
 CRITICAL: Do not create other sections beyond those specified above.

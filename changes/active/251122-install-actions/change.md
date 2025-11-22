@@ -8,7 +8,9 @@ Ref. [mconf-files/model.md](../../../specs/models/mconf-files/models.md).
 
 ## How
 
-- Install and organize all SeeAI Action files (design.md, gherkin.md, analyze.md, implement.md, register.md, archive.md) into the /specs/agents/seeai directory with proper structure and ensure triggering instructions are configured in the Agents Config File (ACF).
-- specs.md should also be installed as the /specs/agents/seeai/specs.md file.
-- So nothing is installed project scope into agent-specific directories like .augment or .github
-- seeai-version.yml for User scope includes only commands (design.md, gherkin.md), for Project scope includes all files.
+- Use specs/agents/seeai as the source location for all Actions and Specs, making it the single source of truth
+- Maintain the subdirectory structure with specs/agents/seeai/specs/specs.md (not flat)
+- For project scope installations, create seeai-version.yml in specs/agents/seeai/ only (centralized version tracking)
+- Installation script reads from specs/agents/seeai and copies to agent-specific directories (.augment, .claude, .github)
+- Nothing is installed into agent-specific directories in project scope - they only exist in user scope
+- seeai-version.yml for user scope includes only Commands (design.md, gherkin.md), for project scope includes all files

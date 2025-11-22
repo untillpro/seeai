@@ -101,7 +101,7 @@ See [Installation File Structure Model](../../models/mconf-files/model.md) for d
 
 - **Copilot**: Files are installed directly in the prompts directory with a `seeai-` prefix
   - Example: `seeai-design.prompt.md`, `seeai-gherkin.prompt.md`
-  - Specs are installed flat: `seeai-specs.prompt.md`
+  - Specs are installed flat: `seeai-specs-specs.prompt.md`
 - **Augment & Claude**: Files are installed in a `seeai/` subdirectory
   - Example: `seeai/design.md`, `seeai/gherkin.md`
   - Specs are installed in subdirectory: `seeai/specs/specs.md`
@@ -109,7 +109,7 @@ See [Installation File Structure Model](../../models/mconf-files/model.md) for d
 ### Project
 
 - Augment: `./.augment/commands/seeai/` (specs: `./.augment/commands/seeai/specs/specs.md`)
-- Copilot: `./.github/prompts/` (files: `seeai-design.prompt.md`, specs: `seeai-specs.prompt.md`)
+- Copilot: `./.github/prompts/` (files: `seeai-design.prompt.md`, specs: `seeai-specs-specs.prompt.md`)
 - Claude: `./.claude/commands/seeai/` (specs: `./.claude/commands/seeai/specs/specs.md`)
 
 ### User

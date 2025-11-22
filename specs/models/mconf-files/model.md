@@ -2,47 +2,50 @@
 
 ## Directory Structure Patterns
 
+### Project Scope
+
 ```text
 Project Scope (Augment, Claude):
-.${agent}/commands/
-└── seeai/
-    ├── $design.md
-    ├── $gherkin.md
-    ├── $register.md
-    ├── $analyze.md
-    ├── $implement.md
-    ├── $archive.md
-    └── specs/
-        └── $specs.md
+.{augment|claude}/commands/seeai/
+├── design.md
+├── gherkin.md
+├── register.md
+├── analyze.md
+├── implement.md
+├── archive.md
+└── specs/
+    └── specs.md
 
 Project Scope (Copilot):
-.github/
-└── prompts/
-    ├── $design.md
-    ├── $gherkin.md
-    ├── $register.md
-    ├── $analyze.md
-    ├── $implement.md
-    ├── $archive.md
-    └── $specs/specs.md
+.github/prompts/
+├── seeai-design.prompt.md
+├── seeai-gherkin.prompt.md
+├── seeai-register.prompt.md
+├── seeai-analyze.prompt.md
+├── seeai-implement.prompt.md
+├── seeai-archive.prompt.md
+└── seeai-specs-specs.prompt.md
+```
+
+### User Scope
+
+```text
 
 User Scope (Augment, Claude):
-~/.${agent}/commands/
-└── seeai/
-    ├── $design.md
-    ├── $gherkin.md
-    └── seeai-version.yml
+~/.{augment|claude}/commands/seeai/
+├── design.md
+├── gherkin.md
+└── seeai-version.yml
 
 User Scope (Copilot):
 {os_prompts_dir}/
-├── $design.md
-├── $gherkin.md
+├── seeai-design.prompt.md
+├── seeai-gherkin.prompt.md
 └── seeai-version.yml
 
 Project Scope Version File (All Agents):
-specs/agents/
-└── seeai/
-    └── seeai-version.yml
+specs/agents/seeai/
+└── seeai-version.yml
 ```
 
 ## Variable Definitions
@@ -61,73 +64,24 @@ Profile-specific paths:
 - macOS: `~/Library/Application Support/Code/User/profiles/<profile-id>/prompts/`
 - Linux: `~/.config/Code/User/profiles/<profile-id>/prompts/`
 
-## File Expansion Rules
+## File Transformation Rules
 
-### $design.md
+### Copilot
 
-- Augment: `design.md`
-- Claude: `design.md`
-- Copilot: `seeai-design.prompt.md`
+Files are transformed with `seeai-` prefix and `.prompt.md` extension.
 
-### $gherkin.md
+Root-level files:
 
-- Augment: `gherkin.md`
-- Claude: `gherkin.md`
-- Copilot: `seeai-gherkin.prompt.md`
+- `design.md` -> `seeai-design.prompt.md`
+- `gherkin.md` -> `seeai-gherkin.prompt.md`
+- `register.md` -> `seeai-register.prompt.md`
 
-### $register.md, $analyze.md, $implement.md, $archive.md
+Subdirectory files (path flattening):
 
-- Augment: `{name}.md` (e.g., `register.md`)
-- Claude: `{name}.md` (e.g., `register.md`)
-- Copilot: `seeai-{name}.prompt.md` (e.g., `seeai-register.prompt.md`)
+- `specs/specs.md` -> `seeai-specs-specs.prompt.md`
+- Pattern: `{dir}/{file}.md` -> `seeai-{dir}-{file}.prompt.md`
 
-### $specs/specs.md
-
-- Augment: `specs/specs.md`
-- Claude: `specs/specs.md`
-- Copilot: `seeai-specs-specs.prompt.md` (path flattened with hyphens)
-
-### Transformation Pattern
-
-- Augment/Claude: Original filename and path preserved
-- Copilot: `seeai-{flattened_path}.prompt.md` where subdirectories are flattened using hyphens
-
-Rationale: Copilot requires `.prompt.md` extension and does not support subdirectories.
-
-## File Categories and Scope Distribution
-
-### Commands
-
-Files: `design.md`, `gherkin.md`
-
-Distribution:
-
-- User scope: Installed
-- Project scope: Installed
-
-Purpose: Can be invoked explicitly via command syntax (e.g., `/seeai:design @file.md`)
-
-### Actions
-
-Files: `register.md`, `analyze.md`, `implement.md`, `archive.md`
-
-Distribution:
-
-- User scope: NOT installed
-- Project scope: Installed
-
-Purpose: Invoked implicitly through Natural Language Invocation (NLI) using Triggering Instructions
-
-### Specs
-
-Files: `specs/specs.md`
-
-Distribution:
-
-- User scope: NOT installed
-- Project scope: Installed
-
-Purpose: Internal templates used by Actions to maintain consistency
+Rationale: Copilot requires `.prompt.md` extension and does not support subdirectories, so paths are flattened using hyphens.
 
 ## Agents Config File Selection Rules
 

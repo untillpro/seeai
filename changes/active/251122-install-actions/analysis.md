@@ -18,6 +18,10 @@ No new specifications need to be created.
   - [x] Update Installation Locations section to clarify specs/agents/seeai as source directory
   - [x] Clarify that project scope installations only create seeai-version.yml in specs/agents/seeai/
   - [x] Update file organization strategy to explain source vs target directories
+  - [x] Update List Command Search Strategy section to specify checking BOTH specs/agents/seeai/ and agent-specific directories for project scope
+  - [x] Update List Command section to clarify backward compatibility with legacy installations
+  - [x] Update Output Example to show "Project (all agents)" label for new installations from specs/agents/seeai/
+  - [x] Update VersionInfo reading section to clarify handling of both new and legacy project scope installations
 - [specs/feat/conf/tests.md](../../../specs/feat/conf/tests.md)
   - [x] Update Project Scope Installation Tests section to clarify that tests verify files are NOT copied to agent-specific directories in project scope
   - [x] Clarify that project scope only creates seeai-version.yml in specs/agents/seeai/
@@ -30,6 +34,8 @@ No new specifications need to be created.
   - [x] Ensure seeai-version.yml is created in specs/agents/seeai/ for project scope (already implemented correctly)
   - [x] Update triggering instructions to reference @/specs/agents/seeai/ paths (already implemented correctly)
   - [x] Update comments to clarify new behavior
+  - [x] Update get_all_locations() to check BOTH specs/agents/seeai/ AND agent-specific directories for backward compatibility
+  - [x] Update list_command() to properly display files from both locations with [legacy] marker
 - update: [tests/test_project_scope_installs.bats](../../../tests/test_project_scope_installs.bats)
   - [x] Update tests to verify files are NOT copied to agent-specific directories in project scope
   - [x] Verify files exist in specs/agents/seeai/ directory
@@ -41,17 +47,27 @@ No new specifications need to be created.
 - update: [README.md](../../../README.md)
   - [x] Update project scope installation instructions to clarify files remain in specs/agents/seeai/
   - [x] Explain that Actions are invoked from specs/agents/seeai via triggering instructions
+- create: [tests/test_list_command.bats](../../../tests/test_list_command.bats)
+  - [x] Create new test file for list command functionality
+  - [x] Test list command shows project scope installation from specs/agents/seeai/
+  - [x] Test list command shows legacy project scope installations from agent-specific directories
+  - [x] Test list command shows user scope installations
+  - [x] Test list command shows correct version info for each installation
+  - [x] Test list command handles missing installations gracefully
+  - [x] Test list command shows both new and legacy installations together
 - test: Installation tests
   - [x] Install BATS if not available: `npm install -g bats` (Windows) or `brew install bats-core` (macOS)
   - [x] Run `bats tests/test_project_scope_installs.bats` to verify new behavior - All 4 tests passed
   - [x] Run `bats tests/test_user_scope_installs.bats` to ensure user scope still works correctly - All tests passed
+  - [x] Run `bats tests/test_list_command.bats` to verify list command works correctly - All 6 tests passed
 
 ## Notes
 
 - This change modifies the installation behavior for project scope to use specs/agents/seeai as the single source of truth
-- Currently, the script DOES copy files to agent-specific directories (.augment, .claude, .github) in project scope - this needs to change
-- After the change, project scope installations will only create seeai-version.yml in specs/agents/seeai/ and update ACF
-- User scope installations will continue to copy files from specs/agents/seeai to agent-specific directories in user home
-- Triggering instructions already reference files using @/specs/agents/seeai/ paths, which is correct
-- The seeai-version.yml creation logic for project scope is already correct (line 202-205 in seeai.sh)
-- Main change needed: Skip file copying in project scope, only create version file and update ACF
+- After the change, project scope installations only create seeai-version.yml in specs/agents/seeai/ and update ACF
+- User scope installations continue to copy files from specs/agents/seeai to agent-specific directories in user home
+- Triggering instructions reference files using @/specs/agents/seeai/ paths
+- The seeai-version.yml creation logic for project scope was already correct (line 202-205 in seeai.sh)
+- The list command checks BOTH specs/agents/seeai/ AND agent-specific directories for backward compatibility with legacy installations
+- Legacy installations are marked with [legacy] label in the list output
+- All changes are complete and verified with passing tests (4 project scope tests, 1 user scope test, 6 list command tests)

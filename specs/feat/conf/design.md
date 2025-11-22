@@ -129,15 +129,27 @@ For user scope installations, files are copied from specs/agents/seeai/ to:
 
 ### List Command Search Strategy
 
-The list command searches for files using current installation patterns only:
+The list command searches for files in both new and legacy installation locations for backward compatibility:
 
-**For Copilot locations** (prompts directories):
+**Project Scope**:
 
-- `seeai-*.prompt.md`
+- New installations: `specs/agents/seeai/*.md` (all agents share this location)
+- Legacy installations (backward compatibility):
+  - Augment: `.augment/commands/seeai/*.md`
+  - Claude: `.claude/commands/seeai/*.md`
+  - Copilot: `.github/prompts/seeai-*.prompt.md`
 
-**For Augment/Claude locations** (commands directories):
+**User Scope**:
 
-- `seeai/*.md`
+- Augment: `~/.augment/commands/seeai/*.md`
+- Claude: `~/.claude/commands/seeai/*.md`
+- Copilot: `<vscode-user-dir>/prompts/seeai-*.prompt.md`
+
+**Search Patterns**:
+
+- Copilot locations (prompts directories): `seeai-*.prompt.md`
+- Augment/Claude locations (commands directories): `seeai/*.md`
+- Project scope new location: `*.md` in `specs/agents/seeai/` and subdirectories
 
 ## Install Command Flow
 
@@ -395,37 +407,54 @@ Notes:
 
 Searches for installed SeeAI files and displays their locations with VersionInfo metadata.
 
+The list command supports backward compatibility by checking both new and legacy installation locations.
+
 Search patterns:
 
 - Copilot: `seeai-*.prompt.md`
 - Augment/Claude: `seeai/*.md`
+- Project scope new location: `*.md` in `specs/agents/seeai/`
 
-Search locations: See "Installation Locations" section above.
+Search locations: See "List Command Search Strategy" section above.
 
 VersionInfo reading:
 
 - User scope: Check for `seeai-version.yml` in each installation directory
-- Project scope: Check for `specs/agents/seeai/seeai-version.yml`
+- Project scope (new installations): Check for `specs/agents/seeai/seeai-version.yml`
+- Project scope (legacy installations): Check for `seeai-version.yml` in agent-specific directories (e.g., `.augment/commands/seeai/seeai-version.yml`)
 - Parse version and installed_at fields
 - Display in format: `[version, timestamp]`
 - If VersionInfo file missing, show files without version info
+
+Legacy installations are marked with `[legacy]` label to indicate they are from older installation patterns.
 
 ### Output Example
 
 ```text
 Found SeeAI installations:
 
-Project (Augment) [v0.1.0, 2025-01-18T14:30:00Z]:
+Project (all agents) [v0.1.0, 2025-01-18T14:30:00Z]:
+  specs/agents/seeai/design.md
+  specs/agents/seeai/gherkin.md
+  specs/agents/seeai/register.md
+  specs/agents/seeai/analyze.md
+  specs/agents/seeai/implement.md
+  specs/agents/seeai/archive.md
+  specs/agents/seeai/specs/specs.md
+
+Project (auggie) [legacy] [v0.0.9, 2025-01-15T10:00:00Z]:
   ./.augment/commands/seeai/design.md
   ./.augment/commands/seeai/gherkin.md
 
-User (Claude) [local-main-4e24576, 2025-01-18T10:15:00Z]:
+User (claude) [local-main-4e24576, 2025-01-18T10:15:00Z]:
   /home/user/.claude/commands/seeai/design.md
 
-User (Copilot) [remote-main-a3f2c1b, 2025-01-18T16:45:00Z]:
+User (copilot) [remote-main-a3f2c1b, 2025-01-18T16:45:00Z]:
   C:/Users/Usuario/AppData/Roaming/Code/User/prompts/seeai-design.prompt.md
   C:/Users/Usuario/AppData/Roaming/Code/User/prompts/seeai-gherkin.prompt.md
 ```
+
+Note: The "Project (all agents)" label indicates a new installation where all agents share the same files from `specs/agents/seeai/`. Legacy installations show agent-specific labels with `[legacy]` marker.
 
 ## Implementation Details
 

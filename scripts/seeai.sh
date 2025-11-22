@@ -106,8 +106,15 @@ get_global_dir() {
 get_all_locations() {
   local locations=()
 
-  # Project scope: Check specs/agents/seeai/ (single source location for all agents)
+  # Project scope: Check specs/agents/seeai/ (new installations)
   locations+=("specs/agents/seeai/")
+
+  # Project scope: Also check agent-specific directories for backward compatibility with legacy installations
+  for agent in augment copilot claude; do
+    local base="${PROJECT_BASE_DIRS[$agent]}"
+    locations+=("$base/")
+    locations+=("$base/$SEEAI_SUBDIR/")
+  done
 
   # User scope: Global locations - base and seeai subdirectories
   for agent in augment claude; do
@@ -307,7 +314,7 @@ list_command() {
 
     # Determine scope and label based on location
     if [[ "$location" == "specs/agents/seeai/" ]]; then
-      # Project scope: single source location for all agents
+      # Project scope: single source location for all agents (new installations)
       label="Project (all agents)"
       scope="project"
       # Find all .md files in specs/agents/seeai/ (excluding subdirectories for now)
@@ -319,6 +326,7 @@ list_command() {
       # copilot locations: search for seeai-*.prompt.md
       mapfile -t files < <(find "$location" -maxdepth 1 -type f -name "seeai-*.prompt.md" 2>/dev/null || true)
       case "$location" in
+        ./.github/prompts/*) label="Project (copilot) [legacy]"; scope="project" ;;
         "$HOME"*) label="User (copilot)"; scope="user" ;;
         *) label="User (copilot)"; scope="user" ;;
       esac
@@ -326,6 +334,8 @@ list_command() {
       # Augment/Claude locations: search in seeai/ subfolder
       mapfile -t files < <(find "$location" -maxdepth 1 -type f -name "*.md" -path "*/seeai/*.md" 2>/dev/null || true)
       case "$location" in
+        ./.augment/commands/*) label="Project (auggie) [legacy]"; scope="project" ;;
+        ./.claude/commands/*) label="Project (claude) [legacy]"; scope="project" ;;
         "$HOME/.augment/commands"*) label="User (auggie)"; scope="user" ;;
         "$HOME/.claude/commands"*) label="User (claude)"; scope="user" ;;
         *) continue ;;

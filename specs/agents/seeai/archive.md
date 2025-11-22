@@ -24,6 +24,12 @@ Move the change folder from active to archive:
 - Destination: `changes/archive/$ChangeID/`
 - Move the entire folder with all its contents (change.md, analysis.md, tasks.md, etc.)
 
+Version control handling:
+
+- If the repository is under version control (check for .git directory), use `git mv` to preserve file history
+- If not under version control, use standard file system move operations
+- Command: `git mv changes/active/$ChangeID changes/archive/$ChangeID`
+
 ## Step 4: Verify Archive
 
 After moving:

@@ -1,8 +1,12 @@
-# SeeAI Configuration Script Design
+# Design: SeeAI Configuration Script
 
 ## Overview
 
 [scripts/seeai.sh](../../../scripts/seeai.sh) - a multi-command installation script for seeai prompt templates that supports multiple agentic tools and installation scopes.
+
+## Principles
+
+- Ask
 
 ## Command Structure
 
@@ -17,10 +21,14 @@ curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.
 # Install specific version - interactive
 curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install v0.1.0
 
-# Install for specific agent (non-interactive)
+# Install for specific agent (non-interactive agent, interactive scope)
 curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent auggie
 
-# Install from local ../src folder (for development)
+# Install fully non-interactive (agent and scope specified)
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent auggie --scope user
+curl -fsSL https://raw.githubusercontent.com/untillpro/seeai/main/scripts/seeai.sh | bash -s install --agent claude --scope project
+
+# Install from local ../specs/agents/seeai folder (for development)
 ./scripts/seeai.sh install -l --agent claude
 
 # List installed files
@@ -42,28 +50,58 @@ Version (for install):
   v0.1.0            - Specific version tag
 
 Options (for install):
-  -l                - Use local files from ../src folder (relative to script path, for development)
+  -l                - Use local files from ../specs/agents/seeai folder (relative to script path, for development)
   --agent <name>    - Specify agent (auggie, claude, copilot) - skips interactive prompt
                       For copilot, uses default profile
+  --scope <scope>   - Specify installation scope (user, project) - skips interactive scope prompt
+                      user: Install to user's home directory
+                      project: Install to current project directory
 
 Examples:
-  seeai.sh install                    # Interactive install, latest version
-  seeai.sh install main               # Interactive install, main branch
-  seeai.sh install --agent auggie     # Non-interactive, Augment agent
-  seeai.sh install -l --agent claude  # Local files, Claude agent
-  seeai.sh list                       # List installed files
+  seeai.sh install                              # Interactive install, latest version
+  seeai.sh install main                         # Interactive install, main branch
+  seeai.sh install --agent auggie               # Non-interactive agent, interactive scope
+  seeai.sh install --agent auggie --scope user  # Fully non-interactive, user scope
+  seeai.sh install --agent claude --scope project  # Fully non-interactive, project scope
+  seeai.sh install -l --agent claude            # Local files, Claude agent
+  seeai.sh list                                 # List installed files
 ```
 
 ## Source Files
 
-Source files are stored in the `src/` directory with simple names:
+Source files are stored in the `specs/agents/seeai/` directory with simple names:
+
+Commands (installed in both user and project scope):
 
 - `design.md` - Software Engineering Design prompt
 - `gherkin.md` - Gherkin/BDD prompt
 
+Actions (installed in project scope only):
+
+- `register.md` - Register a change action
+- `analyze.md` - Analyze a change action
+- `implement.md` - Implement specifications action
+- `archive.md` - Archive a change action
+
+Specs (installed in project scope only):
+
+- `specs/specs.md` - Specification structure and creation criteria template
+
+Commands can be invoked explicitly via command syntax (e.g., `/seeai:design @file.md`) and work in both user and project scope. Actions require Triggering Instructions in Agents Config Files (AGENTS.md or CLAUDE.md) which only exist in project scope, enabling Natural Language Invocation. Specs are internal templates used by Actions to maintain consistency.
+
 These files are transformed during installation based on the target agent (see "File Organization Strategy" below).
 
 ## Installation Locations
+
+See [Installation File Structure Model](../../models/mconf-files/model.md) for detailed directory patterns, file transformations, and version file locations.
+
+### Source Directory
+
+In project scope, all Actions and Specs are stored in:
+
+- `specs/agents/seeai/` - Single source of truth for all Actions and Specs
+
+Actions are referenced directly from this location via triggering instructions in Agents Config Files (AGENTS.md or CLAUDE.md). In project scope, files are NOT copied to agent-specific directories - they remain in specs/agents/seeai/. Only the seeai-version.yml file is created in specs/agents/seeai/ to track installation metadata.
 
 ### File Organization Strategy
 
@@ -71,16 +109,16 @@ These files are transformed during installation based on the target agent (see "
 
 - **Copilot**: Files are installed directly in the prompts directory with a `seeai-` prefix
   - Example: `seeai-design.prompt.md`, `seeai-gherkin.prompt.md`
+  - Specs are installed flat: `seeai-specs-specs.prompt.md`
 - **Augment & Claude**: Files are installed in a `seeai/` subdirectory
   - Example: `seeai/design.md`, `seeai/gherkin.md`
+  - Specs are installed in subdirectory: `seeai/specs/specs.md`
 
-### Workspace
+Note: This organization applies to user scope installations only. In project scope, files remain in specs/agents/seeai/.
 
-- Augment: `./.augment/commands/seeai/`
-- Copilot: `./.github/prompts/` (files: `seeai-design.prompt.md`, etc.)
-- Claude: `./.claude/commands/seeai/`
+### User Scope Target Directories
 
-### User
+For user scope installations, files are copied from specs/agents/seeai/ to:
 
 - Augment: `~/.augment/commands/seeai/`
 - Copilot: Default profile or specific profile (user selects during installation)
@@ -91,15 +129,27 @@ These files are transformed during installation based on the target agent (see "
 
 ### List Command Search Strategy
 
-The list command searches for files using current installation patterns only:
+The list command searches for files in both new and legacy installation locations for backward compatibility:
 
-**For Copilot locations** (prompts directories):
+**Project Scope**:
 
-- `seeai-*.prompt.md`
+- New installations: `specs/agents/seeai/*.md` (all agents share this location)
+- Legacy installations (backward compatibility):
+  - Augment: `.augment/commands/seeai/*.md`
+  - Claude: `.claude/commands/seeai/*.md`
+  - Copilot: `.github/prompts/seeai-*.prompt.md`
 
-**For Augment/Claude locations** (commands directories):
+**User Scope**:
 
-- `seeai/*.md`
+- Augment: `~/.augment/commands/seeai/*.md`
+- Claude: `~/.claude/commands/seeai/*.md`
+- Copilot: `<vscode-user-dir>/prompts/seeai-*.prompt.md`
+
+**Search Patterns**:
+
+- Copilot locations (prompts directories): `seeai-*.prompt.md`
+- Augment/Claude locations (commands directories): `seeai/*.md`
+- Project scope new location: `*.md` in `specs/agents/seeai/` and subdirectories
 
 ## Install Command Flow
 
@@ -107,14 +157,24 @@ The list command searches for files using current installation patterns only:
 
 Parse options before starting interactive flow:
 
-- `-l` flag: Use local files from `../src` folder
+- `-l` flag: Use local files from `../specs/agents/seeai` folder
 - `--agent <name>`: Pre-select agent (auggie, claude, copilot)
+- `--scope <scope>`: Pre-select installation scope (user, project)
 
 If `--agent` is specified:
 
 - Skip Step 1 (agent selection)
 - For copilot: Use default profile, skip profile selection
-- Still ask for installation scope (workspace vs user) unless additional options are added
+
+If `--scope` is specified:
+
+- Skip Step 2 (scope selection prompt)
+- Proceed directly with the specified scope
+
+If both `--agent` and `--scope` are specified:
+
+- Fully non-interactive installation
+- No prompts, proceed directly to installation
 
 ### Step 1: Ask Agent Type
 
@@ -129,6 +189,8 @@ Which agent?
 
 ### Step 2: Show Installation Preview (User Scope Default)
 
+Skip this step if `--scope` option is provided.
+
 Default to user scope and show installation preview:
 
 ```text
@@ -141,19 +203,19 @@ The following files will be installed:
 
 Proceed? (Y/w/n) [Y]:
   Y - Install to user scope
-  w - Switch to workspace scope (will be prompted again)
+  w - Switch to project scope (will be prompted again)
   n - Cancel
 ```
 
 User scope is the default. Options:
 
 - `Y` or Enter: Install to user scope (proceed)
-- `w`: Switch to workspace scope, show new preview, ask Y/n again
+- `w`: Switch to project scope, show new preview, ask Y/n again
 - `n`: Cancel installation
 
-### Step 2a: Workspace Scope (if 'w' selected)
+### Step 2a: Project Scope (if 'w' selected)
 
-If user types 'w', switch to workspace scope and show new preview:
+If user types 'w', switch to project scope and show new preview:
 
 ```text
 Installing from: latest
@@ -185,7 +247,7 @@ See "Installation Locations" section for specific paths.
 
 ### Step 3: Download and Install
 
-After user confirms (either Y for user scope or Y after switching to workspace), create target directory and install files:
+After user confirms (either Y for user scope or Y after switching to project), create target directory and install files:
 
 ```bash
 mkdir -p "$TARGET_DIR"
@@ -199,10 +261,10 @@ Creating seeai-version.yml... OK
 Installation complete!
 ```
 
-If `-l` flag is used, show "local (../src)" as source and "Copying" instead of "Downloading":
+If `-l` flag is used, show "local (../specs/agents/seeai)" as source and "Copying" instead of "Downloading":
 
 ```text
-Installing from: local (../src)
+Installing from: local (../specs/agents/seeai)
 Target: /home/user/myproject/.augment/commands/seeai/
 
 The following files will be installed:
@@ -220,9 +282,12 @@ Installation complete!
 
 For Copilot, files are transformed with `seeai-` prefix and `.prompt.md` extension during installation (show the transformed names in the file list).
 
-### Step 4: Create Version Metadata File
+### Step 4: Create VersionInfo File
 
-After successful file installation, create `seeai-version.yml` in the target directory.
+After successful file installation, create `seeai-version.yml` in the appropriate location:
+
+- User scope: In the target directory (e.g., `~/.augment/commands/seeai/seeai-version.yml`)
+- Project scope: In `specs/agents/seeai/seeai-version.yml`
 
 Version string generation:
 
@@ -307,44 +372,89 @@ Fields:
   - Branch installations: `https://github.com/untillpro/seeai/tree/<branch>`
 - `files`: List of installed base filenames (not transformed names)
 
-For Copilot installations, the metadata file is placed in the prompts directory alongside the transformed files.
+For Copilot installations, the VersionInfo file is placed in the prompts directory alongside the transformed files.
 
 Error handling: The `set -Eeuo pipefail` header ensures the script exits on any error (curl failure, copy failure, etc.).
 
+### Step 5: Install Triggering Instructions (Project Scope Only)
+
+For project scope installations, write triggering instructions to the Agents Config File (ACF):
+
+- AGENTS.md for auggie, gemini, copilot
+- CLAUDE.md for claude
+
+Format:
+
+```markdown
+<!-- seeai:triggering_instructions:begin -->
+# SeeAI Triggering Instructions
+
+- Always open `@/specs/agents/seeai/registrar.md` and follow the instructions there when the request sounds like "let me see a change [change description]"
+- Always open `@/specs/agents/seeai/analyze.md` and follow the instructions there when the request sounds like "let me see an analysis [change reference]"
+- Always open `@/specs/agents/seeai/specifier.md` and follow the instructions there when the request sounds like "let me see a specification [change reference]"
+
+<!-- seeai:triggering_instructions:end -->
+```
+
+Notes:
+
+- Only the begin/end markers are used (no version metadata in ACF)
+- Version metadata is stored separately in VersionInfo file
+- If ACF already exists, update the triggering instructions block
+- If ACF doesn't exist, create it with the triggering instructions
+
 ## List Command
 
-Searches for installed SeeAI files and displays their locations with version metadata.
+Searches for installed SeeAI files and displays their locations with VersionInfo metadata.
+
+The list command supports backward compatibility by checking both new and legacy installation locations.
 
 Search patterns:
 
 - Copilot: `seeai-*.prompt.md`
 - Augment/Claude: `seeai/*.md`
+- Project scope new location: `*.md` in `specs/agents/seeai/`
 
-Search locations: See "Installation Locations" section above.
+Search locations: See "List Command Search Strategy" section above.
 
-Version metadata reading:
+VersionInfo reading:
 
-- Check for `seeai-version.yml` in each installation directory
+- User scope: Check for `seeai-version.yml` in each installation directory
+- Project scope (new installations): Check for `specs/agents/seeai/seeai-version.yml`
+- Project scope (legacy installations): Check for `seeai-version.yml` in agent-specific directories (e.g., `.augment/commands/seeai/seeai-version.yml`)
 - Parse version and installed_at fields
 - Display in format: `[version, timestamp]`
-- If metadata file missing, show files without version info
+- If VersionInfo file missing, show files without version info
+
+Legacy installations are marked with `[legacy]` label to indicate they are from older installation patterns.
 
 ### Output Example
 
 ```text
 Found SeeAI installations:
 
-Workspace (Augment) [v0.1.0, 2025-01-18T14:30:00Z]:
+Project (all agents) [v0.1.0, 2025-01-18T14:30:00Z]:
+  specs/agents/seeai/design.md
+  specs/agents/seeai/gherkin.md
+  specs/agents/seeai/register.md
+  specs/agents/seeai/analyze.md
+  specs/agents/seeai/implement.md
+  specs/agents/seeai/archive.md
+  specs/agents/seeai/specs/specs.md
+
+Project (auggie) [legacy] [v0.0.9, 2025-01-15T10:00:00Z]:
   ./.augment/commands/seeai/design.md
   ./.augment/commands/seeai/gherkin.md
 
-User (Claude) [local-main-4e24576, 2025-01-18T10:15:00Z]:
+User (claude) [local-main-4e24576, 2025-01-18T10:15:00Z]:
   /home/user/.claude/commands/seeai/design.md
 
-User (Copilot) [remote-main-a3f2c1b, 2025-01-18T16:45:00Z]:
+User (copilot) [remote-main-a3f2c1b, 2025-01-18T16:45:00Z]:
   C:/Users/Usuario/AppData/Roaming/Code/User/prompts/seeai-design.prompt.md
   C:/Users/Usuario/AppData/Roaming/Code/User/prompts/seeai-gherkin.prompt.md
 ```
+
+Note: The "Project (all agents)" label indicates a new installation where all agents share the same files from `specs/agents/seeai/`. Legacy installations show agent-specific labels with `[legacy]` marker.
 
 ## Implementation Details
 
@@ -452,12 +562,12 @@ fi
 
 ### File Download
 
-Files are downloaded from the `src` folder in the repository.
+Files are downloaded from the `specs/agents/seeai` folder in the repository.
 
 For remote installation (default):
 
 ```bash
-BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/src"
+BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/specs/agents/seeai"
 
 FILES=(
   "design.md"
@@ -473,7 +583,7 @@ For local installation (`-l` flag):
 
 ```bash
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SRC_DIR="$SCRIPT_DIR/../src"
+SRC_DIR="$SCRIPT_DIR/../specs/agents/seeai"
 
 FILES=(
   "design.md"

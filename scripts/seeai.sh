@@ -1,14 +1,39 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# File list - update when adding/removing templates
-FILES=(
+# File lists - update when adding/removing templates
+# Commands: Can be invoked explicitly, work in both user and project scope
+COMMAND_FILES=(
   "design.md"
   "gherkin.md"
 )
 
+# Actions: Require Triggering Instructions, work only in project scope
+ACTION_FILES=(
+  "register.md"
+  "analyze.md"
+  "implement.md"
+  "archive.md"
+)
+
+# Specs: Internal templates used by Actions, work only in project scope
+SPEC_FILES=(
+  "specs/specs.md"
+)
+
+# All files (for project scope and version info)
+ALL_FILES=(
+  "register.md"
+  "design.md"
+  "analyze.md"
+  "implement.md"
+  "archive.md"
+  "gherkin.md"
+  "specs/specs.md"
+)
+
 # Location definitions - declarative configuration
-declare -A WORKSPACE_BASE_DIRS=(
+declare -A PROJECT_BASE_DIRS=(
   [augment]="./.augment/commands"
   [copilot]="./.github/prompts"
   [claude]="./.claude/commands"
@@ -37,6 +62,7 @@ AGENT=""
 VERSION=""
 AGENT_INTERNAL=""
 SCOPE=""
+SCOPE_PROVIDED=false
 TARGET_DIR=""
 REF=""
 
@@ -58,12 +84,12 @@ normalize_path() {
 # Get installation directory
 # copilot doesn't support subfolders, so files go directly in base dir with seeai- prefix
 # Other agents use seeai/ subdirectory
-get_workspace_dir() {
+get_project_dir() {
   local agent=$1
   if [[ $agent == "copilot" ]]; then
-    echo "${WORKSPACE_BASE_DIRS[$agent]}/"
+    echo "${PROJECT_BASE_DIRS[$agent]}/"
   else
-    echo "${WORKSPACE_BASE_DIRS[$agent]}/$SEEAI_SUBDIR/"
+    echo "${PROJECT_BASE_DIRS[$agent]}/$SEEAI_SUBDIR/"
   fi
 }
 
@@ -76,18 +102,21 @@ get_global_dir() {
   fi
 }
 
-# Get all search locations for list command (base dirs + seeai subdirs)
+# Get all search locations for list command
 get_all_locations() {
   local locations=()
 
-  # Workspace locations - base and seeai subdirectories
+  # Project scope: Check specs/agents/seeai/ (new installations)
+  locations+=("specs/agents/seeai/")
+
+  # Project scope: Also check agent-specific directories for backward compatibility with legacy installations
   for agent in augment copilot claude; do
-    local base="${WORKSPACE_BASE_DIRS[$agent]}"
+    local base="${PROJECT_BASE_DIRS[$agent]}"
     locations+=("$base/")
     locations+=("$base/$SEEAI_SUBDIR/")
   done
 
-  # Global locations - base and seeai subdirectories
+  # User scope: Global locations - base and seeai subdirectories
   for agent in augment claude; do
     local base="${GLOBAL_BASE_DIRS[$agent]}"
     locations+=("$base/")
@@ -120,9 +149,28 @@ get_github_commit_hash() {
   fi
 }
 
-# Create version metadata file
-create_version_metadata() {
-  local target_dir="$1"
+# Get latest tag from GitHub API
+get_latest_tag() {
+  local api_url="https://api.github.com/repos/untillpro/seeai/tags"
+
+  # Try to fetch tags from GitHub API
+  local response
+  response=$(curl -fsSL "$api_url" 2>/dev/null)
+
+  if [[ $? -eq 0 && -n "$response" ]]; then
+    # Extract first tag name from JSON array
+    echo "$response" | grep -o '"name": *"[^"]*"' | head -1 | sed 's/"name": *"\([^"]*\)"/\1/'
+  else
+    echo ""
+  fi
+}
+
+# Create VersionInfo file
+create_version_info() {
+  local scope="$1"  # "user" or "project"
+  local target_dir="$2"
+  shift 2
+  local files_list=("$@")  # Remaining arguments are the file list
   local version_string
   local source_url
   local branch_name
@@ -152,9 +200,19 @@ create_version_metadata() {
   local timestamp
   timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
+  # Determine VersionInfo file location
+  local version_info_file
+  if [[ "$scope" == "project" ]]; then
+    # Project scope: specs/agents/seeai/seeai-version.yml
+    version_info_file="specs/agents/seeai/seeai-version.yml"
+    mkdir -p "specs/agents/seeai"
+  else
+    # User scope: in target directory
+    version_info_file="$target_dir/seeai-version.yml"
+  fi
+
   # Create YAML file
-  local metadata_file="$target_dir/seeai-version.yml"
-  cat > "$metadata_file" <<EOF
+  cat > "$version_info_file" <<EOF
 version: $version_string
 installed_at: $timestamp
 source: $source_url
@@ -162,9 +220,56 @@ files:
 EOF
 
   # Add file list
-  for file in "${FILES[@]}"; do
-    echo "  - $file" >> "$metadata_file"
+  for file in "${files_list[@]}"; do
+    echo "  - $file" >> "$version_info_file"
   done
+}
+
+# Install triggering instructions to ACF (project scope only)
+install_triggering_instructions() {
+  local agent_internal="$1"
+
+  # Determine ACF filename based on agent
+  local acf_file
+  if [[ "$agent_internal" == "claude" ]]; then
+    acf_file="CLAUDE.md"
+  else
+    acf_file="AGENTS.md"
+  fi
+
+  # Triggering instructions content
+  local instructions='<!-- seeai:triggering_instructions:begin -->
+## SeeAI Triggering Instructions
+
+- Always load `@/specs/agents/seeai/register.md` and follow the instructions there when the request sounds like "Register a change [change description]"
+- Always load `@/specs/agents/seeai/design.md` and follow the instructions there when the request sounds like "Design a solution for [problem description]"
+- Always load `@/specs/agents/seeai/analyze.md` and follow the instructions there when the request sounds like "Analyze a change"
+- Always load `@/specs/agents/seeai/implement.md` and follow the instructions there when the request sounds like "implement todo items" or "implement specifications"
+- Always load `@/specs/agents/seeai/archive.md` and follow the instructions there when the request sounds like "archive a change [change reference]"
+- Always load `@/specs/agents/seeai/gherkin.md` and follow the instructions there when the request sounds like "Generate Gherkin scenarios for [feature description]"
+
+<!-- seeai:triggering_instructions:end -->'
+
+  # Check if ACF exists
+  if [[ -f "$acf_file" ]]; then
+    # Check if triggering instructions block already exists
+    if grep -q "<!-- seeai:triggering_instructions:begin -->" "$acf_file"; then
+      # Update existing block
+      # Create temp file with content before the block
+      sed '/<!-- seeai:triggering_instructions:begin -->/,/<!-- seeai:triggering_instructions:end -->/d' "$acf_file" > "${acf_file}.tmp"
+      # Append new instructions
+      echo "$instructions" >> "${acf_file}.tmp"
+      # Replace original file
+      mv "${acf_file}.tmp" "$acf_file"
+    else
+      # Append to existing file
+      echo "" >> "$acf_file"
+      echo "$instructions" >> "$acf_file"
+    fi
+  else
+    # Create new ACF with instructions
+    echo "$instructions" > "$acf_file"
+  fi
 }
 
 # Read version metadata from seeai-version.yml
@@ -204,42 +309,61 @@ list_command() {
     fi
 
     local files=()
+    local label=""
+    local scope=""
 
-    if [[ "$location" == *"/prompts/"* ]]; then
+    # Determine scope and label based on location
+    if [[ "$location" == "specs/agents/seeai/" ]]; then
+      # Project scope: single source location for all agents (new installations)
+      label="Project (all agents)"
+      scope="project"
+      # Find all .md files in specs/agents/seeai/ (excluding subdirectories for now)
+      mapfile -t files < <(find "$location" -maxdepth 1 -type f -name "*.md" 2>/dev/null || true)
+      # Also add files from specs subdirectory
+      mapfile -t spec_files < <(find "$location/specs" -type f -name "*.md" 2>/dev/null || true)
+      files+=("${spec_files[@]}")
+    elif [[ "$location" == *"/prompts/"* ]]; then
       # copilot locations: search for seeai-*.prompt.md
       mapfile -t files < <(find "$location" -maxdepth 1 -type f -name "seeai-*.prompt.md" 2>/dev/null || true)
+      case "$location" in
+        ./.github/prompts/*) label="Project (copilot) [legacy]"; scope="project" ;;
+        "$HOME"*) label="User (copilot)"; scope="user" ;;
+        *) label="User (copilot)"; scope="user" ;;
+      esac
     else
       # Augment/Claude locations: search in seeai/ subfolder
       mapfile -t files < <(find "$location" -maxdepth 1 -type f -name "*.md" -path "*/seeai/*.md" 2>/dev/null || true)
+      case "$location" in
+        ./.augment/commands/*) label="Project (auggie) [legacy]"; scope="project" ;;
+        ./.claude/commands/*) label="Project (claude) [legacy]"; scope="project" ;;
+        "$HOME/.augment/commands"*) label="User (auggie)"; scope="user" ;;
+        "$HOME/.claude/commands"*) label="User (claude)"; scope="user" ;;
+        *) continue ;;
+      esac
     fi
 
     if [[ ${#files[@]} -gt 0 ]]; then
       found_any=true
 
-      # Determine label
-      local label=""
-      case "$location" in
-        ./.augment/commands/*) label="Workspace (auggie)" ;;
-        ./.github/prompts/*) label="Workspace (copilot)" ;;
-        ./.claude/commands/*) label="Workspace (claude)" ;;
-        "$HOME/.augment/commands"*) label="User (auggie)" ;;
-        "$HOME/.claude/commands"*) label="User (claude)" ;;
-        *) label="User (copilot)" ;;
-      esac
-
-      # Read version metadata
+      # Read VersionInfo
       local metadata_file
       local version_info
 
-      if [[ "$location" == *"/prompts/"* ]]; then
-        # copilot: metadata in prompts directory
-        metadata_file="$location/seeai-version.yml"
-      elif [[ "$location" == *"/seeai/" ]]; then
-        # Already in seeai subdirectory
-        metadata_file="$location/seeai-version.yml"
+      if [[ "$scope" == "project" ]]; then
+        # Project scope: check specs/agents/seeai/seeai-version.yml
+        metadata_file="specs/agents/seeai/seeai-version.yml"
       else
-        # Augment/Claude: metadata in seeai subdirectory
-        metadata_file="$location/seeai/seeai-version.yml"
+        # User scope: check in installation directory
+        if [[ "$location" == *"/prompts/"* ]]; then
+          # copilot: metadata in prompts directory
+          metadata_file="$location/seeai-version.yml"
+        elif [[ "$location" == *"/seeai/" ]]; then
+          # Already in seeai subdirectory
+          metadata_file="$location/seeai-version.yml"
+        else
+          # Augment/Claude: metadata in seeai subdirectory
+          metadata_file="$location/seeai/seeai-version.yml"
+        fi
       fi
 
       version_info=$(read_version_metadata "$metadata_file")
@@ -357,8 +481,7 @@ resolve_version() {
   if [[ $VERSION == "main" ]]; then
     REF="main"
   elif [[ $VERSION == "latest" ]]; then
-    REF=$(git ls-remote --tags --refs --sort='v:refname' \
-      https://github.com/untillpro/seeai.git | tail -n1 | sed 's/.*\///')
+    REF=$(get_latest_tag)
     # Fail if no tags found
     if [[ -z "$REF" ]]; then
       echo "Error: No releases found. Use 'bash -s install main' to install from the main branch."
@@ -379,31 +502,55 @@ show_install_preview() {
     source_label="$VERSION"
   fi
 
-  # Convert to absolute path without creating directories
-  local abs_target_dir
-  if [[ "$TARGET_DIR" != /* && "$TARGET_DIR" != [A-Za-z]:/* ]]; then
-    # Relative path: prepend current directory
-    abs_target_dir="$(pwd)/$TARGET_DIR"
+  # Determine which files to show based on scope
+  local preview_files=()
+  if [[ "$SCOPE" == "user" ]]; then
+    preview_files=("${COMMAND_FILES[@]}")
   else
-    # Already absolute
-    abs_target_dir="$TARGET_DIR"
+    preview_files=("${ALL_FILES[@]}")
   fi
-  abs_target_dir=$(normalize_path "$abs_target_dir")
 
   echo
   echo "Installing from: $source_label"
-  echo "Target: $abs_target_dir"
-  echo
-  echo "The following files will be installed:"
 
-  for file in "${FILES[@]}"; do
-    local target_file="$file"
-    if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
-      # copilot: add seeai- prefix and change extension to .prompt.md
-      target_file="seeai-${file%.md}.prompt.md"
+  if [[ "$SCOPE" == "project" ]]; then
+    # Project scope: Files remain in specs/agents/seeai/
+    echo "Source location: specs/agents/seeai/"
+    echo
+    echo "The following files are available in specs/agents/seeai/:"
+    for file in "${preview_files[@]}"; do
+      echo "  specs/agents/seeai/$file"
+    done
+    echo
+    echo "Installation will:"
+    echo "  - Create seeai-version.yml in specs/agents/seeai/"
+    echo "  - Update triggering instructions in AGENTS.md or CLAUDE.md"
+  else
+    # User scope: Files will be copied to target directory
+    # Convert to absolute path without creating directories
+    local abs_target_dir
+    if [[ "$TARGET_DIR" != /* && "$TARGET_DIR" != [A-Za-z]:/* ]]; then
+      # Relative path: prepend current directory
+      abs_target_dir="$(pwd)/$TARGET_DIR"
+    else
+      # Already absolute
+      abs_target_dir="$TARGET_DIR"
     fi
-    echo "  $abs_target_dir$target_file"
-  done
+    abs_target_dir=$(normalize_path "$abs_target_dir")
+
+    echo "Target: $abs_target_dir"
+    echo
+    echo "The following files will be installed:"
+
+    for file in "${preview_files[@]}"; do
+      local target_file="$file"
+      if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
+        # copilot: add seeai- prefix and change extension to .prompt.md
+        target_file="seeai-${file%.md}.prompt.md"
+      fi
+      echo "  $abs_target_dir$target_file"
+    done
+  fi
   echo
 }
 
@@ -414,91 +561,150 @@ install_files() {
     resolve_version
   fi
 
-  # Show initial preview for user scope
+  # Show initial preview
   show_install_preview
 
-  # Prompt with Y/w/n options
-  echo
-  echo "Proceed? (Y/w/n) [Y]: "
-  echo "  Y - Install to user scope"
-  echo "  w - Switch to workspace scope (will be prompted again)"
-  echo "  n - Cancel"
-  echo
-  read -p "> " -r choice </dev/tty
-  echo
-
-  # Default to Y if empty
-  choice=${choice:-Y}
-
-  case $choice in
-    [Yy])
-      # Continue with user scope (already set)
-      ;;
-    [Ww])
-      # Switch to workspace scope
-      SCOPE="workspace"
-      TARGET_DIR=$(get_workspace_dir "$AGENT_INTERNAL")
-
-      # Show new preview for workspace
-      show_install_preview
-
-      # Simple Y/n confirmation
-      read -p "Proceed? (Y/n) [Y]: " -r confirm </dev/tty
-      echo
-
-      # Default to Y if empty, exit only on explicit n/N
-      if [[ -n $confirm && $confirm =~ ^[Nn]$ ]]; then
-        exit 0
-      fi
-      ;;
-    [Nn])
-      exit 0
-      ;;
-    *)
-      echo "Error: Invalid choice"
-      exit 1
-      ;;
-  esac
-
-  # Create target directory
-  mkdir -p "$TARGET_DIR"
-
-  # Install files
-  if [[ "$LOCAL_MODE" == true ]]; then
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    SRC_DIR="$SCRIPT_DIR/../src"
-
-    for file in "${FILES[@]}"; do
-      local target_file="$file"
-      if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
-        # copilot: add seeai- prefix and change extension to .prompt.md
-        target_file="seeai-${file%.md}.prompt.md"
-      fi
-
-      echo -n "Copying $file... "
-      cp "$SRC_DIR/$file" "$TARGET_DIR/$target_file"
-      echo "OK"
-    done
+  # Skip prompt if scope was provided via parameter
+  if [[ "$SCOPE_PROVIDED" == true ]]; then
+    # Non-interactive mode: proceed directly
+    echo
+    echo "Proceeding with non-interactive installation..."
+    echo
   else
-    BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/src"
+    # Interactive mode: prompt with Y/w/n options
+    echo
+    echo "Proceed? (Y/w/n) [Y]: "
+    echo "  Y - Install to user scope"
+    echo "  w - Switch to project scope (will be prompted again)"
+    echo "  n - Cancel"
+    echo
+    read -p "> " -r choice </dev/tty
+    echo
 
-    for file in "${FILES[@]}"; do
-      local target_file="$file"
-      if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
-        # copilot: add seeai- prefix and change extension to .prompt.md
-        target_file="seeai-${file%.md}.prompt.md"
-      fi
+    # Default to Y if empty
+    choice=${choice:-Y}
 
-      echo -n "Downloading $file... "
-      curl -fsSL "${BASE_URL}/${file}" -o "$TARGET_DIR/$target_file"
-      echo "OK"
-    done
+    case $choice in
+      [Yy])
+        # Continue with user scope (already set)
+        ;;
+      [Ww])
+        # Switch to project scope
+        SCOPE="project"
+        TARGET_DIR=$(get_project_dir "$AGENT_INTERNAL")
+
+        # Show new preview for project
+        show_install_preview
+
+        # Simple Y/n confirmation
+        read -p "Proceed? (Y/n) [Y]: " -r confirm </dev/tty
+        echo
+
+        # Default to Y if empty, exit only on explicit n/N
+        if [[ -n $confirm && $confirm =~ ^[Nn]$ ]]; then
+          exit 0
+        fi
+        ;;
+      [Nn])
+        exit 0
+        ;;
+      *)
+        echo "Error: Invalid choice"
+        exit 1
+        ;;
+    esac
   fi
 
-  # Create version metadata file
+  # Determine which files to install based on scope
+  local files_to_install=()
+  if [[ "$SCOPE" == "user" ]]; then
+    # User scope: Install only Commands
+    files_to_install=("${COMMAND_FILES[@]}")
+  else
+    # Project scope: All files (Commands + Actions + Specs) for version tracking
+    files_to_install=("${ALL_FILES[@]}")
+  fi
+
+  # Install files (user scope only)
+  # Project scope: Files remain in specs/agents/seeai/, no copying needed
+  if [[ "$SCOPE" == "user" ]]; then
+    # Create target directory
+    mkdir -p "$TARGET_DIR"
+
+    if [[ "$LOCAL_MODE" == true ]]; then
+      SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+      SRC_DIR="$SCRIPT_DIR/../specs/agents/seeai"
+
+      for file in "${files_to_install[@]}"; do
+        local target_file="$file"
+        if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
+          # copilot: add seeai- prefix and change extension to .prompt.md
+          # For files in subdirectories, flatten the path
+          local base_name="${file##*/}"
+          local dir_name="${file%/*}"
+          if [[ "$dir_name" != "$file" ]]; then
+            # File is in subdirectory, use directory name as part of prefix
+            target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
+          else
+            target_file="seeai-${file%.md}.prompt.md"
+          fi
+        fi
+
+        # Create subdirectory if needed
+        local target_dir_path="$(dirname "$TARGET_DIR/$target_file")"
+        if [[ "$target_dir_path" != "$TARGET_DIR" ]]; then
+          mkdir -p "$target_dir_path"
+        fi
+
+        echo -n "Copying $file... "
+        cp "$SRC_DIR/$file" "$TARGET_DIR/$target_file"
+        echo "OK"
+      done
+    else
+      BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/specs/agents/seeai"
+
+      for file in "${files_to_install[@]}"; do
+        local target_file="$file"
+        if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
+          # copilot: add seeai- prefix and change extension to .prompt.md
+          # For files in subdirectories, flatten the path
+          local base_name="${file##*/}"
+          local dir_name="${file%/*}"
+          if [[ "$dir_name" != "$file" ]]; then
+            # File is in subdirectory, use directory name as part of prefix
+            target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
+          else
+            target_file="seeai-${file%.md}.prompt.md"
+          fi
+        fi
+
+        # Create subdirectory if needed
+        local target_dir_path="$(dirname "$TARGET_DIR/$target_file")"
+        if [[ "$target_dir_path" != "$TARGET_DIR" ]]; then
+          mkdir -p "$target_dir_path"
+        fi
+
+        echo -n "Downloading $file... "
+        curl -fsSL "${BASE_URL}/${file}" -o "$TARGET_DIR/$target_file"
+        echo "OK"
+      done
+    fi
+  else
+    # Project scope: Files already exist in specs/agents/seeai/, skip copying
+    echo "Using existing files in specs/agents/seeai/"
+  fi
+
+  # Create VersionInfo file
   echo -n "Creating seeai-version.yml... "
-  create_version_metadata "$TARGET_DIR"
+  create_version_info "$SCOPE" "$TARGET_DIR" "${files_to_install[@]}"
   echo "OK"
+
+  # Install triggering instructions (project scope only)
+  if [[ "$SCOPE" == "project" ]]; then
+    echo -n "Installing triggering instructions to ACF... "
+    install_triggering_instructions "$AGENT_INTERNAL"
+    echo "OK"
+  fi
 
   echo
   echo "Installation complete!"
@@ -517,6 +723,11 @@ install_command() {
         AGENT="$2"
         shift 2
         ;;
+      --scope)
+        SCOPE="$2"
+        SCOPE_PROVIDED=true
+        shift 2
+        ;;
       *)
         VERSION="$1"
         shift
@@ -532,6 +743,19 @@ install_command() {
         ;;
       *)
         echo "Error: Invalid agent '$AGENT'. Must be: auggie, claude, or copilot"
+        exit 1
+        ;;
+    esac
+  fi
+
+  # Validate scope if provided
+  if [[ "$SCOPE_PROVIDED" == true ]]; then
+    case $SCOPE in
+      user|project)
+        # Valid scope
+        ;;
+      *)
+        echo "Error: Invalid scope '$SCOPE'. Must be: user or project"
         exit 1
         ;;
     esac
@@ -556,13 +780,19 @@ install_command() {
     esac
   fi
 
-  # Step 2: Ask installation scope
-  ask_scope
+  # Step 2: Ask installation scope (skip if --scope provided)
+  if [[ "$SCOPE_PROVIDED" != true ]]; then
+    ask_scope
+  fi
 
-  # Set target directory
-  if [[ "$SCOPE" == "workspace" ]]; then
-    TARGET_DIR=$(get_workspace_dir "$AGENT_INTERNAL")
+  # Set target directory based on scope
+  if [[ "$SCOPE" == "project" ]]; then
+    TARGET_DIR=$(get_project_dir "$AGENT_INTERNAL")
   else
+    # Default to global/user scope
+    if [[ -z "$SCOPE" ]]; then
+      SCOPE="global"
+    fi
     TARGET_DIR=$(get_global_dir "$AGENT_INTERNAL")
   fi
 

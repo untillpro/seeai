@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# Mock curl for testing
+# Returns fixture data based on URL
+
+# Parse arguments to find URL and output file
+url=""
+output_file=""
+prev_arg=""
+for arg in "$@"; do
+  if [[ "$arg" =~ ^https?:// ]]; then
+    url="$arg"
+  elif [[ "$prev_arg" == "-o" ]]; then
+    output_file="$arg"
+  fi
+  prev_arg="$arg"
+done
+
+# Determine fixtures directory
+if [[ -n "$FIXTURES_DIR" ]]; then
+  fixtures_dir="$FIXTURES_DIR"
+else
+  # Default to relative path from mocks directory
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  fixtures_dir="$script_dir/../fixtures"
+fi
+
+# Helper function to output content (to file or stdout)
+output_content() {
+  local content="$1"
+  if [[ -n "$output_file" ]]; then
+    echo "$content" > "$output_file"
+  else
+    echo "$content"
+  fi
+}
+
+# Return appropriate fixture based on URL
+if [[ "$url" == *"api.github.com/repos/untillpro/seeai/tags"* ]]; then
+  # Check if we should return empty tags (for error testing)
+  if [[ "$MOCK_EMPTY_TAGS" == "true" ]]; then
+    if [[ -n "$output_file" ]]; then
+      cat "$fixtures_dir/tags_empty.json" > "$output_file"
+    else
+      cat "$fixtures_dir/tags_empty.json"
+    fi
+  else
+    if [[ -n "$output_file" ]]; then
+      cat "$fixtures_dir/tags.json" > "$output_file"
+    else
+      cat "$fixtures_dir/tags.json"
+    fi
+  fi
+  exit 0
+
+elif [[ "$url" == *"api.github.com/repos/untillpro/seeai/commits/main"* ]]; then
+  if [[ -n "$output_file" ]]; then
+    cat "$fixtures_dir/commits_main.json" > "$output_file"
+  else
+    cat "$fixtures_dir/commits_main.json"
+  fi
+  exit 0
+
+elif [[ "$url" == *"raw.githubusercontent.com/untillpro/seeai"* ]]; then
+  # Extract file path from URL
+  # URL format: https://raw.githubusercontent.com/untillpro/seeai/{ref}/specs/agents/seeai/{filepath}
+  # filepath can be a simple filename or include subdirectories like specs/specs.md
+  if [[ "$url" =~ /specs/agents/seeai/(.+)$ ]]; then
+    filepath="${BASH_REMATCH[1]}"
+    if [[ -f "$fixtures_dir/specs/agents/seeai/$filepath" ]]; then
+      if [[ -n "$output_file" ]]; then
+        cat "$fixtures_dir/specs/agents/seeai/$filepath" > "$output_file"
+      else
+        cat "$fixtures_dir/specs/agents/seeai/$filepath"
+      fi
+      exit 0
+    fi
+  fi
+  echo "Mock curl: File not found in fixtures" >&2
+  exit 1
+
+else
+  echo "Mock curl: Unknown URL: $url" >&2
+  exit 1
+fi
+

@@ -37,6 +37,17 @@ Example:
 
 Answers must be integrated to the Change file, preserve original formatting, style, be concise.
 
+## Step 1a.1: Integrate answers into change.md
+
+After receiving answers from Step 1a:
+
+- Load the change.md file
+- Integrate the answers into appropriate sections (Why/How) based on what was clarified
+- Add new subsections if needed to capture important clarifications
+- Preserve original formatting and style
+- Keep content concise (1-2 sentences per clarification)
+- Save the updated change.md file
+
 ## Step 1b: Load existing analysis (if any) and the specifications
 
 - If the `analysis.md` file already exists in the change folder read it carefully and load and understand all specifications mentioned there

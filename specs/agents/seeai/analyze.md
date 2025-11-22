@@ -93,6 +93,7 @@ Guidelines:
 - Respect current file status - skip already-updated content
 - Use sub-items (indented checkboxes) to list specific changes for each file
 - File-level lines do not have checkboxes, only sub-items do
+- If there are tests that are related to the changed files, create a todo item to run these tests only after all files related to these tests are modified
 
 ### Notes
 

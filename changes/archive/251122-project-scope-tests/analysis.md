@@ -14,13 +14,13 @@ None
 ## Affected files and tests
 
 - create: [tests/test_project_scope_installs.bats](../../../tests/test_project_scope_installs.bats)
-  - [ ] Create mega test "project scope installations (agent x version x mode)" covering 18 combinations (3 agents x 3 versions x 2 modes)
-  - [ ] Add separate test "ACF creation when no file exists" using agent=auggie, version=latest, mode=remote
-  - [ ] Add separate test "ACF append when file exists without instructions" using agent=claude, version=latest, mode=remote
-  - [ ] Add separate test "ACF update when file exists with old instructions" using agent=auggie, version=latest, mode=remote
-  - [ ] Verify all 6 files installed, VersionInfo at specs/agents/seeai/, ACF created/updated, and Actions NOT in user scope
+  - [x] Create mega test "project scope installations (agent x version x mode)" covering 18 combinations (3 agents x 3 versions x 2 modes)
+  - [x] Add separate test "ACF creation when no file exists" using agent=auggie, version=latest, mode=remote
+  - [x] Add separate test "ACF append when file exists without instructions" using agent=claude, version=latest, mode=remote
+  - [x] Add separate test "ACF update when file exists with old instructions" using agent=auggie, version=latest, mode=remote
+  - [x] Verify all 6 files installed, VersionInfo at specs/agents/seeai/, ACF created/updated, and Actions NOT in user scope
 - test: Run new tests
-  - [ ] Run `bats tests/test_project_scope_installs.bats` to verify all 21 test cases pass (18 mega test + 3 ACF tests)
+  - [x] Run `bats tests/test_project_scope_installs.bats` to verify all 21 test cases pass (18 mega test + 3 ACF tests)
 
 ## Notes
 

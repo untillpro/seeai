@@ -24,19 +24,8 @@
 - System installs Triggering Instructions into Agents Config Files (project scope only):
   - AGENTS.md for auggie, gemini, copilot
   - CLAUDE.md for claude
-- Version metadata is stored separately in VersionInfo file at `specs/agents/seeai/seeai-version.yml`
+- Version metadata is stored separately in VersionInfo file at `.seeai/seeai-version.yml`
 - Only instruction block markers are written to ACF (no version metadata in HTML comments)
-
-```markdown
-<!-- SEEAI:BEGIN [version info]-->
-# SeeAI Triggering Instructions
-
-- Always open `@/specs/agents/seeai/registrar.md` and follow the instructions there when the request sounds like "let me see a change [change description]"
-- Always open `@/specs/agents/seeai/analyze.md` and follow the instructions there when the request sounds like "let me see an analysis [change reference]"
-- Always open `@/specs/agents/seeai/specifier.md` and follow the instructions there when the request sounds like "let me see an analysis [change reference]"
-
-<!-- SEEAI:END -->
-```  
 
 ## What
 

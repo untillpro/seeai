@@ -82,10 +82,10 @@ normalize_path() {
 }
 
 # Get installation directory
-# Project scope: All files go to specs/agents/seeai/ regardless of agent
+# Project scope: All files go to .seeai/ regardless of agent
 # This is the single source location for all agents in project scope
 get_project_dir() {
-  echo "specs/agents/seeai/"
+  echo ".seeai/"
 }
 
 get_global_dir() {
@@ -101,8 +101,8 @@ get_global_dir() {
 get_all_locations() {
   local locations=()
 
-  # Project scope: Check specs/agents/seeai/ (new installations)
-  locations+=("specs/agents/seeai/")
+  # Project scope: Check .seeai/ (new installations)
+  locations+=(".seeai/")
 
   # Project scope: Also check agent-specific directories for backward compatibility with legacy installations
   for agent in augment copilot claude; do
@@ -198,9 +198,9 @@ create_version_info() {
   # Determine VersionInfo file location
   local version_info_file
   if [[ "$scope" == "project" ]]; then
-    # Project scope: specs/agents/seeai/seeai-version.yml
-    version_info_file="specs/agents/seeai/seeai-version.yml"
-    mkdir -p "specs/agents/seeai"
+    # Project scope: .seeai/seeai-version.yml
+    version_info_file=".seeai/seeai-version.yml"
+    mkdir -p ".seeai"
   else
     # User scope: in target directory
     version_info_file="$target_dir/seeai-version.yml"
@@ -236,12 +236,12 @@ install_triggering_instructions() {
   local instructions='<!-- seeai:triggering_instructions:begin -->
 ## SeeAI Triggering Instructions
 
-- Always load `@/specs/agents/seeai/register.md` and follow the instructions there when the request sounds like "Register a change [change description]"
-- Always load `@/specs/agents/seeai/design.md` and follow the instructions there when the request sounds like "Design a solution for [problem description]"
-- Always load `@/specs/agents/seeai/analyze.md` and follow the instructions there when the request sounds like "Analyze a change"
-- Always load `@/specs/agents/seeai/implement.md` and follow the instructions there when the request sounds like "implement todo items" or "implement specifications"
-- Always load `@/specs/agents/seeai/archive.md` and follow the instructions there when the request sounds like "archive a change [change reference]"
-- Always load `@/specs/agents/seeai/gherkin.md` and follow the instructions there when the request sounds like "Generate Gherkin scenarios for [feature description]"
+- Always load `@/.seeai/register.md` and follow the instructions there when the request sounds like "Register a change [change description]"
+- Always load `@/.seeai/design.md` and follow the instructions there when the request sounds like "Design a solution for [problem description]"
+- Always load `@/.seeai/analyze.md` and follow the instructions there when the request sounds like "Analyze a change"
+- Always load `@/.seeai/implement.md` and follow the instructions there when the request sounds like "implement todo items" or "implement specifications"
+- Always load `@/.seeai/archive.md` and follow the instructions there when the request sounds like "archive a change [change reference]"
+- Always load `@/.seeai/gherkin.md` and follow the instructions there when the request sounds like "Generate Gherkin scenarios for [feature description]"
 
 <!-- seeai:triggering_instructions:end -->'
 
@@ -308,11 +308,11 @@ list_command() {
     local scope=""
 
     # Determine scope and label based on location
-    if [[ "$location" == "specs/agents/seeai/" ]]; then
+    if [[ "$location" == ".seeai/" ]]; then
       # Project scope: single source location for all agents (new installations)
       label="Project (all agents)"
       scope="project"
-      # Find all .md files in specs/agents/seeai/ (excluding subdirectories for now)
+      # Find all .md files in .seeai/ (excluding subdirectories for now)
       mapfile -t files < <(find "$location" -maxdepth 1 -type f -name "*.md" 2>/dev/null || true)
       # Also add files from specs subdirectory
       mapfile -t spec_files < <(find "$location/specs" -type f -name "*.md" 2>/dev/null || true)
@@ -345,8 +345,8 @@ list_command() {
       local version_info
 
       if [[ "$scope" == "project" ]]; then
-        # Project scope: check specs/agents/seeai/seeai-version.yml
-        metadata_file="specs/agents/seeai/seeai-version.yml"
+        # Project scope: check .seeai/seeai-version.yml
+        metadata_file=".seeai/seeai-version.yml"
       else
         # User scope: check in installation directory
         if [[ "$location" == *"/prompts/"* ]]; then
@@ -509,22 +509,22 @@ show_install_preview() {
   echo "Installing from: $source_label"
 
   if [[ "$SCOPE" == "project" ]]; then
-    # Project scope: Files will be downloaded to specs/agents/seeai/
-    echo "Target: specs/agents/seeai/"
+    # Project scope: Files will be downloaded to .seeai/
+    echo "Target: .seeai/"
     echo
     echo "The following files will be installed:"
     for file in "${preview_files[@]}"; do
-      echo "  specs/agents/seeai/$file"
+      echo "  .seeai/$file"
     done
     echo
     echo "Installation will:"
     if [[ "$LOCAL_MODE" == true ]]; then
-      echo "  - Copy files from local source to specs/agents/seeai/"
+      echo "  - Copy files from local source to .seeai/"
     else
-      echo "  - Download files from GitHub to specs/agents/seeai/"
+      echo "  - Download files from GitHub to .seeai/"
     fi
     echo "  - Overwrite existing files to ensure version consistency"
-    echo "  - Create seeai-version.yml in specs/agents/seeai/"
+    echo "  - Create seeai-version.yml in .seeai/"
     echo "  - Update triggering instructions in AGENTS.md or CLAUDE.md"
   else
     # User scope: Files will be copied to target directory
@@ -632,7 +632,7 @@ install_files() {
 
   if [[ "$LOCAL_MODE" == true ]]; then
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    SRC_DIR="$SCRIPT_DIR/../specs/agents/seeai"
+    SRC_DIR="$SCRIPT_DIR/../.seeai"
 
     for file in "${files_to_install[@]}"; do
       local target_file="$file"
@@ -660,7 +660,7 @@ install_files() {
       echo "OK"
     done
   else
-    BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/specs/agents/seeai"
+    BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/.seeai"
 
     for file in "${files_to_install[@]}"; do
       local target_file="$file"

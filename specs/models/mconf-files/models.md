@@ -8,7 +8,7 @@ In project scope, all Actions and Specs are downloaded during installation to a 
 
 ```text
 Source Directory (All Agents):
-specs/agents/seeai/
+.seeai/
 ├── design.md
 ├── gherkin.md
 ├── register.md
@@ -20,7 +20,7 @@ specs/agents/seeai/
 └── seeai-version.yml
 ```
 
-This directory structure is created during project scope installation. Files are downloaded from the GitHub repository (or copied from local source in development mode) to specs/agents/seeai/. Existing files are overwritten to ensure version consistency.
+This directory structure is created during project scope installation. Files are downloaded from the GitHub repository (or copied from local source in development mode) to .seeai/. Existing files are overwritten to ensure version consistency.
 
 Actions are referenced directly from this location via triggering instructions in Agents Config Files (AGENTS.md or CLAUDE.md). Files are not copied to agent-specific directories in project scope.
 

@@ -4,7 +4,7 @@
 
 - scripts
   - seeai.sh: Main installation and management script
-- specs/agents/seeai: SeeAI agent specifications
+- .seeai/: SeeAI specifications
   - design.md: Prompt to design a solution for a given problem
   - gherkin.md: Prompt to design BDD-style gherkin for a given problem
   - register.md: Prompt to register a change

@@ -16,24 +16,24 @@ References
 
 ## SeeAI Action
 
-A specialized prompt file stored in project scope at specs/agents/seeai/ directory. Actions are invoked implicitly through Natural Language Invocation (NLI) - natural language patterns (e.g., "let me see a design") matched by triggering instructions in Agents Config Files (AGENTS.md or CLAUDE.md).
+A specialized prompt file stored in project scope at .seeai/ directory. Actions are invoked implicitly through Natural Language Invocation (NLI) - natural language patterns (e.g., "let me see a design") matched by triggering instructions in Agents Config Files (AGENTS.md or CLAUDE.md).
 
 Source location:
 
-- `specs/agents/seeai/` - Single source of truth for all Actions in project scope
+- `.seeai/` - Single source of truth for all Actions in project scope
 
-Actions are referenced directly from specs/agents/seeai/ by AI agents via triggering instructions. Unlike Commands, Actions are not copied to agent-specific directories in project scope.
+Actions are referenced directly from .seeai/ by AI agents via triggering instructions. Unlike Commands, Actions are not copied to agent-specific directories in project scope.
 
-Note: The same source files become either Commands or Actions depending on installation scope. In user scope, files are downloaded from GitHub (or copied from local source with -l flag) to agent-specific directories. In project scope, files are downloaded to specs/agents/seeai/.
+Note: The same source files become either Commands or Actions depending on installation scope. In user scope, files are downloaded from GitHub (or copied from local source with -l flag) to agent-specific directories. In project scope, files are downloaded to .seeai/.
 
 ## SeeAI Spec
 
-A reusable specification template stored in `/specs/agents/seeai/specs/` that defines common patterns and structures used by SeeAI Actions. SeeAI Specs are internal templates that guide Actions in creating consistent specifications across different workflows.
+A reusable specification template stored in `/.seeai/specs/` that defines common patterns and structures used by SeeAI Actions. SeeAI Specs are internal templates that guide Actions in creating consistent specifications across different workflows.
 
 Key characteristics:
 
-- Stored in `/specs/agents/seeai/specs/` directory
-- Referenced by Actions using relative paths (e.g., `@/specs/agents/seeai/specs/specs.md`)
+- Stored in `/.seeai/specs/` directory
+- Referenced by Actions using relative paths (e.g., `@/.seeai/specs/specs.md`)
 - Distributed only to project scope via seeai.sh installation script
 - Not versioned separately - they evolve with Actions
 - Not user-facing configuration - internal templates for Actions
@@ -65,7 +65,7 @@ The ACF contains HTML comment markers that wrap the triggering instructions.
 
 ## Project Scope
 
-Installation scope that applies to a single project folder. In project scope, SeeAI Actions and Specs are stored in specs/agents/seeai/ directory and referenced directly by AI agents through triggering instructions in Agents Config Files (AGENTS.md or CLAUDE.md).
+Installation scope that applies to a single project folder. In project scope, SeeAI Actions and Specs are stored in .seeai/ directory and referenced directly by AI agents through triggering instructions in Agents Config Files (AGENTS.md or CLAUDE.md).
 
 Agent-specific directories (.augment/, .github/, .claude/) are only used in user scope installations where files are copied to user home directories. In project scope, these directories are not used.
 
@@ -83,8 +83,8 @@ Example:
 <!-- seeai:triggering_instructions:begin -->
 # SeeAI Triggering Instructions
 
-- Always open `@/specs/agents/seeai/registrar.md` and follow the instructions there when the request sounds like "let me see a change [change description]"
-- Always open `@/specs/agents/seeai/analyze.md` and follow the instructions there when the request sounds like "let me see an analysis [change reference]"
+- Always open `@/.seeai/registrar.md` and follow the instructions there when the request sounds like "let me see a change [change description]"
+- Always open `@/.seeai/analyze.md` and follow the instructions there when the request sounds like "let me see an analysis [change reference]"
 
 <!-- seeai:triggering_instructions:end -->
 ```
@@ -98,9 +98,9 @@ Format: `seeai-version.yml`
 Locations:
 
 - User scope: `~/.augment/commands/seeai/`, `~/.claude/commands/seeai/`, `{prompts_dir}/`
-- Project scope: `specs/agents/seeai/` (single location for all agents)
+- Project scope: `.seeai/` (single location for all agents)
 
-In project scope, the version file is created only in specs/agents/seeai/ directory, not in agent-specific directories, since files are not copied to those locations.
+In project scope, the version file is created only in .seeai/ directory, not in agent-specific directories, since files are not copied to those locations.
 
 Example:
 

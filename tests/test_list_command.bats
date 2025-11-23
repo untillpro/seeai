@@ -13,8 +13,8 @@ setup() {
   cd "$TEST_TEMP_DIR" || exit 1
 
   # Copy fixtures to temp directory (needed for local mode)
-  mkdir -p specs/agents/seeai
-  cp -r "$FIXTURES_DIR/specs/agents/seeai/"* specs/agents/seeai/
+  mkdir -p .seeai
+  cp -r "$FIXTURES_DIR/.seeai/"* .seeai/
 }
 
 teardown() {
@@ -24,8 +24,8 @@ teardown() {
   cleanup_mock_env
 }
 
-@test "list command shows project scope installation from specs/agents/seeai/" {
-  # Install in project scope (creates version file in specs/agents/seeai/)
+@test "list command shows project scope installation from .seeai/" {
+  # Install in project scope (creates version file in .seeai/)
   run bash "$BATS_TEST_DIRNAME/../scripts/seeai.sh" install -l --agent auggie --scope project
   [ "$status" -eq 0 ] || {
     echo "Installation failed with status $status"
@@ -48,9 +48,9 @@ teardown() {
     return 1
   }
 
-  # Should show files from specs/agents/seeai/
-  echo "$output" | grep -q "specs/agents/seeai/design.md" || {
-    echo "Expected 'specs/agents/seeai/design.md' in output"
+  # Should show files from .seeai/
+  echo "$output" | grep -q ".seeai/design.md" || {
+    echo "Expected '.seeai/design.md' in output"
     echo "Output: $output"
     return 1
   }
@@ -59,8 +59,8 @@ teardown() {
 @test "list command shows legacy project scope installations from agent-specific directories" {
   # Simulate legacy installation by manually creating files in agent-specific directory
   mkdir -p .augment/commands/seeai
-  cp specs/agents/seeai/design.md .augment/commands/seeai/
-  cp specs/agents/seeai/gherkin.md .augment/commands/seeai/
+  cp .seeai/design.md .augment/commands/seeai/
+  cp .seeai/gherkin.md .augment/commands/seeai/
 
   # Create legacy version file
   cat > .augment/commands/seeai/seeai-version.yml << EOF
@@ -106,8 +106,8 @@ EOF
 
   # Simulate legacy installation
   mkdir -p .claude/commands/seeai
-  cp specs/agents/seeai/design.md .claude/commands/seeai/
-  cp specs/agents/seeai/gherkin.md .claude/commands/seeai/
+  cp .seeai/design.md .claude/commands/seeai/
+  cp .seeai/gherkin.md .claude/commands/seeai/
 
   cat > .claude/commands/seeai/seeai-version.yml << EOF
 version: v0.0.8
@@ -157,7 +157,7 @@ EOF
     return 1
   }
 
-  # Should show version info from specs/agents/seeai/seeai-version.yml
+  # Should show version info from .seeai/seeai-version.yml
   echo "$output" | grep -q "Project (all agents)" || {
     echo "Expected 'Project (all agents)' in output"
     echo "Output: $output"
@@ -172,8 +172,8 @@ EOF
 }
 
 @test "list command handles missing installations gracefully" {
-  # Remove specs/agents/seeai to simulate no installations
-  rm -rf specs/agents/seeai
+  # Remove .seeai to simulate no installations
+  rm -rf .seeai
 
   # Run list command with no installations
   run bash "$BATS_TEST_DIRNAME/../scripts/seeai.sh" list

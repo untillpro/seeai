@@ -73,7 +73,7 @@ get_user_scope_dir() {
 }
 
 # Get project scope directory for agent (for negative assertions only)
-# Note: In project scope, files remain in specs/agents/seeai/ and are NOT copied
+# Note: In project scope, files remain in .seeai/ and are NOT copied
 # to agent-specific directories. This function returns the agent-specific directory
 # path to verify it does NOT exist.
 get_project_scope_dir() {

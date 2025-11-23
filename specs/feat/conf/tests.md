@@ -58,11 +58,11 @@ Test verifies:
 
 Covered by: [test_project_scope_installs.bats](../../../tests/test_project_scope_installs.bats)
 
-Verifies that project scope installations download all Actions and Specs to specs/agents/seeai/ directory and do NOT copy files to agent-specific directories.
+Verifies that project scope installations download all Actions and Specs to .seeai/ directory and do NOT copy files to agent-specific directories.
 
 Mega test verifies:
 
-- All SeeAI files (Commands + Actions + Specs) are downloaded to specs/agents/seeai/
+- All SeeAI files (Commands + Actions + Specs) are downloaded to .seeai/
   - Commands: design.md, gherkin.md
   - Actions: register.md, analyze.md, implement.md, archive.md
   - Specs: specs/specs.md
@@ -71,12 +71,12 @@ Mega test verifies:
   - NOT in `./.augment/commands/seeai/`
   - NOT in `./.claude/commands/seeai/`
   - NOT in `./.github/prompts/`
-- VersionInfo file is created at `specs/agents/seeai/seeai-version.yml` with all files listed
-- ACF file (AGENTS.md or CLAUDE.md) exists with triggering instructions that reference specs/agents/seeai/
+- VersionInfo file is created at `.seeai/seeai-version.yml` with all files listed
+- ACF file (AGENTS.md or CLAUDE.md) exists with triggering instructions that reference .seeai/
 - Actions are NOT installed in user scope (negative assertions)
 - Installation validates all files were successfully downloaded
 - Installation fails with clear error message if any files are missing after download
-- Existing files in specs/agents/seeai/ are overwritten to ensure version consistency
+- Existing files in .seeai/ are overwritten to ensure version consistency
 
 Separate ACF update tests verify:
 

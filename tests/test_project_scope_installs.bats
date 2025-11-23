@@ -12,10 +12,10 @@ setup() {
   # Change to temp directory
   cd "$TEST_TEMP_DIR" || exit 1
 
-  # Create specs/agents/seeai directory but do NOT pre-populate with files
+  # Create .seeai directory but do NOT pre-populate with files
   # This tests that installation actually downloads/copies files
   # For local mode tests, files will be copied from the real fixtures directory
-  mkdir -p specs/agents/seeai
+  mkdir -p .seeai
 }
 
 teardown() {
@@ -114,37 +114,37 @@ get_expected_version() {
           continue
         fi
 
-        # Validate version file exists at specs/agents/seeai/seeai-version.yml
-        if [[ ! -f "specs/agents/seeai/seeai-version.yml" ]]; then
-          echo "FAILED: Version file missing at specs/agents/seeai/seeai-version.yml"
+        # Validate version file exists at .seeai/seeai-version.yml
+        if [[ ! -f ".seeai/seeai-version.yml" ]]; then
+          echo "FAILED: Version file missing at .seeai/seeai-version.yml"
           continue
         fi
 
         # Check expected version string
         if [[ "$mode" == "local" ]]; then
           # Local mode: version should start with "local-"
-          if ! grep -q "version: local-" "specs/agents/seeai/seeai-version.yml"; then
+          if ! grep -q "version: local-" ".seeai/seeai-version.yml"; then
             echo "FAILED: Expected local version format"
-            cat "specs/agents/seeai/seeai-version.yml"
+            cat ".seeai/seeai-version.yml"
             continue
           fi
         else
           # Remote mode: check expected version
           local expected_version
           expected_version=$(get_expected_version "$version")
-          if ! grep -q "version: $expected_version" "specs/agents/seeai/seeai-version.yml"; then
+          if ! grep -q "version: $expected_version" ".seeai/seeai-version.yml"; then
             echo "FAILED: Expected version $expected_version"
-            cat "specs/agents/seeai/seeai-version.yml"
+            cat ".seeai/seeai-version.yml"
             continue
           fi
         fi
 
-        # Check all 7 files exist in specs/agents/seeai/ (Commands + Actions + Specs)
+        # Check all 7 files exist in .seeai/ (Commands + Actions + Specs)
         local files_ok=true
         local source_files="design.md gherkin.md register.md analyze.md implement.md archive.md specs/specs.md"
         for file in $source_files; do
-          if [[ ! -f "specs/agents/seeai/$file" ]]; then
-            echo "FAILED: Missing file in specs/agents/seeai/$file"
+          if [[ ! -f ".seeai/$file" ]]; then
+            echo "FAILED: Missing file in .seeai/$file"
             files_ok=false
             break
           fi
@@ -154,9 +154,9 @@ get_expected_version() {
           continue
         fi
 
-        # Verify specs directory exists in specs/agents/seeai/
-        if [[ ! -d "specs/agents/seeai/specs" ]]; then
-          echo "FAILED: specs directory not found in specs/agents/seeai/"
+        # Verify specs directory exists in .seeai/
+        if [[ ! -d ".seeai/specs" ]]; then
+          echo "FAILED: specs directory not found in .seeai/"
           files_ok=false
           continue
         fi
@@ -216,8 +216,8 @@ get_expected_version() {
         cleanup_mock_env
         setup_mock_env
         cd "$TEST_TEMP_DIR" || exit 1
-        mkdir -p specs/agents/seeai
-        cp -r "$FIXTURES_DIR/specs/agents/seeai/"* specs/agents/seeai/
+        mkdir -p .seeai
+        cp -r "$FIXTURES_DIR/.seeai/"* .seeai/
       done
     done
   done
@@ -449,7 +449,7 @@ EOF
   }
 
   # Modify a file to verify it gets overwritten
-  echo "OLD CONTENT" > specs/agents/seeai/design.md
+  echo "OLD CONTENT" > .seeai/design.md
 
   # Second installation should overwrite
   run bash "$BATS_TEST_DIRNAME/../scripts/seeai.sh" install -l --agent auggie --scope project
@@ -460,16 +460,16 @@ EOF
   }
 
   # Verify file was overwritten (should not contain OLD CONTENT)
-  if grep -q "OLD CONTENT" specs/agents/seeai/design.md; then
+  if grep -q "OLD CONTENT" .seeai/design.md; then
     echo "FAILED: File was not overwritten"
-    cat specs/agents/seeai/design.md
+    cat .seeai/design.md
     return 1
   fi
 
   # Verify file contains expected content
-  if ! grep -q "Design Document Generator" specs/agents/seeai/design.md; then
+  if ! grep -q "Design Document Generator" .seeai/design.md; then
     echo "FAILED: File does not contain expected content after overwrite"
-    cat specs/agents/seeai/design.md
+    cat .seeai/design.md
     return 1
   fi
 
@@ -489,7 +489,7 @@ exit_code=$?
 
 # If installation succeeded, delete a file to simulate download failure
 if [ $exit_code -eq 0 ]; then
-  rm -f specs/agents/seeai/design.md
+  rm -f .seeai/design.md
 fi
 
 exit $exit_code

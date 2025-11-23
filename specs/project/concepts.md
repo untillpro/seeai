@@ -24,7 +24,7 @@ Source location:
 
 Actions are referenced directly from specs/agents/seeai/ by AI agents via triggering instructions. Unlike Commands, Actions are not copied to agent-specific directories in project scope.
 
-Note: The same source files become either Commands or Actions depending on installation scope. In user scope, files are copied to agent-specific directories. In project scope, files remain in specs/agents/seeai/.
+Note: The same source files become either Commands or Actions depending on installation scope. In user scope, files are downloaded from GitHub (or copied from local source with -l flag) to agent-specific directories. In project scope, files are downloaded to specs/agents/seeai/.
 
 ## SeeAI Spec
 

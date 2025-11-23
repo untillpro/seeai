@@ -82,15 +82,10 @@ normalize_path() {
 }
 
 # Get installation directory
-# copilot doesn't support subfolders, so files go directly in base dir with seeai- prefix
-# Other agents use seeai/ subdirectory
+# Project scope: All files go to specs/agents/seeai/ regardless of agent
+# This is the single source location for all agents in project scope
 get_project_dir() {
-  local agent=$1
-  if [[ $agent == "copilot" ]]; then
-    echo "${PROJECT_BASE_DIRS[$agent]}/"
-  else
-    echo "${PROJECT_BASE_DIRS[$agent]}/$SEEAI_SUBDIR/"
-  fi
+  echo "specs/agents/seeai/"
 }
 
 get_global_dir() {
@@ -514,15 +509,21 @@ show_install_preview() {
   echo "Installing from: $source_label"
 
   if [[ "$SCOPE" == "project" ]]; then
-    # Project scope: Files remain in specs/agents/seeai/
-    echo "Source location: specs/agents/seeai/"
+    # Project scope: Files will be downloaded to specs/agents/seeai/
+    echo "Target: specs/agents/seeai/"
     echo
-    echo "The following files are available in specs/agents/seeai/:"
+    echo "The following files will be installed:"
     for file in "${preview_files[@]}"; do
       echo "  specs/agents/seeai/$file"
     done
     echo
     echo "Installation will:"
+    if [[ "$LOCAL_MODE" == true ]]; then
+      echo "  - Copy files from local source to specs/agents/seeai/"
+    else
+      echo "  - Download files from GitHub to specs/agents/seeai/"
+    fi
+    echo "  - Overwrite existing files to ensure version consistency"
     echo "  - Create seeai-version.yml in specs/agents/seeai/"
     echo "  - Update triggering instructions in AGENTS.md or CLAUDE.md"
   else
@@ -625,74 +626,102 @@ install_files() {
     files_to_install=("${ALL_FILES[@]}")
   fi
 
-  # Install files (user scope only)
-  # Project scope: Files remain in specs/agents/seeai/, no copying needed
-  if [[ "$SCOPE" == "user" ]]; then
-    # Create target directory
-    mkdir -p "$TARGET_DIR"
+  # Install files
+  # Create target directory
+  mkdir -p "$TARGET_DIR"
 
-    if [[ "$LOCAL_MODE" == true ]]; then
-      SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-      SRC_DIR="$SCRIPT_DIR/../specs/agents/seeai"
+  if [[ "$LOCAL_MODE" == true ]]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    SRC_DIR="$SCRIPT_DIR/../specs/agents/seeai"
 
-      for file in "${files_to_install[@]}"; do
-        local target_file="$file"
-        if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
-          # copilot: add seeai- prefix and change extension to .prompt.md
-          # For files in subdirectories, flatten the path
-          local base_name="${file##*/}"
-          local dir_name="${file%/*}"
-          if [[ "$dir_name" != "$file" ]]; then
-            # File is in subdirectory, use directory name as part of prefix
-            target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
-          else
-            target_file="seeai-${file%.md}.prompt.md"
-          fi
+    for file in "${files_to_install[@]}"; do
+      local target_file="$file"
+      if [[ "$SCOPE" == "user" && "$AGENT_INTERNAL" == "copilot" ]]; then
+        # copilot: add seeai- prefix and change extension to .prompt.md
+        # For files in subdirectories, flatten the path
+        local base_name="${file##*/}"
+        local dir_name="${file%/*}"
+        if [[ "$dir_name" != "$file" ]]; then
+          # File is in subdirectory, use directory name as part of prefix
+          target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
+        else
+          target_file="seeai-${file%.md}.prompt.md"
         fi
+      fi
 
-        # Create subdirectory if needed
-        local target_dir_path="$(dirname "$TARGET_DIR/$target_file")"
-        if [[ "$target_dir_path" != "$TARGET_DIR" ]]; then
-          mkdir -p "$target_dir_path"
-        fi
+      # Create subdirectory if needed
+      local target_dir_path="$(dirname "$TARGET_DIR/$target_file")"
+      if [[ "$target_dir_path" != "$TARGET_DIR" ]]; then
+        mkdir -p "$target_dir_path"
+      fi
 
-        echo -n "Copying $file... "
-        cp "$SRC_DIR/$file" "$TARGET_DIR/$target_file"
-        echo "OK"
-      done
-    else
-      BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/specs/agents/seeai"
-
-      for file in "${files_to_install[@]}"; do
-        local target_file="$file"
-        if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
-          # copilot: add seeai- prefix and change extension to .prompt.md
-          # For files in subdirectories, flatten the path
-          local base_name="${file##*/}"
-          local dir_name="${file%/*}"
-          if [[ "$dir_name" != "$file" ]]; then
-            # File is in subdirectory, use directory name as part of prefix
-            target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
-          else
-            target_file="seeai-${file%.md}.prompt.md"
-          fi
-        fi
-
-        # Create subdirectory if needed
-        local target_dir_path="$(dirname "$TARGET_DIR/$target_file")"
-        if [[ "$target_dir_path" != "$TARGET_DIR" ]]; then
-          mkdir -p "$target_dir_path"
-        fi
-
-        echo -n "Downloading $file... "
-        curl -fsSL "${BASE_URL}/${file}" -o "$TARGET_DIR/$target_file"
-        echo "OK"
-      done
-    fi
+      echo -n "Copying $file... "
+      cp "$SRC_DIR/$file" "$TARGET_DIR/$target_file"
+      echo "OK"
+    done
   else
-    # Project scope: Files already exist in specs/agents/seeai/, skip copying
-    echo "Using existing files in specs/agents/seeai/"
+    BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/specs/agents/seeai"
+
+    for file in "${files_to_install[@]}"; do
+      local target_file="$file"
+      if [[ "$SCOPE" == "user" && "$AGENT_INTERNAL" == "copilot" ]]; then
+        # copilot: add seeai- prefix and change extension to .prompt.md
+        # For files in subdirectories, flatten the path
+        local base_name="${file##*/}"
+        local dir_name="${file%/*}"
+        if [[ "$dir_name" != "$file" ]]; then
+          # File is in subdirectory, use directory name as part of prefix
+          target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
+        else
+          target_file="seeai-${file%.md}.prompt.md"
+        fi
+      fi
+
+      # Create subdirectory if needed
+      local target_dir_path="$(dirname "$TARGET_DIR/$target_file")"
+      if [[ "$target_dir_path" != "$TARGET_DIR" ]]; then
+        mkdir -p "$target_dir_path"
+      fi
+
+      echo -n "Downloading $file... "
+      curl -fsSL "${BASE_URL}/${file}" -o "$TARGET_DIR/$target_file"
+      echo "OK"
+    done
   fi
+
+  # Validate that all files were successfully installed
+  echo -n "Validating installation... "
+  local missing_files=()
+  for file in "${files_to_install[@]}"; do
+    local target_file="$file"
+    if [[ "$SCOPE" == "user" && "$AGENT_INTERNAL" == "copilot" ]]; then
+      # copilot: add seeai- prefix and change extension to .prompt.md
+      local base_name="${file##*/}"
+      local dir_name="${file%/*}"
+      if [[ "$dir_name" != "$file" ]]; then
+        target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
+      else
+        target_file="seeai-${file%.md}.prompt.md"
+      fi
+    fi
+
+    if [[ ! -f "$TARGET_DIR/$target_file" ]]; then
+      missing_files+=("$file")
+    fi
+  done
+
+  if [[ ${#missing_files[@]} -gt 0 ]]; then
+    echo "FAILED"
+    echo
+    echo "Error: Installation incomplete. The following files are missing:"
+    for file in "${missing_files[@]}"; do
+      echo "  - $file"
+    done
+    echo
+    echo "Please try running the installation again."
+    exit 1
+  fi
+  echo "OK"
 
   # Create VersionInfo file
   echo -n "Creating seeai-version.yml... "

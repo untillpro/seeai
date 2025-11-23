@@ -4,7 +4,7 @@
 
 ### Source Location
 
-In project scope, all Actions and Specs are stored in a single source location:
+In project scope, all Actions and Specs are downloaded during installation to a single location:
 
 ```text
 Source Directory (All Agents):
@@ -20,11 +20,13 @@ specs/agents/seeai/
 └── seeai-version.yml
 ```
 
+This directory structure is created during project scope installation. Files are downloaded from the GitHub repository (or copied from local source in development mode) to specs/agents/seeai/. Existing files are overwritten to ensure version consistency.
+
 Actions are referenced directly from this location via triggering instructions in Agents Config Files (AGENTS.md or CLAUDE.md). Files are not copied to agent-specific directories in project scope.
 
 ### User Scope Target Directories
 
-For user scope installations, files are copied from specs/agents/seeai/ to agent-specific directories in user home:
+For user scope installations, files are downloaded from GitHub (or copied from local source with -l flag) to agent-specific directories in user home:
 
 ```text
 User Scope (Augment, Claude):

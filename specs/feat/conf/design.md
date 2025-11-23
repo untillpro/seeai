@@ -101,7 +101,7 @@ In project scope, all Actions and Specs are stored in:
 
 - `specs/agents/seeai/` - Single source of truth for all Actions and Specs
 
-Actions are referenced directly from this location via triggering instructions in Agents Config Files (AGENTS.md or CLAUDE.md). In project scope, files are NOT copied to agent-specific directories - they remain in specs/agents/seeai/. Only the seeai-version.yml file is created in specs/agents/seeai/ to track installation metadata.
+Actions are referenced directly from this location via triggering instructions in Agents Config Files (AGENTS.md or CLAUDE.md). In project scope, files are downloaded to specs/agents/seeai/ directory (overwriting any existing files to ensure version consistency). Files are NOT copied to agent-specific directories. The seeai-version.yml file is created in specs/agents/seeai/ to track installation metadata.
 
 ### File Organization Strategy
 
@@ -114,11 +114,11 @@ Actions are referenced directly from this location via triggering instructions i
   - Example: `seeai/design.md`, `seeai/gherkin.md`
   - Specs are installed in subdirectory: `seeai/specs/specs.md`
 
-Note: This organization applies to user scope installations only. In project scope, files remain in specs/agents/seeai/.
+Note: This organization applies to user scope installations only. In project scope, files are downloaded to specs/agents/seeai/.
 
 ### User Scope Target Directories
 
-For user scope installations, files are copied from specs/agents/seeai/ to:
+For user scope installations, files are downloaded from GitHub (or copied from local source with -l flag) to:
 
 - Augment: `~/.augment/commands/seeai/`
 - Copilot: Default profile or specific profile (user selects during installation)
@@ -247,7 +247,9 @@ See "Installation Locations" section for specific paths.
 
 ### Step 3: Download and Install
 
-After user confirms (either Y for user scope or Y after switching to project), create target directory and install files:
+After user confirms (either Y for user scope or Y after switching to project), create target directory and install files.
+
+For user scope:
 
 ```bash
 mkdir -p "$TARGET_DIR"
@@ -260,6 +262,28 @@ Creating seeai-version.yml... OK
 
 Installation complete!
 ```
+
+For project scope:
+
+```bash
+mkdir -p "specs/agents/seeai"
+```
+
+```text
+Downloading design.md... OK
+Downloading gherkin.md... OK
+Downloading register.md... OK
+Downloading analyze.md... OK
+Downloading implement.md... OK
+Downloading archive.md... OK
+Downloading specs/specs.md... OK
+Creating seeai-version.yml... OK
+Installing triggering instructions to ACF... OK
+
+Installation complete!
+```
+
+Files are downloaded to specs/agents/seeai/ directory. Existing files are overwritten to ensure version consistency.
 
 If `-l` flag is used, show "local (../specs/agents/seeai)" as source and "Copying" instead of "Downloading":
 
@@ -281,6 +305,8 @@ Installation complete!
 ```
 
 For Copilot, files are transformed with `seeai-` prefix and `.prompt.md` extension during installation (show the transformed names in the file list).
+
+After file installation, the script validates that all required files were successfully downloaded. If any file is missing, the installation fails with an error message listing the missing files and exits with non-zero status.
 
 ### Step 4: Create VersionInfo File
 

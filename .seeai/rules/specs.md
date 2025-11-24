@@ -2,17 +2,44 @@
 
 ## Overview
 
-- specs
-  - agents: Specifications for agents
-  - contracts: Specifications for project-defined contracts, like API, protocols, workflows
-    - vision.md, contract.md
-  - feat: Feature specifications
-    - vision.md, scenarious.feature
-  - integrations: Specifications for integrations with external systems
-    - vision.md, integration.md
-  - models: Specifications related to data models, see below
-    - vision.md, models.md
-  - project: Project-level specifications that must be followed across the codebase
+The `specs` may containt the following categories of specifications:
+
+- contracts: Specifications for user-facing project-defined contracts, like API, protocols, workflows
+  - vision.md
+  - contract.md
+  - scenarious.feature (if applicable)
+- components: Specifications for system components or modules that are shared across features
+  - E.g. routers, authentication/authorization modules, own implementation of logging, error handling
+- features: Feature specifications
+  - vision.md, scenarious.feature, design.md
+- integrations: Specifications for integrations with external systems
+  - vision.md
+  - integration.md: A reference document that outlines integration protocols and relevant parts to be implemented
+  - scenarious.feature
+  - design.md
+- models: Specifications related to data models, see below
+  - vision.md, models.md
+- project: Project-level specifications that must be followed across the codebase
+  - adr.md: Architecture Decision Records
+    - Brief documents with extremely concise descriptions and rationale and links to more detailed docs
+  - concepts.md: High-level concepts for the project
+  - dev.md: Development rules
+  - specs.md: Specification structure and rules
+  - test.md: Testing strategy and rules
+  - delivery.md: Packaging, installers, CI/CD, installation, configuration, updates...
+  - features.md: Overview of key project features
+  - requirements.md: High-level functional and non-functional requirements
+  - structure.md: Project folder structure
+  - tech.md: Technology stack and other technical decisions
+  - uxui.md: User experience and user interface rules
+
+## Project-related specification categories
+
+For each file in the `specs/project` folder there may be a corresponding specification folder, e.g.:
+
+- `specs/dev`: Describes development-related capabilities like how to set up the dev environment
+- `specs/test`: Describes testing-related capabilities like how to run unit/integration tests
+- `specs/delivery`: Describes capabilities related packaging, installers, CI/CD, installation, configuration, updates...
 
 ## Models
 
@@ -22,15 +49,7 @@
 
 ## When to Create New Specifications
 
-Create new specs in these scenarios:
-
-- specs/models: User-facing data structures (config files, folder structures, version files, UI data formats)
-- specs/feat: New user-facing features or capabilities
-- specs/contracts: APIs, protocols, or workflows that multiple components must follow
-- specs/integrations: Integration with external systems or third-party services
-- specs/agents: New agent behaviors or prompts
-- specs/project: New project-wide rules or standards
-- Architectural components without user-visible behavior that need to be documented as part of the system architecture
+New specifications should be created when existing specs do not cover the new requirements.
 
 Do NOT create specs for:
 
@@ -42,25 +61,27 @@ Do NOT create specs for:
 Example
 
 ```markdown
-## Specifications to create
+## Specifications
 
-- [specs/integrations/mcp/vision.md](../../../specs/integrations/mcp/vision.md)
+- [mcp/vision.md](../../../specs/integrations/mcp/vision.md)
   - [ ] Define the purpose and benefits of MCP server integration
   - [ ] Describe the extension architecture and tool-based approach
   - [ ] Explain how Actions will interact with the MCP server
-- [specs/integrations/mcp/integration.md](../../../specs/integrations/mcp/integration.md)
-  - [ ] Specify MCP protocol version and transport mechanisms (stdio/HTTP)
-  - [ ] Define extension discovery protocol and tool listing format
-  - [ ] Specify extension invocation protocol and response handling
-  - [ ] Define error handling and fallback mechanisms
-  - [ ] Specify configuration format for MCP server connection
-- [specs/models/mcp-config/vision.md](../../../specs/models/mcp-config/vision.md)
+- [mcp/integration.md](../../../specs/integrations/mcp/integration.md)
+  - [ ] MCP protocol version and transport mechanisms (stdio/HTTP)
+  - [ ] Brief description of MCP server initialization protocol with link to spec
+  - [ ] Brief description of tool listing/discovery protocol with link to spec
+  - [ ] Brief description of tool invocation protocol with link to spec
+- [mcp/design.md](../../../specs/integrations/mcp/design.md)
+  - [ ] Define error handling and fallback mechanisms (retry logic, timeouts)
+  - [ ] Specify configuration format for MCP server connection (your internal config structure)
+  - [ ] Architecture components (MCPClient, ExtensionRegistry, etc.)
+- [mcp-config/vision.md](../../../specs/models/mcp-config/vision.md)
   - [ ] Define the need for MCP server configuration tracking
   - [ ] Describe configuration scope (user vs project)
-- [specs/models/mcp-config/model.md](../../../specs/models/mcp-config/model.md)
+- [mcp-config/model.md](../../../specs/models/mcp-config/model.md)
   - [ ] Specify MCP server configuration file format
   - [ ] Define connection parameters (transport type, endpoint, authentication)
   - [ ] Specify extension registry format
   - [ ] Define configuration file locations for user and project scopes
 ```
-

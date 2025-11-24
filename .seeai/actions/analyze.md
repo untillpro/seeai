@@ -1,31 +1,28 @@
 # Analyze Change
 
-You are analyzing a registered change to identify impact on specifications and guidelines.
+You are analyzing a registered change to identify impact on specifications and implementation.
 
 ## General instructions
 
-- If not specified otherwise, use sentence capitalization for all headings and lists
-- Load and understand all specs from the `@/specs/project` folder, strictly follow all rules that are contained there
-- Use title case for terms from `@/project/concepts*.md` files everywhere (e.g., "Command", "Action", "Natural Language Invocation"), use terms consistently where applicable
+- Use sentence capitalization for all headings and lists
+- Load and understand all specs from `@/specs/project` folder
+- Use title case for terms from `@/specs/project/concepts*.md` files (e.g., "Command", "Action", "Natural Language Invocation")
 
-## Step 1: Identify the Change
+## Identify the change
 
-- Identify the $ChangeID in the `@/changes/active` folder
-- If $ChangeID may not be identified, ask user for clarification and repeat Step 1
-- Load and understand all the change description files from `@/changes/active/$ChangeID`
+- Identify the $ChangeID in `@/changes/active` folder
+- If $ChangeID cannot be identified, ask user for clarification
+- Load all change description files from `@/changes/active/$ChangeID`
 
-## Step 1a: Ask clarifying questions (if analysis.md does not exist)
+## Ask clarifying questions
 
-If the `analysis.md` file does not exist in the change folder, ask the user three clarifying questions to better understand the change.
+Only if `analysis.md` does not exist in the change folder:
 
-Keep questions and solutions extremely concise, ask about unclear requirements or ambiguous specifications.
+- Ask three clarifying questions about unclear requirements or ambiguous specifications
+- Present suggestions as numbered lists with first option as recommended approach with rationale
+- Keep questions and solutions extremely concise
 
-Format for suggestions:
-
-- Present suggestions as numbered lists
-- First option should be the recommended approach with rationale
-
-Example:
+Example format:
 
 ```markdown
 ## Q1: Question?
@@ -35,131 +32,153 @@ Example:
 3. Answer3 - rationale
 ```
 
-Answers must be integrated to the Change file, preserve original formatting, style, be concise.
+## Integrate answers into change.md
 
-## Step 1a.1: Integrate answers into change.md
+After receiving answers:
 
-After receiving answers from Step 1a:
-
-- Load the change.md file
-- Integrate the answers into appropriate sections (Why/How) based on what was clarified
-- Add new subsections if needed to capture important clarifications
+- Load change.md file
+- Integrate answers into appropriate sections (Why/How)
+- Add new subsections if needed for important clarifications
 - Preserve original formatting and style
 - Keep content concise (1-2 sentences per clarification)
-- Save the updated change.md file
 
-## Step 1b: Load existing analysis (if any) and the specifications
+## Create analysis.md if not exists
 
-- If the `analysis.md` file already exists in the change folder read it carefully and load and understand all specifications mentioned there
+If `analysis.md` does not exist in the change folder, create it with empty sections.
 
-## Step 2: Find related spec files to update
+## Load existing analysis.md
+
+If `analysis.md` exists, load it and understand all specifications mentioned there.
+
+## Identify related spec files
 
 - Extract key concepts from the change (domain entities, actions, technical terms)
 - Use codebase-retrieval to search for specifications semantically related to the change
-- Search for those concepts across `@/specs/` directory and find which spec files are relevant to the change
-- If the change is not related to any existing spec file, note that in the analysis report
-- Identify which spec files need updates based on the change description
+- Search across `@/specs/` directory for relevant spec files
+- Identify which spec files need updates, moves, or deletions
 
-## Step 3: Identify spec files to create
+## Identify spec files CRUD
 
-- Load and understand the specification structure and creation criteria from `@/.seeai/rules/specs.md`
-- Apply the criteria to determine what new spec files need to be created based on the change
-- If something in the change is not covered by existing specs, identify what new spec files need to be created
+- Load and understand specification structure from `@/.seeai/rules/specs.md`
+- Determine what new spec files need to be created
+- Identify existing specs that need updates
+- Identify specs that need to be moved or deleted
 
-## Step 4: Identify files to update and create
+## Actualize Specifications section
 
-- Identify any guideline (e.g. README.md) files that need updated/created based on the change
-- CRITICAL: These files should be in `@/specs/**` folders
-
-## Step 5: Generate analysis report
-
-Create or update `analysis.md` in the change folder with these sections:
-
-### Specifications to create
-
-List all specification files that you recommend creating with specific things to specify (high-level only):
+Create or update the Specifications section in `analysis.md`:
 
 ```markdown
-- [folder1/filename1](relative/path)
-  - [ ] Specific thing to specify 1
-  - [ ] Specific thing to specify 2
-  - [ ] Specific thing to specify 3
-- [folder2/filename2](relative/path)
-  - [ ] Specific thing to specify 1
-  - [ ] Specific thing to specify 2
-```
+## Specifications
 
-### Specifications to update
-
-List all specification files that need changes with specific things to update:
-
-```markdown
-- [folder1/filename1](relative/path)
-  - [ ] Specific thing to update 1
-  - [ ] Specific thing to update 2
-  - [ ] Specific thing to update 3
-- [folder2/filename2](relative/path)
-  - [ ] Specific thing to update 1
-  - [ ] Specific thing to update 2
-```
-
-### Affected files and tests
-
-List all non-specification files that need changes and related tests to run.
-
-Example:
-
-```markdown
-- update: [scripts/deploy.sh](../../../scripts/deploy.sh)
-  - [ ] Update API_URL from `api.old.com` to `api.new.com` (line 42)
-  - [ ] Update timeout value from 30 to 60 (line 89)
-- move: [src/config.json](../../../src/config.json)
-  - [ ] Relocate to [config/app.json](../../../config/app.json)
-- configure: Flutter dependencies
-  - [ ] Related file: [pubspec.yaml](../../../pubspec.yaml)
-  - [ ] Run `flutter pub get` to update dependencies
-- update: [.gitignore](../../../.gitignore)
-  - [ ] Add Flutter-specific patterns: `*.g.dart`, `*.freezed.dart`, `build/`, `.dart_tool/`
-- test: Widget tests
-  - [ ] Run `flutter test test/widget_test.dart` to verify widget changes
-```
-
-Format:
-
-```markdown
-- create: [folder/filename](relative/path)
-  - [ ] Description of new file and its purpose
-- update: [folder/filename](relative/path)
-  - [ ] Description of what should be changed
-  - [ ] Another change to the same file (if applicable)
-- move: [folder/filename](relative/path)
-  - [ ] Relocate to [new/folder/filename](relative/path)
-- delete: [folder/filename](relative/path)
+- create: [folder/filename](relative-path)
+  - [ ] Description of what should be in the file (max 5 items)
+- update: [folder/filename](relative-path)
+  - [ ] Description of what should be changed (max 5 items)
+- move: [folder/filename](relative-path)
+  - [ ] Relocate to [new/folder/filename](new-relative-path)
+- delete: [folder/filename](relative-path)
   - [ ] Reason for deletion
-- configure: Description of configuration task
-  - [ ] Related file: [folder/filename](relative/path)
-  - [ ] Related file: [folder/filename2](relative/path) (if applicable)
-  - [ ] Run command (e.g., `flutter pub get`, `npm install`, `go mod tidy`)
-- test: Description of test suite or verification
-  - [ ] Test command to run (e.g., `flutter test test/widget_test.dart`, `go test -short ./...`)
 ```
 
-Guidelines:
+## Stop if Specifications need implementation
 
-- Files should be ordered to minimize impact on project correctness, ideally allowing one-by-one modifications without breaking the project
-- Group logically related files if it does nit affect correctness
-- Update guidelines and README files last
-- Respect current file status - skip already-updated content
-- Use sub-items (indented checkboxes) to list specific changes for each file
+CRITICAL STOPPING CONDITION:
+
+- Check if Specifications section contains ANY uncompleted todo items (marked [ ])
+- If ANY uncompleted items exist, you MUST stop immediately
+- Do NOT proceed to generate System changes, Project changes, or File changes sections
+- Do NOT generate any implementation-related content
+
+Display this exact message:
+
+```text
+STOP: Specifications are incomplete.
+
+The Specifications section contains uncompleted items that must be addressed first.
+
+Please complete all specification updates (mark all items as [x]), then re-run the analysis to continue with implementation planning.
+
+Do not proceed with System changes, Project changes, or File changes until all specifications are complete.
+```
+
+Only if ALL specification items are marked [x], continue to the next sections.
+
+## Actualize System changes
+
+PREREQUISITE: Only proceed if ALL specification items are marked [x] as complete.
+
+If any specification items are incomplete, DO NOT generate this section.
+
+Identify system-level changes (installations, global configurations):
+
+```markdown
+## System changes
+
+- install: Description
+  - [ ] Command or action to perform
+- configure: Description
+  - [ ] Configuration change needed
+```
+
+## Actualize Project changes
+
+PREREQUISITE: Only proceed if ALL specification items are marked [x] as complete.
+
+If any specification items are incomplete, DO NOT generate this section.
+
+Identify project initialization or structure changes:
+
+```markdown
+## Project changes
+
+- create: Description
+  - [ ] Command to execute (e.g., `flutter create myapp --platforms web`)
+- configure: Description
+  - [ ] Project-level configuration change
+```
+
+## Actualize File changes
+
+PREREQUISITE: Only proceed if ALL specification items AND all previous change items are marked [x] as complete.
+
+If any specification items are incomplete, DO NOT generate this section.
+
+Identify file-level changes and tests:
+
+```markdown
+## File changes
+
+- create: [folder/filename](relative-path)
+  - [ ] Description of new file and its purpose
+- update: [folder/filename](relative-path)
+  - [ ] Description of what should be changed
+- move: [folder/filename](relative-path)
+  - [ ] Relocate to [new/folder/filename](new-relative-path)
+- delete: [folder/filename](relative-path)
+  - [ ] Reason for deletion
+- test: Description
+  - [ ] Test command to run
+```
+
+Order files to minimize impact on project correctness.
+
+## Format rules
+
+Apply to all sections (Specifications, System changes, Project changes, File changes):
+
 - File-level lines do not have checkboxes, only sub-items do
-- If there are tests that are related to the changed files, create a test: item to run these tests only after all files related to these tests are modified
-- If project configuration is needed (dependencies, code generation, etc.), create configure: items in the appropriate order (e.g., before tests that depend on them)
-- Place configure: and test: items at the appropriate point in the sequence to maintain project correctness
-- Always re-analyze if tests should be executed and fit then into the sequence properly
-- If project-level configuration changes are detected, include an "update: .gitignore" item with technology-specific patterns to prevent committing generated or temporary files (detection criteria: configure: items for dependencies, new project directories like .augment/, .claude/, .github/, or framework-specific configuration files). Examples: Flutter project - add `*.g.dart`, `*.freezed.dart`, `build/`, `.dart_tool/`; Go project - add `*.exe`, `*.test`, `vendor/`, `bin/`
+- List no more than 5 specific items per file
+- Use relative paths from the change folder (e.g., `../../../path/to/file`)
 
-### Notes
+## Notes section
 
-Provide any additional context or notes about the change that may help implementers understand the impact. Use bullet list format. 3-5 bullets max.
+Add Notes section at the end:
+
+```markdown
+## Notes
+
+- Additional context about the change (3-5 bullets max)
+```
 
 CRITICAL: Do not create other sections beyond those specified above.

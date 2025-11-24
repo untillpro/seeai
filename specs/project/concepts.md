@@ -26,20 +26,6 @@ Actions are referenced directly from .seeai/ by AI agents via triggering instruc
 
 Note: The same source files become either Commands or Actions depending on installation scope. In user scope, files are downloaded from GitHub (or copied from local source with -l flag) to agent-specific directories. In project scope, files are downloaded to .seeai/.
 
-## SeeAI Spec
-
-A reusable specification template stored in `/.seeai/specs/` that defines common patterns and structures used by SeeAI Actions. SeeAI Specs are internal templates that guide Actions in creating consistent specifications across different workflows.
-
-Key characteristics:
-
-- Stored in `/.seeai/specs/` directory
-- Referenced by Actions using relative paths (e.g., `@/.seeai/specs/specs.md`)
-- Distributed only to project scope via seeai.sh installation script
-- Not versioned separately - they evolve with Actions
-- Not user-facing configuration - internal templates for Actions
-
-Example: `specs.md` defines the specification structure and criteria for when to create new specifications, which is used by the analyze action to guide specification creation.
-
 ## Natural Language Invocation (NLI)
 
 The capability to invoke SeeAI Actions through natural language patterns instead of explicit command syntax. NLI is enabled by triggering instructions embedded in Agents Config Files (AGENTS.md or CLAUDE.md) that match user requests to specific actions.
@@ -91,27 +77,8 @@ Example:
 
 ## seeai-version.yml
 
-A YAML configuration file that tracks version information for SeeAI installations in both user and project scopes.
-
-Format: `seeai-version.yml`
-
-Locations:
-
-- User scope: `~/.augment/commands/seeai/`, `~/.claude/commands/seeai/`, `{prompts_dir}/`
-- Project scope: `.seeai/` (single location for all agents)
-
-In project scope, the version file is created only in .seeai/ directory, not in agent-specific directories, since files are not copied to those locations.
-
-Example:
-
-```yaml
-version: v0.1.0
-installed_at: 2025-01-18T14:30:00Z
-source: https://github.com/untillpro/seeai/releases/tag/v0.1.0
-files:
-  - design.md
-  - gherkin.md
-```
+- A YAML configuration file that tracks version information for SeeAI installations in both user and project scopes
+- Ref. the `@mconf/models.md` file
 
 ## User Scope
 

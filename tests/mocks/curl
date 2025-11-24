@@ -63,7 +63,7 @@ elif [[ "$url" == *"api.github.com/repos/untillpro/seeai/commits/main"* ]]; then
 elif [[ "$url" == *"raw.githubusercontent.com/untillpro/seeai"* ]]; then
   # Extract file path from URL
   # URL format: https://raw.githubusercontent.com/untillpro/seeai/{ref}/.seeai/{filepath}
-  # filepath can be a simple filename or include subdirectories like specs/specs.md
+  # filepath includes subdirectories like actions/register.md, commands/design.md, rules/specs.md
   if [[ "$url" =~ /\.seeai/(.+)$ ]]; then
     filepath="${BASH_REMATCH[1]}"
     if [[ -f "$fixtures_dir/.seeai/$filepath" ]]; then

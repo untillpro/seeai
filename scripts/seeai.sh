@@ -4,32 +4,32 @@ set -Eeuo pipefail
 # File lists - update when adding/removing templates
 # Commands: Can be invoked explicitly, work in both user and project scope
 COMMAND_FILES=(
-  "design.md"
-  "gherkin.md"
+  "commands/design.md"
+  "commands/gherkin.md"
 )
 
 # Actions: Require Triggering Instructions, work only in project scope
 ACTION_FILES=(
-  "register.md"
-  "analyze.md"
-  "implement.md"
-  "archive.md"
+  "actions/register.md"
+  "actions/analyze.md"
+  "actions/implement.md"
+  "actions/archive.md"
 )
 
 # Specs: Internal templates used by Actions, work only in project scope
 SPEC_FILES=(
-  "specs/specs.md"
+  "rules/specs.md"
 )
 
 # All files (for project scope and version info)
 ALL_FILES=(
-  "register.md"
-  "design.md"
-  "analyze.md"
-  "implement.md"
-  "archive.md"
-  "gherkin.md"
-  "specs/specs.md"
+  "actions/register.md"
+  "commands/design.md"
+  "actions/analyze.md"
+  "actions/implement.md"
+  "actions/archive.md"
+  "commands/gherkin.md"
+  "rules/specs.md"
 )
 
 # Location definitions - declarative configuration
@@ -236,12 +236,12 @@ install_triggering_instructions() {
   local instructions='<!-- seeai:triggering_instructions:begin -->
 ## SeeAI Triggering Instructions
 
-- Always load `@/.seeai/register.md` and follow the instructions there when the request sounds like "Register a change [change description]"
-- Always load `@/.seeai/design.md` and follow the instructions there when the request sounds like "Design a solution for [problem description]"
-- Always load `@/.seeai/analyze.md` and follow the instructions there when the request sounds like "Analyze a change"
-- Always load `@/.seeai/implement.md` and follow the instructions there when the request sounds like "implement todo items" or "implement specifications"
-- Always load `@/.seeai/archive.md` and follow the instructions there when the request sounds like "archive a change [change reference]"
-- Always load `@/.seeai/gherkin.md` and follow the instructions there when the request sounds like "Generate Gherkin scenarios for [feature description]"
+- Always load `@/.seeai/actions/register.md` and follow the instructions there when the request sounds like "Register a change [change description]"
+- Always load `@/.seeai/commands/design.md` and follow the instructions there when the request sounds like "Design a solution for [problem description]"
+- Always load `@/.seeai/actions/analyze.md` and follow the instructions there when the request sounds like "Analyze a change"
+- Always load `@/.seeai/actions/implement.md` and follow the instructions there when the request sounds like "implement todo items" or "implement specifications"
+- Always load `@/.seeai/actions/archive.md` and follow the instructions there when the request sounds like "archive a change [change reference]"
+- Always load `@/.seeai/commands/gherkin.md` and follow the instructions there when the request sounds like "Generate Gherkin scenarios for [feature description]"
 
 <!-- seeai:triggering_instructions:end -->'
 
@@ -312,11 +312,8 @@ list_command() {
       # Project scope: single source location for all agents (new installations)
       label="Project (all agents)"
       scope="project"
-      # Find all .md files in .seeai/ (excluding subdirectories for now)
-      mapfile -t files < <(find "$location" -maxdepth 1 -type f -name "*.md" 2>/dev/null || true)
-      # Also add files from specs subdirectory
-      mapfile -t spec_files < <(find "$location/specs" -type f -name "*.md" 2>/dev/null || true)
-      files+=("${spec_files[@]}")
+      # Find all .md files in .seeai/ subdirectories (actions/, commands/, rules/)
+      mapfile -t files < <(find "$location" -type f -name "*.md" 2>/dev/null || true)
     elif [[ "$location" == *"/prompts/"* ]]; then
       # copilot locations: search for seeai-*.prompt.md
       mapfile -t files < <(find "$location" -maxdepth 1 -type f -name "seeai-*.prompt.md" 2>/dev/null || true)
@@ -545,9 +542,18 @@ show_install_preview() {
 
     for file in "${preview_files[@]}"; do
       local target_file="$file"
+      local base_name="${file##*/}"
       if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
         # copilot: add seeai- prefix and change extension to .prompt.md
-        target_file="seeai-${file%.md}.prompt.md"
+        local dir_name="${file%/*}"
+        if [[ "$dir_name" != "$file" ]]; then
+          target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
+        else
+          target_file="seeai-${file%.md}.prompt.md"
+        fi
+      else
+        # auggie/claude: just use base filename without subdirectory
+        target_file="$base_name"
       fi
       echo "  $abs_target_dir$target_file"
     done
@@ -636,20 +642,25 @@ install_files() {
 
     for file in "${files_to_install[@]}"; do
       local target_file="$file"
-      if [[ "$SCOPE" == "user" && "$AGENT_INTERNAL" == "copilot" ]]; then
-        # copilot: add seeai- prefix and change extension to .prompt.md
-        # For files in subdirectories, flatten the path
+      if [[ "$SCOPE" == "user" ]]; then
+        # User scope: flatten subdirectory paths
         local base_name="${file##*/}"
-        local dir_name="${file%/*}"
-        if [[ "$dir_name" != "$file" ]]; then
-          # File is in subdirectory, use directory name as part of prefix
-          target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
+        if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
+          # copilot: add seeai- prefix and change extension to .prompt.md
+          local dir_name="${file%/*}"
+          if [[ "$dir_name" != "$file" ]]; then
+            # File is in subdirectory, use directory name as part of prefix
+            target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
+          else
+            target_file="seeai-${file%.md}.prompt.md"
+          fi
         else
-          target_file="seeai-${file%.md}.prompt.md"
+          # auggie/claude: just use base filename without subdirectory
+          target_file="$base_name"
         fi
       fi
 
-      # Create subdirectory if needed
+      # Create subdirectory if needed (for project scope only)
       local target_dir_path="$(dirname "$TARGET_DIR/$target_file")"
       if [[ "$target_dir_path" != "$TARGET_DIR" ]]; then
         mkdir -p "$target_dir_path"
@@ -664,20 +675,25 @@ install_files() {
 
     for file in "${files_to_install[@]}"; do
       local target_file="$file"
-      if [[ "$SCOPE" == "user" && "$AGENT_INTERNAL" == "copilot" ]]; then
-        # copilot: add seeai- prefix and change extension to .prompt.md
-        # For files in subdirectories, flatten the path
+      if [[ "$SCOPE" == "user" ]]; then
+        # User scope: flatten subdirectory paths
         local base_name="${file##*/}"
-        local dir_name="${file%/*}"
-        if [[ "$dir_name" != "$file" ]]; then
-          # File is in subdirectory, use directory name as part of prefix
-          target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
+        if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
+          # copilot: add seeai- prefix and change extension to .prompt.md
+          local dir_name="${file%/*}"
+          if [[ "$dir_name" != "$file" ]]; then
+            # File is in subdirectory, use directory name as part of prefix
+            target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
+          else
+            target_file="seeai-${file%.md}.prompt.md"
+          fi
         else
-          target_file="seeai-${file%.md}.prompt.md"
+          # auggie/claude: just use base filename without subdirectory
+          target_file="$base_name"
         fi
       fi
 
-      # Create subdirectory if needed
+      # Create subdirectory if needed (for project scope only)
       local target_dir_path="$(dirname "$TARGET_DIR/$target_file")"
       if [[ "$target_dir_path" != "$TARGET_DIR" ]]; then
         mkdir -p "$target_dir_path"
@@ -694,14 +710,20 @@ install_files() {
   local missing_files=()
   for file in "${files_to_install[@]}"; do
     local target_file="$file"
-    if [[ "$SCOPE" == "user" && "$AGENT_INTERNAL" == "copilot" ]]; then
-      # copilot: add seeai- prefix and change extension to .prompt.md
+    if [[ "$SCOPE" == "user" ]]; then
+      # User scope: flatten subdirectory paths
       local base_name="${file##*/}"
-      local dir_name="${file%/*}"
-      if [[ "$dir_name" != "$file" ]]; then
-        target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
+      if [[ "$AGENT_INTERNAL" == "copilot" ]]; then
+        # copilot: add seeai- prefix and change extension to .prompt.md
+        local dir_name="${file%/*}"
+        if [[ "$dir_name" != "$file" ]]; then
+          target_file="seeai-${dir_name//\//-}-${base_name%.md}.prompt.md"
+        else
+          target_file="seeai-${file%.md}.prompt.md"
+        fi
       else
-        target_file="seeai-${file%.md}.prompt.md"
+        # auggie/claude: just use base filename without subdirectory
+        target_file="$base_name"
       fi
     fi
 

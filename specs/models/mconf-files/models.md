@@ -9,13 +9,15 @@ In project scope, all Actions and Specs are downloaded during installation to a 
 ```text
 Source Directory (All Agents):
 .seeai/
-├── design.md
-├── gherkin.md
-├── register.md
-├── analyze.md
-├── implement.md
-├── archive.md
-├── specs/
+├── actions/
+│   ├── register.md
+│   ├── analyze.md
+│   ├── implement.md
+│   └── archive.md
+├── commands/
+│   ├── design.md
+│   └── gherkin.md
+├── rules/
 │   └── specs.md
 └── seeai-version.yml
 ```
@@ -64,32 +66,19 @@ Profile-specific paths:
 
 ### Copilot
 
-Files are transformed with `seeai-` prefix and `.prompt.md` extension.
+Commands are transformed with `seeai-` prefix and `.prompt.md` extension.
 
-Root-level files:
-
-- `design.md` -> `seeai-design.prompt.md`
-- `gherkin.md` -> `seeai-gherkin.prompt.md`
-- `register.md` -> `seeai-register.prompt.md`
-
-Subdirectory files (path flattening):
-
-- `specs/specs.md` -> `seeai-specs-specs.prompt.md`
 - Pattern: `{dir}/{file}.md` -> `seeai-{dir}-{file}.prompt.md`
+- `commands/design.md` -> `seeai-commands-design.prompt.md`
+- `commands/gherkin.md` -> `seeai-commands-gherkin.prompt.md`
 
 Rationale: Copilot requires `.prompt.md` extension and does not support subdirectories, so paths are flattened using hyphens.
 
 ## Agents Config File Selection Rules
 
-Agents Config File (ACF) is used for Triggering Instructions in project scope only.
-
-Selection rules:
-
-- Claude: `CLAUDE.md`
-- Augment (auggie): `AGENTS.md`
-- Copilot: `AGENTS.md`
-- Gemini: `AGENTS.md`
-
-Location: Project root directory
-
-Format: Markdown with HTML comment markers wrapping triggering instructions
+- Agents Config File (ACF) is used for Triggering Instructions in project scope only.
+- Selection rules:
+  - Claude: `CLAUDE.md`
+  - Other agents:: `AGENTS.md`
+- Location: Project root directory
+- Format: Markdown with HTML comment markers wrapping triggering instructions

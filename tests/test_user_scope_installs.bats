@@ -19,7 +19,7 @@ get_agent_files() {
       echo "design.md gherkin.md"
       ;;
     copilot)
-      echo "seeai-design.prompt.md seeai-gherkin.prompt.md"
+      echo "seeai-commands-design.prompt.md seeai-commands-gherkin.prompt.md"
       ;;
   esac
 }
@@ -32,7 +32,7 @@ get_action_files() {
       echo "register.md analyze.md implement.md archive.md"
       ;;
     copilot)
-      echo "seeai-register.prompt.md seeai-analyze.prompt.md seeai-implement.prompt.md seeai-archive.prompt.md"
+      echo "seeai-actions-register.prompt.md seeai-actions-analyze.prompt.md seeai-actions-implement.prompt.md seeai-actions-archive.prompt.md"
       ;;
   esac
 }

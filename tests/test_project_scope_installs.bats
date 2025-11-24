@@ -141,7 +141,7 @@ get_expected_version() {
 
         # Check all 7 files exist in .seeai/ (Commands + Actions + Specs)
         local files_ok=true
-        local source_files="design.md gherkin.md register.md analyze.md implement.md archive.md specs/specs.md"
+        local source_files="commands/design.md commands/gherkin.md actions/register.md actions/analyze.md actions/implement.md actions/archive.md rules/specs.md"
         for file in $source_files; do
           if [[ ! -f ".seeai/$file" ]]; then
             echo "FAILED: Missing file in .seeai/$file"
@@ -154,9 +154,19 @@ get_expected_version() {
           continue
         fi
 
-        # Verify specs directory exists in .seeai/
-        if [[ ! -d ".seeai/specs" ]]; then
-          echo "FAILED: specs directory not found in .seeai/"
+        # Verify subdirectories exist in .seeai/
+        if [[ ! -d ".seeai/actions" ]]; then
+          echo "FAILED: actions directory not found in .seeai/"
+          files_ok=false
+          continue
+        fi
+        if [[ ! -d ".seeai/commands" ]]; then
+          echo "FAILED: commands directory not found in .seeai/"
+          files_ok=false
+          continue
+        fi
+        if [[ ! -d ".seeai/rules" ]]; then
+          echo "FAILED: rules directory not found in .seeai/"
           files_ok=false
           continue
         fi
@@ -449,7 +459,7 @@ EOF
   }
 
   # Modify a file to verify it gets overwritten
-  echo "OLD CONTENT" > .seeai/design.md
+  echo "OLD CONTENT" > .seeai/commands/design.md
 
   # Second installation should overwrite
   run bash "$BATS_TEST_DIRNAME/../scripts/seeai.sh" install -l --agent auggie --scope project
@@ -460,16 +470,16 @@ EOF
   }
 
   # Verify file was overwritten (should not contain OLD CONTENT)
-  if grep -q "OLD CONTENT" .seeai/design.md; then
+  if grep -q "OLD CONTENT" .seeai/commands/design.md; then
     echo "FAILED: File was not overwritten"
-    cat .seeai/design.md
+    cat .seeai/commands/design.md
     return 1
   fi
 
   # Verify file contains expected content
-  if ! grep -q "Design Document Generator" .seeai/design.md; then
+  if ! grep -q "Design Document Generator" .seeai/commands/design.md; then
     echo "FAILED: File does not contain expected content after overwrite"
-    cat .seeai/design.md
+    cat .seeai/commands/design.md
     return 1
   fi
 
@@ -489,7 +499,7 @@ exit_code=$?
 
 # If installation succeeded, delete a file to simulate download failure
 if [ $exit_code -eq 0 ]; then
-  rm -f .seeai/design.md
+  rm -f .seeai/commands/design.md
 fi
 
 exit $exit_code

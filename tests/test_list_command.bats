@@ -49,8 +49,8 @@ teardown() {
   }
 
   # Should show files from .seeai/
-  echo "$output" | grep -q ".seeai/design.md" || {
-    echo "Expected '.seeai/design.md' in output"
+  echo "$output" | grep -q ".seeai/commands/design.md" || {
+    echo "Expected '.seeai/commands/design.md' in output"
     echo "Output: $output"
     return 1
   }
@@ -59,8 +59,8 @@ teardown() {
 @test "list command shows legacy project scope installations from agent-specific directories" {
   # Simulate legacy installation by manually creating files in agent-specific directory
   mkdir -p .augment/commands/seeai
-  cp .seeai/design.md .augment/commands/seeai/
-  cp .seeai/gherkin.md .augment/commands/seeai/
+  cp .seeai/commands/design.md .augment/commands/seeai/
+  cp .seeai/commands/gherkin.md .augment/commands/seeai/
 
   # Create legacy version file
   cat > .augment/commands/seeai/seeai-version.yml << EOF
@@ -106,8 +106,8 @@ EOF
 
   # Simulate legacy installation
   mkdir -p .claude/commands/seeai
-  cp .seeai/design.md .claude/commands/seeai/
-  cp .seeai/gherkin.md .claude/commands/seeai/
+  cp .seeai/commands/design.md .claude/commands/seeai/
+  cp .seeai/commands/gherkin.md .claude/commands/seeai/
 
   cat > .claude/commands/seeai/seeai-version.yml << EOF
 version: v0.0.8

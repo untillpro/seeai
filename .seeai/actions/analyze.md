@@ -52,21 +52,27 @@ If `analysis.md` exists, load it and understand all specifications mentioned the
 
 ## Identify related spec files
 
+IMPORTANT: Specifications are files located in `/specs/` directory only.
+
 - Extract key concepts from the change (domain entities, actions, technical terms)
 - Use codebase-retrieval to search for specifications semantically related to the change
 - Search across `@/specs/` directory for relevant spec files
 - Identify which spec files need updates, moves, or deletions
 
+Files NOT in `/specs/` directory are implementation details and should be addressed in File changes section only.
+
 ## Identify spec files CRUD
 
 - Load and understand specification structure from `@/.seeai/rules/specs.md`
-- Determine what new spec files need to be created
-- Identify existing specs that need updates
-- Identify specs that need to be moved or deleted
+- Determine what new spec files need to be created in `/specs/` directory
+- Identify existing specs in `/specs/` that need updates
+- Identify specs in `/specs/` that need to be moved or deleted
 
 ## Actualize Specifications section
 
 Create or update the Specifications section in `analysis.md`:
+
+CRITICAL: Only include files from `/specs/` directory. All other files belong in File changes section.
 
 ```markdown
 ## Specifications
@@ -79,6 +85,14 @@ Create or update the Specifications section in `analysis.md`:
   - [ ] Relocate to [new/folder/filename](new-relative-path)
 - delete: [folder/filename](relative-path)
   - [ ] Reason for deletion
+```
+
+If no files in `/specs/` directory are affected, write:
+
+```markdown
+## Specifications
+
+All specifications are up to date; no changes needed.
 ```
 
 ## Stop if Specifications need implementation

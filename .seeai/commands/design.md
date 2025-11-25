@@ -53,6 +53,18 @@ Example:
 3. Custom useState hooks - Maximum control but requires more boilerplate
 ```
 
+## Integrate Answers
+
+After receiving answers to the questions:
+
+- Wait for user responses to all questions
+- Integrate answers into the design document sections
+- Use answers to inform decisions in System Configuration, Project Configuration, and Architecture sections
+- Reference the chosen options in relevant sections with brief rationale
+- Preserve the user's exact choices and reasoning
+
+CRITICAL: Do NOT proceed with generating the design document until all questions are answered.
+
 ## Output File Naming
 
 If the problem requirement file name can be inferred (e.g., `myfeature.feature`, `myfeature.md`) and the design file name is not specified directly by the user, create the design file with the name `myfeature-design.md` in the same directory as the problem requirement file.

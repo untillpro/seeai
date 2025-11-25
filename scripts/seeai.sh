@@ -22,14 +22,11 @@ SPEC_FILES=(
 )
 
 # All files (for project scope and version info)
+# Built from the arrays above to ensure consistency
 ALL_FILES=(
-  "actions/register.md"
-  "commands/design.md"
-  "actions/analyze.md"
-  "actions/implement.md"
-  "actions/archive.md"
-  "commands/gherkin.md"
-  "rules/specs.md"
+  "${ACTION_FILES[@]}"
+  "${COMMAND_FILES[@]}"
+  "${SPEC_FILES[@]}"
 )
 
 # Location definitions - declarative configuration
@@ -666,15 +663,23 @@ install_files() {
         mkdir -p "$target_dir_path"
       fi
 
+      # Sequential operation: use echo -n for traditional progress display
       echo -n "Copying $file... "
-      cp "$SRC_DIR/$file" "$TARGET_DIR/$target_file"
-      echo "OK"
+      if cp "$SRC_DIR/$file" "$TARGET_DIR/$target_file"; then
+        echo "OK"
+      else
+        echo "FAILED"
+        exit 1
+      fi
     done
   else
     BASE_URL="https://raw.githubusercontent.com/untillpro/seeai/${REF}/.seeai"
 
-    for file in "${files_to_install[@]}"; do
+    # Helper function to download a single file
+    download_file() {
+      local file="$1"
       local target_file="$file"
+
       if [[ "$SCOPE" == "user" ]]; then
         # User scope: flatten subdirectory paths
         local base_name="${file##*/}"
@@ -699,10 +704,35 @@ install_files() {
         mkdir -p "$target_dir_path"
       fi
 
-      echo -n "Downloading $file... "
-      curl -fsSL "${BASE_URL}/${file}" -o "$TARGET_DIR/$target_file"
-      echo "OK"
-    done
+      # Parallel operation: use atomic echo to prevent output interleaving
+      # When running in parallel with xargs, separate echo statements can interleave
+      # (e.g., "Downloading file1... Downloading file2... OK" on same line)
+      if curl -fsSL "${BASE_URL}/${file}" -o "$TARGET_DIR/$target_file"; then
+        echo "Downloading $file... OK"
+        return 0
+      else
+        echo "Downloading $file... FAILED"
+        return 1
+      fi
+    }
+
+    # Export function and variables for xargs subshells
+    export -f download_file
+    export BASE_URL
+    export TARGET_DIR
+    export SCOPE
+    export AGENT_INTERNAL
+    export REF
+
+    # Download files in parallel using xargs
+    # -P 4: Run up to 4 downloads in parallel
+    # -I {}: Replace {} with the input line
+    # The process will fail fast if any download fails
+    if ! printf '%s\n' "${files_to_install[@]}" | xargs -P 4 -I {} bash -c 'download_file "$@"' _ {}; then
+      echo
+      echo "Error: One or more downloads failed."
+      exit 1
+    fi
   fi
 
   # Validate that all files were successfully installed

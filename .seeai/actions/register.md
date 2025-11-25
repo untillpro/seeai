@@ -30,19 +30,6 @@ Examples:
 - "Register a change to add tests for seeai.sh" -> `changes/active/251122-seeai-tests/`
 - "Register a change for scope parameter" -> `changes/active/251121-scope-as-param/`
 
-### File Structure
+### File structure
 
-Create `change.md` inside the folder with these sections:
-
-```markdown
-# Change: [Descriptive Title]
-
-## Why
-
-[Brief 1-2 sentence description of the problem the change solves]
-
-
-## How
-
-[Brief 1-2 sentence description of the how problem is going to be solved]
-```
+Create `change.md` inside the folder following the Problem/Approach structure defined in `.seeai/rules/psa-structure.md`.

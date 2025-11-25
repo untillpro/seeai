@@ -61,6 +61,16 @@ Format:
 - Capability 3
 ```
 
+### Out of Scope (optional)
+
+What is explicitly NOT included in this change.
+
+Content requirements:
+
+- Brief bullet list (3-5 items maximum)
+- Only include items that might reasonably be expected
+- Answer: What related features are NOT included?
+
 ### Approach (optional, when approach is not obvious)
 
 High-level approach or mechanism.
@@ -78,6 +88,7 @@ Structure validation:
 
 - Must have "Problem" section
 - Must have "Solution" section
+- "Out of Scope" section is optional
 - "Approach" section is optional
 - NO other top-level sections are allowed (no Stories, no References as separate section, no Requirements, etc.)
 - References should be included within the Problem section, not as a separate top-level section
@@ -86,6 +97,7 @@ Content validation:
 
 - Problem section: 1-3 sentences, no implementation details, optional references to supporting evidence
 - Solution section: Must start with introductory sentence, followed by brief list (if applicable)
+- Out of Scope section: Brief bullet list (3-5 items maximum), only reasonably expected items
 - Approach section: High-level only, no code or detailed steps
 
 ## Examples
@@ -108,6 +120,12 @@ Deposit feature with the following capabilities:
 - Deposit money to child accounts
 - Transaction history
 - Instant notifications
+
+## Out of Scope
+
+- Withdrawal functionality
+- Multi-currency support
+- Scheduled/recurring deposits
 
 ## Approach
 
@@ -134,6 +152,12 @@ Payment API contract providing:
 - REST API for payment processing
 - Authentication and authorization
 - Webhook notifications for payment status
+
+## Out of Scope
+
+- Refund processing
+- Subscription management
+- Fraud detection
 
 ## Approach
 

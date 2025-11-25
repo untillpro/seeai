@@ -1,17 +1,5 @@
 # Problem/Solution/Approach structure
 
-## Purpose
-
-This document defines the Problem/Solution/Approach structure used in change.md, requirements.md, and vision.md files. This structure explains the problem being solved, the solution, and the high-level approach.
-
-## Sections
-
-### Usage
-
-- change.md: Uses Problem/Approach (Solution is implied by the change itself)
-- requirements.md: Uses Problem/Solution/Approach in Overview section
-- vision.md: Uses Problem/Solution/Approach (legacy, existing files only)
-
 ## Section definitions
 
 ### Problem

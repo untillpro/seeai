@@ -33,17 +33,3 @@ Examples:
 ### File structure
 
 Create `change.md` inside the folder following the Problem/Approach structure defined in `.seeai/rules/psa-structure.md`.
-
-```markdown
-# Change: [Descriptive Title]
-
-## Problem
-
-[Brief 1-2 sentence description of the problem the change solves]
-
-## Approach
-
-[Brief 1-2 sentence description of how the problem is going to be solved]
-```
-
-Note: change.md uses Problem/Approach sections (not Problem/Solution/Approach) since the solution is implied by the change itself.

@@ -1,12 +1,10 @@
 # Change: Implement action should handle vision.md and design.md specially
 
-## Overview
-
-### Problem
+## Problem
 
 - vision.md needs to be generated and reviewed but it is just a few lines
 
-### Solution
+## Solution
 
 - vision.md won't be a part of the specs anymore
 - instead for the specs we will use requirements.md

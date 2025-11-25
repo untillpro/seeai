@@ -85,3 +85,30 @@ Example:
 Installation scope that applies globally to all projects for a user. Files are installed in user-level configuration directories (e.g., `~/.augment/`, `~/.claude/`, `~/Library/Application Support/Code/User/prompts/`).
 
 Contrast with Project Scope, which applies only to a specific project folder.
+
+## requirements.md
+
+A specification document that describes the problem, solution, and approach for a feature, integration, contract, or model. Uses the Problem/Solution/Approach structure defined in psa-structure.md.
+
+Used in:
+
+- change.md files in changes/ directory
+- Specification documents in specs/ directory (contracts, features, integrations, models)
+
+Replaces the legacy vision.md format for new specifications.
+
+## Problem/Solution/Approach Structure
+
+A standardized document structure for requirements and change descriptions. Defined in .seeai/rules/psa-structure.md.
+
+Required sections:
+
+- Problem: 1-3 sentences describing the problem or need
+- Solution: Introductory sentence plus list of capabilities
+
+Optional sections:
+
+- Out of Scope: Brief list of what is NOT included
+- Approach: High-level approach or mechanism
+
+Used in change.md and requirements.md files throughout the project.

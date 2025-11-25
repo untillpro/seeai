@@ -19,7 +19,7 @@ ACTION_FILES=(
 # Specs: Internal templates used by Actions, work only in project scope
 SPEC_FILES=(
   "rules/specs-structure.md"
-  "rules/vision-structure.md"
+  "rules/psa-structure.md"
   "rules/design-structure.md"
 )
 

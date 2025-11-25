@@ -65,6 +65,7 @@ Do not create vision.md files. Use requirements.md instead. Existing vision.md f
 - Industry standard: Aligns with RFC and ADR conventions
 - No file proliferation: requirements.md includes overview instead of separate vision.md
 - Flexibility: Simple features have minimal requirements, complex features have detailed requirements
+- DRY principle: Structure defined once in .seeai/rules/psa-structure.md and reused by all actions
 
 ## Consequences
 
@@ -72,3 +73,4 @@ Do not create vision.md files. Use requirements.md instead. Existing vision.md f
 - New work uses requirements.md with Problem/Solution/Approach sections
 - change.md uses Problem/Approach sections
 - Tooling needs updates to generate requirements.md instead of vision.md
+- Single source of truth: .seeai/rules/psa-structure.md defines structure for all document types

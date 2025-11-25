@@ -1,3 +1,1 @@
 # Design Document Structure
-
-

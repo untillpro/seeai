@@ -37,7 +37,7 @@ Example format:
 After receiving answers:
 
 - Load change.md file
-- Integrate answers into appropriate sections (Why/How)
+- Integrate answers into appropriate sections (Problem/Approach)
 - Add new subsections if needed for important clarifications
 - Preserve original formatting and style
 - Keep content concise (1-2 sentences per clarification)
@@ -63,7 +63,7 @@ Files NOT in `/specs/` directory are implementation details and should be addres
 
 ## Identify spec files CRUD
 
-- Load and understand specification structure from `@/.seeai/rules/specs.md`
+- Load and understand specification structure from `@/.seeai/rules/specs-structure.md`
 - Determine what new spec files need to be created in `/specs/` directory
 - Identify existing specs in `/specs/` that need updates
 - Identify specs in `/specs/` that need to be moved or deleted

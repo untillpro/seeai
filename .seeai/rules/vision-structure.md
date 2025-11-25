@@ -6,9 +6,9 @@ This document defines the structure, content requirements, and validation rules 
 
 ## Required sections
 
-### Why
+### Problem
 
-Explains the motivation and problem being solved.
+Explains the problem being solved.
 
 Content requirements:
 
@@ -29,18 +29,31 @@ References can be:
 - Listed after the problem statement in a "References:" subsection
 - Both (brief inline + full list)
 
-### What
+### Solution
 
 Describes what is being created or implemented.
 
 Content requirements:
 
-- Brief list or 1-2 sentences
+- Start with an introductory sentence describing the feature/system/capability
+- Follow with a brief list of specific capabilities (if applicable)
 - Focus on capabilities and outcomes
 - Avoid implementation details
 - Answer: What are we building? What capabilities does it provide?
 
-### How (optional)
+Format:
+
+```markdown
+## Solution
+
+[Feature/system name] with the following capabilities:
+
+- Capability 1
+- Capability 2
+- Capability 3
+```
+
+### Approach (optional, when approach is not obvious)
 
 High-level approach or mechanism.
 
@@ -55,24 +68,24 @@ Content requirements:
 
 Structure validation:
 
-- Must have "Why" section
-- Must have "What" section
-- "How" section is optional
+- Must have "Problem" section
+- Must have "Solution" section
+- "Approach" section is optional
 - NO other top-level sections are allowed (no Stories, no References as separate section, no Requirements, etc.)
-- References should be included within the Why section, not as a separate top-level section
+- References should be included within the Problem section, not as a separate top-level section
 
 Content validation:
 
-- Why section: 1-3 sentences, no implementation details, optional references to supporting evidence
-- What section: Brief list or 1-2 sentences
-- How section: High-level only, no code or detailed steps
+- Problem section: 1-3 sentences, no implementation details, optional references to supporting evidence
+- Solution section: Must start with introductory sentence, followed by brief list (if applicable)
+- Approach section: High-level only, no code or detailed steps
 
 ## Examples
 
 ### Deposit feature
 
 ```markdown
-## Why
+## Problem
 
 Parents need a way to add money to their children's digital accounts without handling physical cash.
 
@@ -80,13 +93,15 @@ References:
 
 - [JIRA-456: Digital deposit feature request](https://jira.example.com/browse/JIRA-456)
 
-## What
+## Solution
+
+Deposit feature with the following capabilities:
 
 - Deposit money to child accounts
 - Transaction history
 - Instant notifications
 
-## How
+## Approach
 
 - REST API endpoint for deposits
 - Database transaction with balance update
@@ -96,7 +111,7 @@ References:
 ### Payment API contract
 
 ```markdown
-## Why
+## Problem
 
 External partners need a standardized way to process payments through our platform.
 
@@ -104,13 +119,15 @@ References:
 
 - [Partner integration requirements doc](https://docs.example.com/partner-requirements)
 
-## What
+## Solution
+
+Payment API contract providing:
 
 - REST API for payment processing
 - Authentication and authorization
 - Webhook notifications for payment status
 
-## How
+## Approach
 
 - OAuth 2.0 for authentication
 - JSON request/response format

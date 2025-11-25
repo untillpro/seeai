@@ -8,8 +8,8 @@ The implement action currently treats all markdown files uniformly, but vision.m
 
 Extend the implement action to detect vision.md and design.md files and apply special processing rules for each, using:
 
-- .seeai/rules/vision.md to validate structure and guide content for vision.md files
-- .seeai/rules/design.md to validate structure and guide content for design.md files
+- .seeai/rules/vision-structure.md to validate structure and guide content for vision.md files
+- .seeai/rules/design-structure.md to validate structure and guide content for design.md files
 
 ### Detection and invocation
 

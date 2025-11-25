@@ -32,17 +32,18 @@ Examples:
 
 ### File Structure
 
-Create `change.md` inside the folder with these sections:
+Create `change.md` inside the folder following the structure defined in `.seeai/rules/vision-structure.md`.
 
 ```markdown
 # Change: [Descriptive Title]
 
-## Why
+## Problem
 
 [Brief 1-2 sentence description of the problem the change solves]
 
+## Approach
 
-## How
-
-[Brief 1-2 sentence description of the how problem is going to be solved]
+[Brief 1-2 sentence description of how the problem is going to be solved]
 ```
+
+Note: change.md uses Problem/Approach sections (not Problem/Solution/Approach) since the solution is implied by the change itself.

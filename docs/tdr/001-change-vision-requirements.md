@@ -28,7 +28,10 @@ Both change.md and requirements.md use the same Problem/Solution/Approach struct
 ## Problem
 [1-3 sentences with optional references]
 
-## Approach
+## Solution
+[Brief description of the solution]
+
+## Approach (optional)
 [High-level approach]
 ```
 
@@ -69,8 +72,8 @@ Do not create vision.md files. Use requirements.md instead. Existing vision.md f
 
 ## Consequences
 
-- Existing vision.md files remain intact (yet)
+- Existing vision.md files remain intact
 - New work uses requirements.md with Problem/Solution/Approach sections
-- change.md uses Problem/Approach sections
+- change.md uses Problem/Solution/Approach sections (Approach is optional)
 - Tooling needs updates to generate requirements.md instead of vision.md
 - Single source of truth: .seeai/rules/psa-structure.md defines structure for all document types

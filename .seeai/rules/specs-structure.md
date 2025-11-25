@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `specs` may containt the following categories of specifications:
+The `specs` may contain the following categories of specifications:
 
 - contracts: Specifications for user-facing project-defined contracts, like API, protocols, workflows
   - requirements.md
@@ -33,7 +33,7 @@ The `specs` may containt the following categories of specifications:
   - test.md: Testing strategy and rules
   - release.md: Packaging, installers, CI/CD, installation, configuration, updates...
     - High-level overview of release process and mechanisms
-    - Detailes must be in the specs inder /specs/release folder
+    - Details must be in the specs under /specs/release folder
   - features.md: Overview of key project features
   - requirements.md: High-level functional and non-functional requirements
   - structure.md: Principles of the project folder structure, bird's eye view
@@ -49,7 +49,6 @@ For each file in the `specs/project` folder there may be a corresponding specifi
 - `specs/delivery`: Describes capabilities related packaging, installers, CI/CD, installation, configuration, updates...
 
 ## Models
-
 
 ## When to Create New Specifications
 

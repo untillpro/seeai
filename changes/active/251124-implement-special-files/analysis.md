@@ -7,17 +7,19 @@ None - this change only affects internal SeeAI Action implementation, not user-f
 ## File changes
 
 - create: [.seeai/rules/vision.md](../../../.seeai/rules/vision.md)
-  - [ ] Define required sections for vision.md (Why, What, How, Stories if applicable)
-  - [ ] Specify content requirements for each section (conciseness, format, examples)
-  - [ ] Define validation rules for structure and content completeness
-  - [ ] Provide guidance for generating new vision.md files
-  - [ ] Include examples of well-formed vision.md files
+  - [x] Define required sections for vision.md (Why, What, How, Stories if applicable)
+  - [x] Specify content requirements for each section (conciseness, format, examples)
+  - [x] Define validation rules for structure and content completeness
+  - [x] Provide guidance for generating new vision.md files
+  - [x] Include examples of well-formed vision.md files
+- [ ] 👀
 - create: [.seeai/rules/design.md](../../../.seeai/rules/design.md)
   - [ ] Define required sections for design.md (Overview, Architecture, Flows, References, etc.)
   - [ ] Specify content requirements and format for each section
   - [ ] Define validation rules for component naming, paths, and structure
   - [ ] Provide guidance for generating new design.md files
   - [ ] Include examples of well-formed design.md sections
+- [ ] 👀
 - update: [.seeai/actions/implement.md](../../../.seeai/actions/implement.md)
   - [ ] Add filename detection logic in Step 1 to identify vision.md and design.md files
   - [ ] Add rules loading logic to load corresponding rules file when special file detected

@@ -1,4 +1,4 @@
-# Specification Structure
+# Specification Document Structure
 
 ## Overview
 

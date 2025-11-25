@@ -10,9 +10,9 @@ You are analyzing a registered change to identify impact on specifications and i
 
 ## Identify the change
 
-- Identify the $ChangeID in `@/changes/active` folder
-- If $ChangeID cannot be identified, ask user for clarification
-- Load all change description files from `@/changes/active/$ChangeID`
+- Identify the $changeID in `@/changes/active` folder
+- If $changeID cannot be identified, ask user for clarification
+- Load all change description files from `@/changes/active/$changeID`
 
 ## Ask clarifying questions
 

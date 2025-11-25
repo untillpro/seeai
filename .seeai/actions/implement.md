@@ -31,7 +31,17 @@ A markdown file path containing todo items in the format:
 
 ### Step 2: Process todo items
 
+CRITICAL: Before processing any todo item, check if it contains the 👀 emoji. If it does, STOP IMMEDIATELY.
+
 For each todo item:
+
+0. **Check for review checkpoint (MANDATORY)**
+   - BEFORE doing anything else, check if the todo item contains 👀 emoji
+   - If the item is `[ ] 👀` or contains 👀 emoji: STOP EXECUTION IMMEDIATELY
+   - Present summary of all changes made so far
+   - DO NOT mark the review checkpoint as done
+   - DO NOT proceed to next items
+   - The user will manually mark it as `[x]` or remove it when ready to continue
 
 1. **Understand the task**
    - Read the task description carefully

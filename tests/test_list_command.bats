@@ -24,6 +24,7 @@ teardown() {
   cleanup_mock_env
 }
 
+# test(@conf-3)
 @test "list command shows project scope installation from .seeai/" {
   # Install in project scope (creates version file in .seeai/)
   run bash "$BATS_TEST_DIRNAME/../scripts/seeai.sh" install -l --agent auggie --scope project
@@ -56,6 +57,7 @@ teardown() {
   }
 }
 
+# test(@conf-3)
 @test "list command shows legacy project scope installations from agent-specific directories" {
   # Simulate legacy installation by manually creating files in agent-specific directory
   mkdir -p .augment/commands/seeai
@@ -95,6 +97,7 @@ EOF
   }
 }
 
+# test(@conf-3)
 @test "list command shows both new and legacy project scope installations" {
   # Install new project scope
   run bash "$BATS_TEST_DIRNAME/../scripts/seeai.sh" install -l --agent auggie --scope project
@@ -140,6 +143,7 @@ EOF
   }
 }
 
+# test(@conf-3)
 @test "list command shows correct version info for project scope" {
   # Install in project scope
   run bash "$BATS_TEST_DIRNAME/../scripts/seeai.sh" install -l --agent auggie --scope project
@@ -171,6 +175,7 @@ EOF
   }
 }
 
+# test(@conf-1)
 @test "list command handles missing installations gracefully" {
   # Remove .seeai to simulate no installations
   rm -rf .seeai
@@ -191,6 +196,7 @@ EOF
   }
 }
 
+# test(@conf-2)
 @test "list command shows user scope installations" {
   # Install in user scope
   run bash "$BATS_TEST_DIRNAME/../scripts/seeai.sh" install -l --agent auggie --scope user

@@ -69,6 +69,7 @@ get_expected_version() {
 }
 
 # Single mega-test covering all combinations
+# test(@conf-5, @conf-12)
 @test "project scope installations (agent x version x mode)" {
   local agents=("auggie" "claude" "copilot")
   local versions=("latest" "main" "v0.0.9")
@@ -241,6 +242,7 @@ get_expected_version() {
   [ "$passed" -eq "$total" ]
 }
 
+# test(@conf-5)
 @test "ACF creation when no file exists" {
   local agent="auggie"
   local version="latest"
@@ -298,6 +300,7 @@ get_expected_version() {
   echo "PASSED"
 }
 
+# test(@conf-5)
 @test "ACF append when file exists without instructions" {
   local agent="claude"
   local version="latest"
@@ -366,6 +369,7 @@ EOF
   echo "PASSED"
 }
 
+# test(@conf-5, @conf-11)
 @test "ACF update when file exists with old instructions" {
   local agent="auggie"
   local version="latest"
@@ -449,6 +453,7 @@ EOF
   echo "PASSED"
 }
 
+# test(@conf-11)
 @test "project scope installation overwrites existing files" {
   # First installation (local mode for speed)
   run bash "$BATS_TEST_DIRNAME/../scripts/seeai.sh" install -l --agent auggie --scope project
@@ -486,6 +491,7 @@ EOF
   echo "PASSED"
 }
 
+# test(@conf-5, @conf-8)
 @test "project scope installation validates all files were downloaded" {
   # This test verifies that the validation step catches missing files
   # We'll use a mock script that simulates a failed download

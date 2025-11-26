@@ -54,6 +54,7 @@ get_expected_version() {
 }
 
 # Single mega-test covering all combinations
+# test(@conf-4, @conf-12)
 @test "user scope installations (agent x version x mode)" {
   local agents=("auggie" "claude" "copilot")
   local versions=("latest" "main" "v0.0.9")
